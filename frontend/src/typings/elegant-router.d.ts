@@ -29,7 +29,6 @@ declare module "@elegant-router/types" {
     "log_login-log": "/log/login-log";
     "log_online-user": "/log/online-user";
     "log_operation-log": "/log/operation-log";
-    "log_robot-log": "/log/robot-log";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
     "manage": "/manage";
     "manage_announcement": "/manage/announcement";
@@ -43,16 +42,6 @@ declare module "@elegant-router/types" {
     "manage_scheduler-log": "/manage/scheduler-log";
     "manage_user": "/manage/user";
     "monitor": "/monitor";
-    "operation-monitor": "/operation-monitor";
-    "robot": "/robot";
-    "robot_manage": "/robot/manage";
-    "robot_model": "/robot/model";
-    "scene": "/scene";
-    "scene_group": "/scene/group";
-    "scene_map": "/scene/map";
-    "scene_map-editor": "/scene/map-editor";
-    "settings": "/settings";
-    "task": "/task";
   };
 
   /**
@@ -94,11 +83,6 @@ declare module "@elegant-router/types" {
     | "login"
     | "manage"
     | "monitor"
-    | "operation-monitor"
-    | "robot"
-    | "scene"
-    | "settings"
-    | "task"
   >;
 
   /**
@@ -126,7 +110,6 @@ declare module "@elegant-router/types" {
     | "log_login-log"
     | "log_online-user"
     | "log_operation-log"
-    | "log_robot-log"
     | "manage_announcement"
     | "manage_config"
     | "manage_dict"
@@ -138,14 +121,6 @@ declare module "@elegant-router/types" {
     | "manage_scheduler"
     | "manage_user"
     | "monitor"
-    | "operation-monitor"
-    | "robot_manage"
-    | "robot_model"
-    | "scene_group"
-    | "scene_map-editor"
-    | "scene_map"
-    | "settings"
-    | "task"
   >;
 
   /**

@@ -39,14 +39,6 @@ from database.models.sys.notice import SysNotice
 from database.models.sys.notice_read import SysNoticeRead
 from database.models.sys.login_log import SysLoginLog
 from database.models.business.user import AppUser
-from database.models.business.robot_model import RobotModel
-from database.models.business.robot import Robot
-from database.models.business.robot_status_record import RobotStatusRecord
-from database.models.business.scene_group import SceneGroup
-from database.models.business.scene_map import SceneMap
-from database.models.business.scene_map_annotation import SceneMapAnnotation
-from database.models.business.scene_map_object import SceneMapObject
-from database.models.business.scene_map_path import SceneMapPath
 from modules.scheduler.models.scheduled_task import SysScheduledTask
 from modules.scheduler.models.task_log import SysScheduledTaskLog
 
