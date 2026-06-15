@@ -40,6 +40,8 @@ class SysFileUploadResponse(BaseRespEntity):
     mime_type: str = Field(..., description="MIME类型")
     extension: str = Field(..., description="扩展名")
     storage_platform: str = Field(..., description="存储平台")
+    image_width: Optional[int] = Field(None, description="图片宽度(像素)，仅图片文件且请求时返回")
+    image_height: Optional[int] = Field(None, description="图片高度(像素)，仅图片文件且请求时返回")
     created_at: Annotated[Optional[str], BeforeValidator(_format_datetime)] = Field(None, description="上传时间")
 
 

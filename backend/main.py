@@ -17,6 +17,9 @@ from core.redis import RedisPool
 
 from modules.app.router import router as app_app_router
 from modules.admin.router import router as admin_app_router
+from modules.robot.router import router as robot_router
+from modules.scene.router import router as scene_router
+from modules.task.router import router as task_router
 from core.registry.setup_registry import setup_app
 from core.websocket import FastAPIConnectionManager
 
@@ -45,6 +48,13 @@ async def lifespan(app: FastAPI):
         logger.info("IP 黑名单预热数量: %s", count)
     except Exception as exc:
         logger.error("IP 黑名单预热异常: %s", exc)
+    try:
+        from modules.robot.services.robot_schema_service import RobotSchemaService
+        async for db_schema in get_session():
+            await RobotSchemaService.ensure_robot_map_binding(db_schema)
+        logger.info("机器人场景绑定字段检查完成")
+    except Exception as exc:
+        logger.error("机器人场景绑定字段检查异常: %s", exc)
     # 启动定时任务调度器
     try:
         from modules.scheduler.core.scheduler import SchedulerManager
@@ -110,6 +120,9 @@ logger.info("配置文件初始化完成")
 # 挂载认证路由
 app.include_router(app_app_router)
 app.include_router(admin_app_router)
+app.include_router(robot_router)
+app.include_router(scene_router)
+app.include_router(task_router)
 
 
 if __name__ == "__main__":

@@ -444,5 +444,29 @@ declare namespace Api {
     type IpBlacklistBatchDelete = {
       ids: number[];
     };
+
+    /** 机器人事件日志搜索参数 */
+    type RobotEventLogSearchParams = CommonType.RecordNullable<{
+      robot_id?: number | null;
+      event_type?: string | null;
+      event_status?: string | null;
+      start_time?: string;
+      end_time?: string;
+    } & CommonSearchParams>;
+
+    /** 机器人事件日志 */
+    type RobotEventLog = {
+      id: number;
+      robot_id: number;
+      robot_name: string | null;
+      event_type: string;
+      event_status: string;
+      event_content: string | null;
+      created_at: string | null;
+      updated_at: string | null;
+    };
+
+    /** 机器人事件日志列表 */
+    type RobotEventLogList = Common.PaginatingQueryRecord<RobotEventLog>;
   }
 }

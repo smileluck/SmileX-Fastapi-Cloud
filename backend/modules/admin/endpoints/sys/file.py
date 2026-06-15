@@ -46,6 +46,7 @@ preview_router = APIRouter(prefix="/file", tags=["系统管理/文件管理"])
 )
 async def upload_file(
     file: UploadFile = File(...),
+    include_image_info: bool = Query(False, description="是否返回图片宽高信息"),
     db: AsyncSession = Depends(get_session),
     user: SysUser = Depends(current_user),
 ):
@@ -59,7 +60,16 @@ async def upload_file(
         created_by=user.id,
     )
     await db.commit()
-    return ResponseModel(data=SysFileUploadResponse.model_validate(sys_file), msg="上传成功")
+
+    response = SysFileUploadResponse.model_validate(sys_file)
+    if include_image_info:
+        width, height = FileService.get_image_dimensions(
+            file_data, file.content_type or "application/octet-stream"
+        )
+        response.image_width = width
+        response.image_height = height
+
+    return ResponseModel(data=response, msg="上传成功")
 
 
 @file_router.post(
@@ -70,6 +80,7 @@ async def upload_file(
 )
 async def upload_files(
     files: List[UploadFile] = File(...),
+    include_image_info: bool = Query(False, description="是否返回图片宽高信息"),
     db: AsyncSession = Depends(get_session),
     user: SysUser = Depends(current_user),
 ):
@@ -81,8 +92,18 @@ async def upload_files(
 
     sys_files = await FileService.upload_files(db=db, files=file_tuples, created_by=user.id)
     await db.commit()
+
+    responses = []
+    for sys_file, (file_data, _, mime_type) in zip(sys_files, file_tuples):
+        resp = SysFileUploadResponse.model_validate(sys_file)
+        if include_image_info:
+            width, height = FileService.get_image_dimensions(file_data, mime_type)
+            resp.image_width = width
+            resp.image_height = height
+        responses.append(resp)
+
     return ResponseModel(
-        data=[SysFileUploadResponse.model_validate(f) for f in sys_files],
+        data=responses,
         msg=f"成功上传 {len(sys_files)} 个文件",
     )
 

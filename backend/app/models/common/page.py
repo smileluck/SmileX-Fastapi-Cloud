@@ -23,7 +23,7 @@ class PageRequest(BaseModel):
     """分页请求的基类模型"""
 
     page: int = Field(1, description="当前页码，默认第 1 页", gt=0)
-    page_size: int = Field(100, description="每页条数，默认 100 条", gt=0, le=200)
+    page_size: int = Field(100, description="每页条数，默认 100 条", gt=0, le=2000)
 
     @field_validator("page")
     def page_must_be_positive(cls, v):
@@ -35,8 +35,8 @@ class PageRequest(BaseModel):
     def page_size_must_be_positive(cls, v):
         if v < 1:
             raise ValueError("每页条数必须为正整数")
-        if v > 200:
-            raise ValueError("每页条数最多为 200 条")
+        if v > 2000:
+            raise ValueError("每页条数最多为 2000 条")
         return v
 
 
@@ -84,7 +84,7 @@ async def get_paginated_results(
 # FastAPI依赖项：获取分页参数
 def get_page_params(
     page: int = Query(1, ge=1, description="页码，从1开始"),
-    page_size: int = Query(10, ge=1, le=200, description="每页条数，最大200"),
+    page_size: int = Query(10, ge=1, le=2000, description="每页条数，最大2000"),
 ) -> PageRequest:
     """获取分页查询参数的依赖项"""
     return PageRequest(page=page, page_size=page_size)

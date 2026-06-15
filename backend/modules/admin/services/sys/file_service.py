@@ -28,6 +28,22 @@ logger = logging.getLogger(__name__)
 class FileService:
 
     @staticmethod
+    def get_image_dimensions(file_data: bytes, mime_type: str) -> tuple[int | None, int | None]:
+        """从文件字节中读取图片尺寸，非图片或读取失败返回 (None, None)"""
+        if not mime_type.startswith("image/"):
+            return None, None
+        try:
+            from io import BytesIO
+            from PIL import Image
+
+            img = Image.open(BytesIO(file_data))
+            width, height = img.size
+            img.close()
+            return width, height
+        except Exception:
+            return None, None
+
+    @staticmethod
     def build_file_query(query_params: SysFileQueryParams) -> Select:
         """构建文件查询对象"""
         base_query = select(SysFile).where(SysFile.deleted_at.is_(None))

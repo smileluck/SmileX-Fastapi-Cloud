@@ -133,6 +133,15 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'log_operation-log',
           i18nKey: 'route.log_operation-log'
         }
+      },
+      {
+        name: 'log_robot-log',
+        path: '/log/robot-log',
+        component: 'view.log_robot-log',
+        meta: {
+          title: 'log_robot-log',
+          i18nKey: 'route.log_robot-log'
+        }
       }
     ]
   },
@@ -258,6 +267,101 @@ export const generatedRoutes: GeneratedRoute[] = [
       i18nKey: 'route.monitor',
       icon: 'mdi:chart-areaspline-variant',
       order: 4
+    }
+  },
+  {
+    name: 'operation-monitor',
+    path: '/operation-monitor',
+    component: 'layout.base$view.operation-monitor',
+    meta: {
+      title: 'operation-monitor',
+      i18nKey: 'route.operation-monitor'
+    }
+  },
+  {
+    name: 'robot',
+    path: '/robot',
+    component: 'layout.base',
+    meta: {
+      title: 'robot',
+      i18nKey: 'route.robot'
+    },
+    children: [
+      {
+        name: 'robot_manage',
+        path: '/robot/manage',
+        component: 'view.robot_manage',
+        meta: {
+          title: 'robot_manage',
+          i18nKey: 'route.robot_manage'
+        }
+      },
+      {
+        name: 'robot_model',
+        path: '/robot/model',
+        component: 'view.robot_model',
+        meta: {
+          title: 'robot_model',
+          i18nKey: 'route.robot_model'
+        }
+      }
+    ]
+  },
+  {
+    name: 'scene',
+    path: '/scene',
+    component: 'layout.base',
+    meta: {
+      title: 'scene',
+      i18nKey: 'route.scene'
+    },
+    children: [
+      {
+        name: 'scene_group',
+        path: '/scene/group',
+        component: 'view.scene_group',
+        meta: {
+          title: 'scene_group',
+          i18nKey: 'route.scene_group'
+        }
+      },
+      {
+        name: 'scene_map',
+        path: '/scene/map',
+        component: 'view.scene_map',
+        meta: {
+          title: 'scene_map',
+          i18nKey: 'route.scene_map'
+        }
+      },
+      {
+        name: 'scene_map-editor',
+        path: '/scene/map-editor',
+        component: 'view.scene_map-editor',
+        meta: {
+          title: 'scene_map-editor',
+          i18nKey: 'route.scene_map-editor'
+        }
+      }
+    ]
+  },
+  {
+    name: 'settings',
+    path: '/settings',
+    component: 'layout.base$view.settings',
+    meta: {
+      title: 'settings',
+      i18nKey: 'route.settings',
+      icon: 'mdi:cog'
+    }
+  },
+  {
+    name: 'task',
+    path: '/task',
+    component: 'layout.base$view.task',
+    meta: {
+      title: 'task',
+      i18nKey: 'route.task'
     }
   }
 ];

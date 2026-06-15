@@ -126,3 +126,48 @@ export function fetchGetOnlineUserCount() {
     method: 'get'
   });
 }
+
+/** ==================== 机器人事件日志 API ==================== */
+
+/** get robot event log list */
+export function fetchGetRobotEventLogList(params?: Api.SystemManage.RobotEventLogSearchParams) {
+  return request<Api.SystemManage.RobotEventLogList>({
+    url: '/robot/event-log/list',
+    method: 'get',
+    params
+  });
+}
+
+/** get robot event log detail */
+export function fetchGetRobotEventLogDetail(logId: number) {
+  return request<Api.SystemManage.RobotEventLog>({
+    url: `/robot/event-log/${logId}`,
+    method: 'get'
+  });
+}
+
+/** delete robot event log */
+export function fetchDeleteRobotEventLog(logId: number) {
+  return request<void>({
+    url: `/robot/event-log/${logId}`,
+    method: 'delete'
+  });
+}
+
+/** batch delete robot event logs */
+export function fetchBatchDeleteRobotEventLog(logIds: number[]) {
+  return request<void>({
+    url: '/robot/event-log/batch/delete',
+    method: 'delete',
+    data: logIds
+  });
+}
+
+/** clear old robot event logs */
+export function fetchClearRobotEventLog(days?: number) {
+  return request<void>({
+    url: '/robot/event-log/clear',
+    method: 'delete',
+    params: { days }
+  });
+}

@@ -18,6 +18,10 @@ declare namespace Api {
       extension: string;
       /** 存储平台 */
       storage_platform: string;
+      /** 图片宽度(像素)，仅图片文件且请求时返回 */
+      image_width?: number | null;
+      /** 图片高度(像素)，仅图片文件且请求时返回 */
+      image_height?: number | null;
       /** 上传时间 */
       created_at: string;
     };

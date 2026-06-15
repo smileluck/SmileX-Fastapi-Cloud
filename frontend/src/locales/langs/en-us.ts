@@ -254,13 +254,24 @@ const local: App.I18n.Schema = {
     'log_login-log': 'Login Log',
     'log_online-user': 'Online Users',
     'log_operation-log': 'Operation Log',
+    'log_robot-log': 'Robot Event Log',
     monitor: 'Monitor Dashboard',
     demo: 'Example',
     demo_upload: 'Upload Demo',
     demo_dict: 'Dict Component Demo',
     manage_file: 'File Management',
     manage_scheduler: 'Task Management',
-    'manage_scheduler-log': 'Execution Log'
+    'manage_scheduler-log': 'Execution Log',
+    robot: 'Robot',
+    robot_model: 'Robot Model',
+    robot_manage: 'Robot Management',
+    scene: 'Scene',
+    settings: 'Parameter Config',
+    scene_group: 'Scene Group',
+    scene_map: 'Scene Map',
+    'scene_map-editor': 'Map Editor',
+    task: 'Task Management',
+    'operation-monitor': 'Operation Monitor'
   },
   page: {
     login: {
@@ -752,6 +763,25 @@ const local: App.I18n.Schema = {
         form: {
           username: 'Enter username',
           ip: 'Enter IP address'
+        }
+      },
+      robotEventLog: {
+        title: 'Robot Event Log',
+        robotName: 'Robot Name',
+        eventType: 'Event Type',
+        eventStatus: 'Event Status',
+        eventContent: 'Event Content',
+        typeTask: 'Task',
+        typeAlarm: 'Alarm',
+        statusNormal: 'Normal',
+        statusAbnormal: 'Abnormal',
+        clear: 'Clear Logs',
+        clearConfirm: 'Confirm to clear robot event logs older than 30 days?',
+        form: {
+          robotName: 'Select robot',
+          eventType: 'Select event type',
+          eventStatus: 'Select event status',
+          timeRange: 'Time Range'
         }
       }
     }

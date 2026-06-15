@@ -250,13 +250,24 @@ const local: App.I18n.Schema = {
     'log_login-log': '登录日志',
     'log_online-user': '在线用户',
     'log_operation-log': '操作日志',
+    'log_robot-log': '机器人事件日志',
     monitor: '监控仪表盘',
     demo: '示例',
     demo_upload: '上传演示',
     demo_dict: '字典组件演示',
     manage_file: '文件管理',
     manage_scheduler: '任务管理',
-    'manage_scheduler-log': '执行日志'
+    'manage_scheduler-log': '执行日志',
+    robot: '机器人',
+    robot_model: '型号管理',
+    robot_manage: '机器人管理',
+    scene: '场景管理',
+    settings: '参数配置',
+    scene_group: '场景分组',
+    scene_map: '场景地图',
+    'scene_map-editor': '地图编辑器',
+    task: '任务管理',
+    'operation-monitor': '运行监控'
   },
   page: {
     login: {
@@ -747,6 +758,25 @@ const local: App.I18n.Schema = {
         form: {
           username: '请输入用户名',
           ip: '请输入IP地址'
+        }
+      },
+      robotEventLog: {
+        title: '机器人事件日志列表',
+        robotName: '机器人名称',
+        eventType: '事件类型',
+        eventStatus: '事件状态',
+        eventContent: '事件内容',
+        typeTask: '任务',
+        typeAlarm: '告警',
+        statusNormal: '正常',
+        statusAbnormal: '异常',
+        clear: '清理日志',
+        clearConfirm: '确认清理30天前的机器人事件日志？',
+        form: {
+          robotName: '请选择机器人',
+          eventType: '请选择事件类型',
+          eventStatus: '请选择事件状态',
+          timeRange: '时间范围'
         }
       }
     }
