@@ -17,3 +17,4 @@
 - [2026-06-01 插件安装自动更新 PLUGINS__ENABLED](./2026-06-01_auto_update_plugins_enabled.md) — 安装/卸载插件时自动更新 .env 中的启用列表
 - [2026-06-03 数据库模块迁移](./2026-06-03_database_migration.md) — ORM 模型、连接管理、工具函数统一迁移到 database/ 包
 - [2026-06-03 字典通用组件](./2026-06-03_dict_components.md) — useDict composable + DictSelect/DictTag/DictText 通用组件 + gender 种子数据
+- [2026-06-17 登录 redirect 不生效修复](./2026-06-17_login_redirect_fix.md) — checkTabClear 在首次登录会吞掉 redirect 参数，登录后误回首页
