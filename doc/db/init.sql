@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict 2Ddq8fvoxTShBajd4MIEFIYgr9rLw30KseerRdIA4pLxurd9c5j7nqZfRcuqDZa
+\restrict 5PxxLp13VmOwQ6yD6RfOx6kZCLhavTSebbm2LlHnfy2NjzZ9fthUgMk8NVj4w19
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 18.0
 
--- Started on 2026-06-04 21:26:33
+-- Started on 2026-06-08 14:59:38
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -4515,11 +4515,11 @@ ALTER TABLE ONLY public.sys_user_role
     ADD CONSTRAINT sys_user_role_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.sys_user(id) ON DELETE CASCADE;
 
 
--- Completed on 2026-06-04 21:26:33
+-- Completed on 2026-06-08 14:59:38
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 2Ddq8fvoxTShBajd4MIEFIYgr9rLw30KseerRdIA4pLxurd9c5j7nqZfRcuqDZa
+\unrestrict 5PxxLp13VmOwQ6yD6RfOx6kZCLhavTSebbm2LlHnfy2NjzZ9fthUgMk8NVj4w19
 
