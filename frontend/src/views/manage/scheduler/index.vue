@@ -249,7 +249,6 @@ async function handleDelete(taskId: number) {
   const { error } = await fetchDeleteScheduledTask(taskId);
   if (!error) {
     onDeleted();
-    window.$message?.success($t('common.deleteSuccess'));
   }
 }
 
@@ -257,7 +256,6 @@ async function handleBatchDelete() {
   const { error } = await fetchBatchDeleteScheduledTask(checkedRowKeys.value as number[]);
   if (!error) {
     onBatchDeleted();
-    window.$message?.success($t('common.deleteSuccess'));
   }
 }
 

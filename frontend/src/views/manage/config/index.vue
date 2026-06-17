@@ -196,7 +196,6 @@ function editConfig(id: number) {
 async function handleDeleteConfig(id: number) {
   try {
     await fetchDeleteConfig(id);
-    message.success($t('common.deleteSuccess'));
     onConfigDeleted();
   } catch (error) {
     console.error('删除配置失败:', error);
@@ -221,7 +220,6 @@ async function handleBatchDeleteConfig() {
   }
   try {
     await fetchBatchDeleteConfig(checkedConfigRowKeys.value.map(Number));
-    message.success($t('common.deleteSuccess'));
     onConfigBatchDeleted();
   } catch (error) {
     console.error('批量删除配置失败:', error);

@@ -125,7 +125,6 @@ const { checkedRowKeys, onBatchDeleted, onDeleted } = useTableOperate(data, 'id'
 async function handleDelete(id: number) {
   try {
     await fetchDeleteLoginLog(id);
-    message.success($t('common.deleteSuccess'));
     onDeleted();
   } catch (error) {
     console.error('删除登录日志失败:', error);

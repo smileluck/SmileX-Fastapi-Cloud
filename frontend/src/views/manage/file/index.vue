@@ -176,7 +176,6 @@ async function handleDownload(fileId: number, fileName: string) {
 async function handleDelete(fileId: number) {
   try {
     await fetchDeleteFile(fileId);
-    message.success($t('common.deleteSuccess'));
     onDeleted();
   } catch {
     message.error($t('common.deleteFailed'));

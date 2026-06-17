@@ -353,7 +353,6 @@ function editDict(id: number) {
 async function handleDeleteDict(id: number) {
   try {
     await fetchDeleteDict(id);
-    message.success($t('common.deleteSuccess'));
     onDictDeleted();
   } catch (error) {
     console.error('删除字典失败:', error);
@@ -369,7 +368,6 @@ function editDictItem(id: number) {
 async function handleDeleteDictItem(id: number) {
   try {
     await fetchDeleteDictItem(id);
-    message.success($t('common.deleteSuccess'));
     onDictItemDeleted();
   } catch (error) {
     console.error('删除字典项失败:', error);

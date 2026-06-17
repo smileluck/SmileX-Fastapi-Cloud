@@ -221,7 +221,6 @@ function editNotice(id: number) {
 async function handleDelete(id: number) {
   try {
     await fetchDeleteNotice(id);
-    message.success($t('common.deleteSuccess'));
     onNoticeDeleted();
   } catch (error) {
     console.error('删除通知失败:', error);
@@ -247,7 +246,6 @@ async function handleBatchDelete() {
   }
   try {
     await fetchBatchDeleteNotice(checkedNoticeRowKeys.value.map(Number));
-    message.success($t('common.deleteSuccess'));
     onNoticeBatchDeleted();
   } catch (error) {
     console.error('批量删除通知失败:', error);

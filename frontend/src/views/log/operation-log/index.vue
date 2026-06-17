@@ -180,7 +180,6 @@ function handleViewDetail(id: number) {
 async function handleDelete(id: number) {
   try {
     await fetchDeleteOperationLog(id);
-    message.success($t('common.deleteSuccess'));
     onDeleted();
   } catch (error) {
     console.error('删除操作日志失败:', error);

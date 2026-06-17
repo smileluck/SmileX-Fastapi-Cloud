@@ -122,7 +122,6 @@ async function handleBatchDelete() {
 
   const { error } = await fetchBatchDeleteRole(checkedRowKeys.value);
   if (!error) {
-    window.$message?.success($t('common.deleteSuccess'));
     onBatchDeleted();
   }
 }
@@ -130,7 +129,6 @@ async function handleBatchDelete() {
 async function handleDelete(id: number) {
   const { error } = await fetchDeleteRole(id);
   if (!error) {
-    window.$message?.success($t('common.deleteSuccess'));
     onDeleted();
   }
 }

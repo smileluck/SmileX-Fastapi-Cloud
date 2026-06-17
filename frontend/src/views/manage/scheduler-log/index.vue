@@ -155,7 +155,6 @@ async function handleBatchDelete() {
   const { error } = await fetchBatchDeleteTaskLog(checkedRowKeys.value as number[]);
   if (!error) {
     onBatchDeleted();
-    window.$message?.success($t('common.deleteSuccess'));
   }
 }
 
