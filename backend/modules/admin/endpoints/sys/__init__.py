@@ -26,10 +26,7 @@ from modules.scheduler.endpoints.scheduled_task import scheduler_task_router
 from modules.scheduler.endpoints.task_log import scheduler_log_router
 
 # 创建系统管理主路由器
-sys_router = APIRouter(
-    prefix="/sys",
-    tags=["系统管理"]
-)
+sys_router = APIRouter(prefix="/sys", tags=["系统管理"])
 
 # 包含各个子模块路由
 sys_router.include_router(config_router)
@@ -54,4 +51,3 @@ sys_router.include_router(scheduler_task_router)
 sys_router.include_router(scheduler_log_router)
 
 __all__ = ["sys_router"]
-

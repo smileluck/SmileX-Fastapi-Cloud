@@ -6,8 +6,9 @@ from sqlalchemy import pool
 from alembic import context
 
 import sys
-import io,os
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+import io, os
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 
 # this is the Alembic Config object, which provides
@@ -29,7 +30,10 @@ from database.models.sys.role import SysRole
 from database.models.sys.menu import SysMenu
 from database.models.sys.config import SysConfig
 from database.models.sys.dict import SysDict, SysDictItem
-from database.models.sys.association_tables import sys_user_role_association, sys_role_menu_association
+from database.models.sys.association_tables import (
+    sys_user_role_association,
+    sys_role_menu_association,
+)
 from database.models.sys.operation_log import SysOperationLog
 from database.models.sys.export_task import SysExportTask
 from database.models.sys.export_template import SysExportTemplate
@@ -39,8 +43,8 @@ from database.models.sys.notice import SysNotice
 from database.models.sys.notice_read import SysNoticeRead
 from database.models.sys.login_log import SysLoginLog
 from database.models.business.user import AppUser
-from modules.scheduler.models.scheduled_task import SysScheduledTask
-from modules.scheduler.models.task_log import SysScheduledTaskLog
+from database.models.sys.scheduled_task import SysScheduledTask
+from database.models.sys.task_log import SysScheduledTaskLog
 
 # Set target_metadata to Base.metadata
 target_metadata = Base.metadata
@@ -84,9 +88,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

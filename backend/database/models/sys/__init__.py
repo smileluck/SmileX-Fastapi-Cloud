@@ -10,4 +10,20 @@ from .operation_log import SysOperationLog
 from .login_log import SysLoginLog
 from .ip_blacklist import SysIpBlacklist
 from .file import SysFile
-__all__ = ["SysMenu", "SysRole", "SysUser", "SysConfig", "SysDict", "SysDictItem", "SysOperationLog", "SysLoginLog", "SysIpBlacklist", "SysFile"]
+from .scheduled_task import SysScheduledTask
+from .task_log import SysScheduledTaskLog
+
+__all__ = [
+    "SysMenu",
+    "SysRole",
+    "SysUser",
+    "SysConfig",
+    "SysDict",
+    "SysDictItem",
+    "SysOperationLog",
+    "SysLoginLog",
+    "SysIpBlacklist",
+    "SysFile",
+    "SysScheduledTask",
+    "SysScheduledTaskLog",
+]
