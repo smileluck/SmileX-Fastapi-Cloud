@@ -50,6 +50,7 @@ async def lifespan(app: FastAPI):
         from modules.scheduler.core.scheduler import SchedulerManager
         import modules.scheduler.tasks.builtin  # noqa: F401
         import modules.scheduler.tasks.rate_limit_config  # noqa: F401
+        import modules.scheduler.tasks.generic  # noqa: F401
 
         manager = SchedulerManager.get_instance()
         manager.start()

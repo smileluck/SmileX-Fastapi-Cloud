@@ -3,7 +3,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import String, Text, Integer, Boolean, BigInteger, DateTime, Float
+from sqlalchemy import String, Text, Integer, Boolean, BigInteger, DateTime, Float, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 
 from database.models.base import Base
@@ -59,4 +59,7 @@ class SysScheduledTask(Base):
     )
     concurrent_policy: Mapped[str] = mapped_column(
         String(20), nullable=False, default="skip", comment="并发策略: skip/replace/run"
+    )
+    params: Mapped[dict | None] = mapped_column(
+        JSON, nullable=True, default=None, comment="通用任务参数 JSON"
     )

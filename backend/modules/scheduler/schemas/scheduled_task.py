@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+from typing import Literal
 
 from pydantic import Field
 
@@ -12,7 +13,7 @@ class ScheduledTaskCreate(BaseEntity):
     """创建定时任务"""
 
     name: str = Field(..., description="任务名称")
-    task_key: str = Field(..., description="任务唯一标识")
+    task_key: str = Field(..., description="任务唯一标识（用户自定义实例名）")
     description: str | None = Field(None, description="任务描述")
     cron_expression: str = Field(..., description="Cron 表达式")
     trigger_type: str = Field("cron", description="触发类型: cron/interval/date")
@@ -20,6 +21,8 @@ class ScheduledTaskCreate(BaseEntity):
     timeout: int = Field(300, description="超时时间(秒)")
     max_retries: int = Field(0, description="最大重试次数")
     concurrent_policy: str = Field("skip", description="并发策略: skip/replace/run")
+    params: dict | None = Field(None, description="通用任务参数 JSON")
+    function_path: str | None = Field(None, description="模板函数路径（通用任务实例化时由前端传入）")
 
 
 class ScheduledTaskUpdate(BaseEntity):
@@ -33,6 +36,7 @@ class ScheduledTaskUpdate(BaseEntity):
     timeout: int | None = Field(None, description="超时时间(秒)")
     max_retries: int | None = Field(None, description="最大重试次数")
     concurrent_policy: str | None = Field(None, description="并发策略")
+    params: dict | None = Field(None, description="通用任务参数 JSON")
 
 
 class ScheduledTaskQueryParams(BaseEntity):
@@ -64,6 +68,7 @@ class ScheduledTaskResponse(BaseRespEntity):
     timeout: int
     max_retries: int
     concurrent_policy: str
+    params: dict | None = None
     created_at: datetime | None
     updated_at: datetime | None
 
@@ -95,3 +100,5 @@ class RegistryTaskResponse(BaseEntity):
     timeout: int
     max_retries: int
     concurrent_policy: str
+    has_params: bool = False
+    task_category: Literal["specialist", "generic"] = "specialist"

@@ -2,6 +2,8 @@ declare namespace Api {
   namespace Scheduler {
     type CommonSearchParams = Pick<Common.PaginatingCommonParams, 'page' | 'page_size'>;
 
+    type TaskCategory = 'specialist' | 'generic';
+
     /** 定时任务 */
     type ScheduledTask = {
       id: number;
@@ -21,6 +23,7 @@ declare namespace Api {
       timeout: number;
       max_retries: number;
       concurrent_policy: string;
+      params: Record<string, any> | null;
       created_at: string | null;
       updated_at: string | null;
     };
@@ -41,6 +44,8 @@ declare namespace Api {
       timeout: number;
       max_retries: number;
       concurrent_policy: string;
+      params?: Record<string, any> | null;
+      function_path?: string;
     };
 
     type ScheduledTaskUpdate = Partial<ScheduledTaskCreate>;
@@ -68,6 +73,36 @@ declare namespace Api {
       timeout: number;
       max_retries: number;
       concurrent_policy: string;
+      has_params: boolean;
+      task_category: TaskCategory;
+    };
+
+    /** JSON Schema 字段定义（简化版） */
+    type JsonSchemaProperty = {
+      type?: 'string' | 'integer' | 'number' | 'boolean' | 'object' | 'array' | 'null';
+      title?: string;
+      description?: string;
+      default?: any;
+      enum?: any[];
+      minimum?: number;
+      maximum?: number;
+      minLength?: number;
+      maxLength?: number;
+      items?: JsonSchemaProperty;
+      properties?: Record<string, JsonSchemaProperty>;
+      required?: string[];
+      anyOf?: JsonSchemaProperty[];
+      allOf?: JsonSchemaProperty[];
+      $ref?: string;
+    };
+
+    type TaskParamsSchema = {
+      type?: string;
+      title?: string;
+      description?: string;
+      properties?: Record<string, JsonSchemaProperty>;
+      required?: string[];
+      $defs?: Record<string, JsonSchemaProperty>;
     };
 
     /** 任务执行日志 */

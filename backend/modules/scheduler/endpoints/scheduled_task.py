@@ -24,7 +24,7 @@ from modules.scheduler.schemas.scheduled_task import (
     RegistryTaskResponse,
 )
 from modules.scheduler.schemas.task_log import TaskLogQueryParams, TaskLogResponse
-from modules.scheduler.core.registry import get_registered_tasks
+from modules.scheduler.core.registry import get_registered_tasks, get_task_params_schema
 
 scheduler_task_router = APIRouter(
     prefix="/scheduler-task",
@@ -225,10 +225,27 @@ async def get_registry_tasks(
             timeout=defn.timeout,
             max_retries=defn.max_retries,
             concurrent_policy=defn.concurrent_policy,
+            has_params=defn.params_schema is not None,
+            task_category=defn.task_category,
         )
         for defn in registry.values()
     ]
     return response_base.success(data=tasks)
+
+
+@scheduler_task_router.get(
+    "/registry/{task_key}/schema",
+    response_model=ResponseModel[dict | None],
+    summary="获取任务参数 JSON Schema",
+    dependencies=[Depends(require_permission("sys:scheduler:list"))],
+)
+async def get_registry_task_schema(
+    task_key: str,
+    user: SysUser = Depends(current_user),
+):
+    """获取指定任务的参数 JSON Schema，无参数任务返回 data=null"""
+    schema = get_task_params_schema(task_key)
+    return response_base.success(data=schema)
 
 
 @scheduler_task_router.post(

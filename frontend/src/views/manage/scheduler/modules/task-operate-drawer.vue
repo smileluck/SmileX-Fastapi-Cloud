@@ -3,7 +3,14 @@ import { computed, ref, watch } from 'vue';
 import { jsonClone } from '@sa/utils';
 import { useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
-import { fetchCreateScheduledTask, fetchUpdateScheduledTask, fetchCronPreview } from '@/service/api';
+import {
+  fetchCreateScheduledTask,
+  fetchUpdateScheduledTask,
+  fetchCronPreview,
+  fetchGetRegistryTasks,
+  fetchGetTaskParamsSchema
+} from '@/service/api';
+import JsonSchemaForm from './json-schema-form.vue';
 
 defineOptions({ name: 'TaskOperateDrawer' });
 
@@ -34,6 +41,13 @@ const title = computed(() => {
 
 const model = ref(createDefaultModel());
 
+const allRegistryTasks = ref<Api.Scheduler.RegistryTask[]>([]);
+const genericTemplateOptions = ref<{ label: string; value: string }[]>([]);
+const paramsSchema = ref<Api.Scheduler.TaskParamsSchema | null>(null);
+const paramsModel = ref<Record<string, any>>({});
+const schemaLoading = ref(false);
+const selectedTemplateKey = ref<string>('');
+
 const triggerTypeOptions = [
   { label: $t('page.manage.scheduler.triggerTypes.cron'), value: 'cron' },
   { label: $t('page.manage.scheduler.triggerTypes.interval'), value: 'interval' },
@@ -59,13 +73,15 @@ function createDefaultModel(): Api.Scheduler.ScheduledTaskCreate {
     trigger_params: '',
     timeout: 300,
     max_retries: 0,
-    concurrent_policy: 'skip'
+    concurrent_policy: 'skip',
+    params: null,
+    function_path: undefined as any
   };
 }
 
 const rules = {
   name: { required: true, message: $t('page.manage.scheduler.form.taskName'), trigger: 'blur' },
-  task_key: { required: true, message: $t('page.manage.scheduler.form.taskKey'), trigger: 'blur' },
+  task_key: { required: true, message: '请输入任务实例标识（唯一）', trigger: 'blur' },
   cron_expression: { required: true, message: $t('page.manage.scheduler.form.cronExpression'), trigger: 'blur' },
   trigger_type: { required: true, message: $t('page.manage.scheduler.form.triggerType'), trigger: 'change' },
   concurrent_policy: { required: true, message: $t('page.manage.scheduler.form.concurrentPolicy'), trigger: 'change' }
@@ -73,9 +89,55 @@ const rules = {
 
 const taskId = computed(() => props.rowData?.id || -1);
 const isEdit = computed(() => props.operateType === 'edit');
+const currentTemplate = computed(() => allRegistryTasks.value.find(t => t.task_key === selectedTemplateKey.value));
+const hasParams = computed(() => Boolean(currentTemplate.value?.has_params || paramsSchema.value));
+
+async function loadRegistryTasks() {
+  if (genericTemplateOptions.value.length > 0) return;
+  const { data, error } = await fetchGetRegistryTasks();
+  if (!error && data) {
+    allRegistryTasks.value = data;
+    genericTemplateOptions.value = data
+      .filter(t => t.task_category === 'generic')
+      .map(t => ({ label: `${t.name} (${t.task_key})`, value: t.task_key }));
+  }
+}
+
+async function loadSchema(templateKey: string) {
+  if (!templateKey) {
+    paramsSchema.value = null;
+    paramsModel.value = {};
+    return;
+  }
+  schemaLoading.value = true;
+  const { data, error } = await fetchGetTaskParamsSchema(templateKey);
+  if (!error) {
+    paramsSchema.value = data;
+    paramsModel.value = {};
+  }
+  schemaLoading.value = false;
+}
+
+async function onTemplateChange(templateKey: string) {
+  selectedTemplateKey.value = templateKey;
+  const def = allRegistryTasks.value.find(t => t.task_key === templateKey);
+  if (def) {
+    model.value.function_path = def.function_path || undefined;
+    if (!model.value.name) model.value.name = def.name;
+    if (!model.value.description) model.value.description = def.description;
+    if (!model.value.cron_expression) model.value.cron_expression = def.cron_expression;
+    model.value.timeout = def.timeout;
+    model.value.max_retries = def.max_retries;
+    model.value.concurrent_policy = def.concurrent_policy;
+  }
+  await loadSchema(templateKey);
+}
 
 function handleInitModel() {
   model.value = createDefaultModel();
+  paramsSchema.value = null;
+  paramsModel.value = {};
+  selectedTemplateKey.value = '';
 
   if (props.operateType === 'edit' && props.rowData) {
     const clonedData = jsonClone(props.rowData);
@@ -88,6 +150,19 @@ function handleInitModel() {
     model.value.timeout = clonedData.timeout ?? 300;
     model.value.max_retries = clonedData.max_retries ?? 0;
     model.value.concurrent_policy = clonedData.concurrent_policy || 'skip';
+    model.value.params = clonedData.params || null;
+    model.value.function_path = clonedData.function_path || undefined;
+    if (clonedData.params && typeof clonedData.params === 'object') {
+      paramsModel.value = { ...clonedData.params };
+    }
+    // 反查模板：按 function_path 找回 registry 中的 generic task
+    loadRegistryTasks().then(() => {
+      const matched = allRegistryTasks.value.find(t => t.function_path === clonedData.function_path);
+      if (matched) {
+        selectedTemplateKey.value = matched.task_key;
+        loadSchema(matched.task_key);
+      }
+    });
   }
   cronPreviewTimes.value = [];
 }
@@ -109,13 +184,20 @@ async function handleCronPreview() {
 async function handleSubmit() {
   await validate();
 
+  const payload = { ...model.value };
+  if (hasParams.value) {
+    payload.params = { ...paramsModel.value };
+  } else {
+    payload.params = null;
+  }
+
   let error: unknown = null;
 
   if (isEdit.value) {
-    const result = await fetchUpdateScheduledTask(taskId.value, model.value);
+    const result = await fetchUpdateScheduledTask(taskId.value, payload);
     error = result.error;
   } else {
-    const result = await fetchCreateScheduledTask(model.value);
+    const result = await fetchCreateScheduledTask(payload);
     error = result.error;
   }
 
@@ -126,27 +208,61 @@ async function handleSubmit() {
   }
 }
 
-watch(visible, () => {
-  if (visible.value) {
+watch(visible, async visibleState => {
+  if (visibleState) {
     handleInitModel();
+    await loadRegistryTasks();
     restoreValidation();
   }
 });
 </script>
 
 <template>
-  <NDrawer v-model:show="visible" display-directive="show" :width="560">
+  <NDrawer v-model:show="visible" display-directive="show" :width="640">
     <NDrawerContent :title="title" :native-scrollbar="false" closable>
       <NForm ref="formRef" :model="model" :rules="rules">
+        <NFormItem label="任务模板" path="template" v-if="!isEdit">
+          <NSelect
+            v-model:value="selectedTemplateKey"
+            :options="genericTemplateOptions"
+            placeholder="请选择任务模板（决定执行逻辑）"
+            filterable
+            @update:value="onTemplateChange"
+          />
+        </NFormItem>
+        <NFormItem label="任务类别" path="task_category">
+          <NTag v-if="currentTemplate" :type="currentTemplate.task_category === 'generic' ? 'success' : 'info'" size="small">
+            {{ currentTemplate.task_category === 'generic' ? '通用任务' : '专用任务' }}
+          </NTag>
+          <span v-else class="text-gray-400 text-13px">—</span>
+        </NFormItem>
         <NFormItem :label="$t('page.manage.scheduler.taskName')" path="name">
           <NInput v-model:value="model.name" :placeholder="$t('page.manage.scheduler.form.taskName')" maxlength="100" show-count />
         </NFormItem>
         <NFormItem :label="$t('page.manage.scheduler.taskKey')" path="task_key">
-          <NInput v-model:value="model.task_key" :placeholder="$t('page.manage.scheduler.form.taskKey')" maxlength="200" :disabled="isEdit" />
+          <NInput
+            v-model:value="model.task_key"
+            :placeholder="isEdit ? '' : '请输入任务实例标识，例如 my-daily-ping'"
+            maxlength="200"
+            :disabled="isEdit"
+          />
         </NFormItem>
         <NFormItem :label="$t('page.manage.scheduler.description')" path="description">
           <NInput v-model:value="model.description" type="textarea" :placeholder="$t('page.manage.scheduler.form.description')" :rows="3" maxlength="500" />
         </NFormItem>
+
+        <template v-if="hasParams">
+          <NDivider title-placement="left" class="text-13px">任务参数</NDivider>
+          <div v-if="schemaLoading" class="text-gray-400 text-13px">参数表单加载中…</div>
+          <JsonSchemaForm
+            v-else
+            v-model="paramsModel"
+            :schema="paramsSchema"
+            :required-mark="true"
+          />
+        </template>
+
+        <NDivider title-placement="left" class="text-13px">调度配置</NDivider>
         <NFormItem :label="$t('page.manage.scheduler.triggerType')" path="trigger_type">
           <NSelect v-model:value="model.trigger_type" :options="triggerTypeOptions" />
         </NFormItem>
@@ -165,7 +281,12 @@ watch(visible, () => {
           </NSpace>
         </NFormItem>
         <NFormItem v-if="model.trigger_type !== 'cron'" :label="$t('page.manage.scheduler.triggerParams')" path="trigger_params">
-          <NInput v-model:value="model.trigger_params" type="textarea" :placeholder="trigger_type === 'interval' ? '{&quot;seconds&quot;: 60}' : '{&quot;run_date&quot;: &quot;2026-01-01 00:00:00&quot;}'" :rows="2" />
+          <NInput
+            v-model:value="model.trigger_params"
+            type="textarea"
+            :placeholder="model.trigger_type === 'interval' ? '{&quot;seconds&quot;: 60}' : '{&quot;run_date&quot;: &quot;2026-01-01 00:00:00&quot;}'"
+            :rows="2"
+          />
         </NFormItem>
         <NFormItem :label="$t('page.manage.scheduler.timeout')" path="timeout">
           <NInputNumber v-model:value="model.timeout" :min="0" :step="60" class="w-full" />

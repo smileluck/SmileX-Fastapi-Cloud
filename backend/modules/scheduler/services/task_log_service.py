@@ -7,7 +7,7 @@ from sqlalchemy import select, and_, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.exception.errors import NotFoundError
-from modules.scheduler.models.task_log import SysScheduledTaskLog
+from database.models.sys.task_log import SysScheduledTaskLog
 from modules.scheduler.schemas.task_log import TaskLogQueryParams
 
 

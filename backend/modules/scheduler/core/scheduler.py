@@ -19,9 +19,9 @@ from apscheduler.triggers.date import DateTrigger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from modules.scheduler.core.registry import get_task_definition
-from modules.scheduler.models.scheduled_task import SysScheduledTask
-from modules.scheduler.models.task_log import SysScheduledTaskLog
+from modules.scheduler.core.registry import get_task_definition, get_task_definition_by_path
+from database.models.sys.scheduled_task import SysScheduledTask
+from database.models.sys.task_log import SysScheduledTaskLog
 
 logger = logging.getLogger(__name__)
 
@@ -105,7 +105,9 @@ class SchedulerManager:
 
     async def run_task_now(self, task: SysScheduledTask, db: AsyncSession, triggered_by: str = "manual"):
         """手动触发任务执行"""
-        definition = get_task_definition(task.task_key)
+        definition = get_task_definition(task.task_key) or (
+            get_task_definition_by_path(task.function_path) if task.function_path else None
+        )
         func = definition.function if definition else _load_function(task.function_path)
         if func is None:
             logger.error("任务 %s 的函数无法加载", task.task_key)
@@ -191,7 +193,9 @@ async def _scheduled_job_wrapper(task_id: int):
             if task is None or not task.status:
                 return
 
-            definition = get_task_definition(task.task_key)
+            definition = get_task_definition(task.task_key) or (
+                get_task_definition_by_path(task.function_path) if task.function_path else None
+            )
             func = definition.function if definition else _load_function(task.function_path)
             if func is None:
                 logger.error("任务 %s 的函数无法加载", task.task_key)
@@ -232,11 +236,33 @@ async def _execute_task(
     task.last_run_at = now
     await db.commit()
 
+    definition = get_task_definition(task.task_key) or (
+        get_task_definition_by_path(task.function_path) if task.function_path else None
+    )
+    params_model = None
+    if definition and definition.params_schema and task.params:
+        try:
+            params_model = definition.params_schema.model_validate(task.params)
+        except Exception as exc:
+            end = tz.now()
+            log.status = "failed"
+            log.end_time = end
+            log.duration_ms = (end - now).total_seconds() * 1000
+            log.error_message = f"参数校验失败: {exc}"[:5000]
+            task.last_status = "failed"
+            await db.commit()
+            logger.error("定时任务 %s 参数校验失败: %s", task.task_key, exc)
+            return
+
     try:
-        if task.timeout > 0:
-            result = await asyncio.wait_for(func(), timeout=task.timeout)
+        if params_model is not None:
+            coro = func(params=params_model)
         else:
-            result = await func()
+            coro = func()
+        if task.timeout > 0:
+            result = await asyncio.wait_for(coro, timeout=task.timeout)
+        else:
+            result = await coro
 
         end = tz.now()
         duration = (end - now).total_seconds() * 1000

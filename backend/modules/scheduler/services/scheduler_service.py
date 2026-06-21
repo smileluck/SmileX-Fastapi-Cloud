@@ -4,15 +4,41 @@
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.exception.errors import NotFoundError, ConflictError
-from modules.scheduler.models.scheduled_task import SysScheduledTask
+from core.exception.errors import NotFoundError, ConflictError, ValidationError
+from database.models.sys.scheduled_task import SysScheduledTask
 from modules.scheduler.schemas.scheduled_task import (
     ScheduledTaskCreate,
     ScheduledTaskUpdate,
     ScheduledTaskQueryParams,
 )
-from modules.scheduler.core.registry import get_registered_tasks
+from modules.scheduler.core.registry import get_registered_tasks, get_task_definition, get_task_definition_by_path
 from modules.scheduler.core.scheduler import SchedulerManager
+
+
+def _resolve_definition(task_key: str, function_path: str | None):
+    """优先按 task_key 查注册表（专用任务/已实例化的通用任务），否则按 function_path 查"""
+    definition = get_task_definition(task_key)
+    if definition is not None:
+        return definition
+    if function_path:
+        return get_task_definition_by_path(function_path)
+    return None
+
+
+def _validate_task_params(task_key: str, function_path: str | None, params: dict | None) -> dict | None:
+    """根据注册表的 params_schema 校验参数，返回 JSON-safe dict 或 None"""
+    definition = _resolve_definition(task_key, function_path)
+    if definition is None:
+        raise ValidationError(msg=f"任务 '{task_key}' 未在注册表中找到，无法创建")
+    if definition.params_schema is None:
+        if params:
+            raise ValidationError(msg=f"任务 '{task_key}' 不接受参数")
+        return None
+    try:
+        validated = definition.params_schema.model_validate(params or {})
+    except Exception as exc:
+        raise ValidationError(msg=f"任务参数校验失败: {exc}")
+    return validated.model_dump(mode="json")
 
 
 class SchedulerService:
@@ -67,6 +93,12 @@ class SchedulerService:
         if existing:
             raise ConflictError(msg=f"任务标识 '{task_create.task_key}' 已存在")
 
+        definition = _resolve_definition(task_create.task_key, task_create.function_path)
+        if definition is None:
+            raise ValidationError(msg=f"任务 '{task_create.task_key}' 未在注册表中找到，无法创建")
+
+        params_json = _validate_task_params(task_create.task_key, task_create.function_path, task_create.params)
+
         task = SysScheduledTask(
             name=task_create.name,
             task_key=task_create.task_key,
@@ -75,9 +107,12 @@ class SchedulerService:
             trigger_type=task_create.trigger_type,
             trigger_params=task_create.trigger_params,
             status=True,
+            module=definition.module,
+            function_path=definition.function_path,
             timeout=task_create.timeout,
             max_retries=task_create.max_retries,
             concurrent_policy=task_create.concurrent_policy,
+            params=params_json,
         )
         db.add(task)
         await db.flush()
@@ -93,6 +128,8 @@ class SchedulerService:
         task = await SchedulerService.get_task(db, task_id)
 
         update_data = task_update.model_dump(exclude_unset=True)
+        if "params" in update_data:
+            update_data["params"] = _validate_task_params(task.task_key, task.function_path, update_data["params"])
         for field, value in update_data.items():
             setattr(task, field, value)
 
@@ -140,11 +177,13 @@ class SchedulerService:
 
     @staticmethod
     async def sync_registry_to_db(db: AsyncSession) -> list[str]:
-        """将装饰器注册的任务同步到数据库"""
+        """将装饰器注册的任务同步到数据库（通用任务模板不同步——它们由用户实例化）"""
         registry = get_registered_tasks()
         synced = []
 
         for task_key, definition in registry.items():
+            if definition.task_category == "generic":
+                continue
             existing = await SchedulerService.get_task_by_key(db, task_key)
             if existing:
                 existing.name = definition.name

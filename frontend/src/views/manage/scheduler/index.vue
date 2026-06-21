@@ -97,6 +97,19 @@ const {
       ellipsis: { tooltip: true }
     },
     {
+      key: 'task_category',
+      title: '任务类别',
+      align: 'center',
+      width: 90,
+      render: row => {
+        const isGeneric = row.task_key?.startsWith('generic.');
+        const isSystem = row.task_key?.startsWith('system.');
+        const label = isGeneric ? '通用' : isSystem ? '系统' : '专用';
+        const type: NaiveUI.ThemeColor = isGeneric ? 'success' : isSystem ? 'warning' : 'info';
+        return <NTag type={type} size="small">{label}</NTag>;
+      }
+    },
+    {
       key: 'cron_expression',
       title: $t('page.manage.scheduler.cronExpression'),
       align: 'center',

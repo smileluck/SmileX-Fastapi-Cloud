@@ -11,6 +11,8 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
+from pydantic import BaseModel
+
 logger = logging.getLogger(__name__)
 
 _TASK_REGISTRY: dict[str, "TaskDefinition"] = {}
@@ -33,6 +35,8 @@ class TaskDefinition:
     max_retries: int = 0
     concurrent_policy: str = "skip"
     is_system: bool = False
+    params_schema: type[BaseModel] | None = None
+    task_category: str = "specialist"  # "specialist" | "generic"
 
 
 def scheduled_task(
@@ -47,6 +51,8 @@ def scheduled_task(
     max_retries: int = 0,
     concurrent_policy: str = "skip",
     is_system: bool = False,
+    params_schema: type[BaseModel] | None = None,
+    task_category: str | None = None,
 ):
     """
     装饰器：将函数注册为可管理的定时任务。
@@ -55,6 +61,16 @@ def scheduled_task(
 
         @scheduled_task(cron="0 */5 * * *", name="清理日志", description="清理过期日志")
         async def cleanup_logs():
+            ...
+
+        # 通用任务（接受参数，前端可实例化）
+        @scheduled_task(
+            cron="0 * * * *",
+            name="Webhook 请求",
+            task_key="generic.webhook",
+            params_schema=WebhookParams,
+        )
+        async def webhook_task(params: WebhookParams):
             ...
 
     Args:
@@ -68,6 +84,8 @@ def scheduled_task(
         max_retries: 最大重试次数
         concurrent_policy: 并发策略 skip/replace/run
         is_system: 系统任务不可通过 UI 删除
+        params_schema: 通用任务的参数 Pydantic 模型，未声明则任务不接受参数
+        task_category: 任务类别 specialist/generic，未传时根据 params_schema 自动推断
     """
 
     def decorator(func: Callable) -> Callable:
@@ -75,6 +93,8 @@ def scheduled_task(
 
         key = task_key or f"{func.__module__}.{func.__qualname__}"
         func_path = f"{func.__module__}.{func.__qualname__}"
+
+        inferred_category = task_category or ("generic" if params_schema is not None else "specialist")
 
         definition = TaskDefinition(
             task_key=key,
@@ -90,10 +110,12 @@ def scheduled_task(
             max_retries=max_retries,
             concurrent_policy=concurrent_policy,
             is_system=is_system,
+            params_schema=params_schema,
+            task_category=inferred_category,
         )
 
         _TASK_REGISTRY[key] = definition
-        logger.debug("注册定时任务: %s (%s)", name, key)
+        logger.debug("注册定时任务: %s (%s, category=%s)", name, key, inferred_category)
         return func
 
     return decorator
@@ -125,3 +147,19 @@ def get_registered_tasks() -> dict[str, TaskDefinition]:
 def get_task_definition(task_key: str) -> TaskDefinition | None:
     """按 task_key 获取注册的任务定义"""
     return _TASK_REGISTRY.get(task_key)
+
+
+def get_task_definition_by_path(function_path: str) -> TaskDefinition | None:
+    """按 function_path 反查任务定义（用于通用任务实例）"""
+    for defn in _TASK_REGISTRY.values():
+        if defn.function_path == function_path:
+            return defn
+    return None
+
+
+def get_task_params_schema(task_key: str) -> dict | None:
+    """返回任务参数的 JSON Schema；任务无 params_schema 时返回 None"""
+    defn = _TASK_REGISTRY.get(task_key)
+    if not defn or not defn.params_schema:
+        return None
+    return defn.params_schema.model_json_schema()

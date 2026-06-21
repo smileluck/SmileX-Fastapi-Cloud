@@ -78,6 +78,13 @@ export function fetchGetRegistryTasks() {
   });
 }
 
+export function fetchGetTaskParamsSchema(taskKey: string) {
+  return request<Api.Scheduler.TaskParamsSchema | null>({
+    url: `/admin/sys/scheduler-task/registry/${encodeURIComponent(taskKey)}/schema`,
+    method: 'get'
+  });
+}
+
 export function fetchSyncRegistry() {
   return request<{ synced: string[] }>({
     url: '/admin/sys/scheduler-task/sync-registry',
