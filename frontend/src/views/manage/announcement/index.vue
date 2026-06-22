@@ -267,42 +267,12 @@ async function handleBatchDelete() {
           v-model:columns="noticeColumnChecks"
           :disabled-delete="checkedNoticeRowKeys.length === 0"
           :loading="noticeLoading"
+          add-auth="sys:notice:add"
+          delete-auth="sys:notice:delete"
+          @add="handleAddNotice"
+          @delete="handleBatchDelete"
           @refresh="getNoticeData"
-        >
-          <template #default>
-            <NButton
-              v-if="hasAuth('sys:notice:add')"
-              size="small"
-              ghost
-              type="primary"
-              @click="handleAddNotice"
-            >
-              <template #icon>
-                <icon-ic-round-plus class="text-icon" />
-              </template>
-              {{ $t('common.add') }}
-            </NButton>
-            <NPopconfirm
-              v-if="hasAuth('sys:notice:delete')"
-              @positive-click="handleBatchDelete"
-            >
-              <template #trigger>
-                <NButton
-                  size="small"
-                  ghost
-                  type="error"
-                  :disabled="checkedNoticeRowKeys.length === 0"
-                >
-                  <template #icon>
-                    <icon-ic-round-delete class="text-icon" />
-                  </template>
-                  {{ $t('common.batchDelete') }}
-                </NButton>
-              </template>
-              {{ $t('common.confirmDelete') }}
-            </NPopconfirm>
-          </template>
-        </TableHeaderOperation>
+        />
       </template>
       <NDataTable
         v-model:checked-row-keys="checkedNoticeRowKeys"

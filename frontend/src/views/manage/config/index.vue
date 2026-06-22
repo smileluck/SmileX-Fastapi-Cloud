@@ -251,28 +251,13 @@ async function handleBatchResetConfig() {
           v-model:columns="configColumnChecks"
           :disabled-delete="checkedConfigRowKeys.length === 0"
           :loading="configLoading"
+          add-auth="sys:config:add"
+          delete-auth="sys:config:delete"
           @add="handleAddConfig"
           @delete="handleBatchDeleteConfig"
           @refresh="getConfigData"
         >
-          <template #default>
-            <NButton v-if="hasAuth('sys:config:add')" size="small" ghost type="primary" @click="handleAddConfig">
-              <template #icon>
-                <icon-ic-round-plus class="text-icon" />
-              </template>
-              {{ $t('common.add') }}
-            </NButton>
-            <NPopconfirm v-if="hasAuth('sys:config:delete')" @positive-click="handleBatchDeleteConfig">
-              <template #trigger>
-                <NButton size="small" ghost type="error" :disabled="checkedConfigRowKeys.length === 0">
-                  <template #icon>
-                    <icon-ic-round-delete class="text-icon" />
-                  </template>
-                  {{ $t('common.batchDelete') }}
-                </NButton>
-              </template>
-              {{ $t('common.confirmDelete') }}
-            </NPopconfirm>
+          <template #extra>
             <NButton
               v-if="hasAuth('sys:config:edit')"
               type="info"

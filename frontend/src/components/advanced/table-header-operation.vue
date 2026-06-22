@@ -10,10 +10,11 @@ defineOptions({
 interface Props {
   itemAlign?: NaiveUI.Align;
   disabledDelete?: boolean;
+  disabledAdd?: boolean;
   loading?: boolean;
-  /** permission code required to show the add button (omit to always show) */
+  /** permission code required to show the add button; required for the button to render */
   addAuth?: string;
-  /** permission code required to show the batch delete button (omit to always show) */
+  /** permission code required to show the batch delete button; required for the button to render */
   deleteAuth?: string;
   /** explicitly hide add button (overrides addAuth) */
   showAdd?: boolean;
@@ -23,7 +24,9 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   showAdd: true,
-  showDelete: true
+  showDelete: true,
+  disabledAdd: false,
+  disabledDelete: false
 });
 
 interface Emits {
@@ -40,8 +43,14 @@ const columns = defineModel<NaiveUI.TableColumnCheck[]>('columns', {
 
 const { hasAuth } = useAuth();
 
-const canShowAdd = computed(() => props.showAdd && (props.addAuth ? hasAuth(props.addAuth) : true));
-const canShowDelete = computed(() => props.showDelete && (props.deleteAuth ? hasAuth(props.deleteAuth) : true));
+const canShowAdd = computed(() => {
+  if (!props.showAdd || !props.addAuth) return false;
+  return hasAuth(props.addAuth);
+});
+const canShowDelete = computed(() => {
+  if (!props.showDelete || !props.deleteAuth) return false;
+  return hasAuth(props.deleteAuth);
+});
 
 function add() {
   emit('add');
@@ -59,13 +68,15 @@ function refresh() {
 <template>
   <NSpace :align="itemAlign" wrap justify="end" class="lt-sm:w-200px">
     <slot name="prefix"></slot>
-    <slot name="default">
-      <NButton v-if="canShowAdd" size="small" ghost type="primary" @click="add">
+    <slot name="add">
+      <NButton v-if="canShowAdd" :disabled="disabledAdd" size="small" ghost type="primary" @click="add">
         <template #icon>
           <icon-ic-round-plus class="text-icon" />
         </template>
         {{ $t('common.add') }}
       </NButton>
+    </slot>
+    <slot name="delete">
       <NPopconfirm v-if="canShowDelete" @positive-click="batchDelete">
         <template #trigger>
           <NButton size="small" ghost type="error" :disabled="disabledDelete">
@@ -78,6 +89,7 @@ function refresh() {
         {{ $t('common.confirmDelete') }}
       </NPopconfirm>
     </slot>
+    <slot name="extra"></slot>
     <NButton size="small" @click="refresh">
       <template #icon>
         <icon-mdi-refresh class="text-icon" :class="{ 'animate-spin': loading }" />

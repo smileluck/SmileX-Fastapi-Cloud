@@ -27,8 +27,16 @@ class RouteService:
     """路由管理服务类"""
 
     @staticmethod
-    def _menu_to_route(menu: SysMenu) -> MenuRouteResponse:
-        """将 SysMenu 模型转换为 MenuRouteResponse"""
+    def _menu_to_route(
+        menu: SysMenu, menu_ids: set[int] | None = None
+    ) -> MenuRouteResponse:
+        """将 SysMenu 模型转换为 MenuRouteResponse
+
+        Args:
+            menu: 菜单模型实例
+            menu_ids: 当为普通用户构建路由时传入其被授权的菜单 ID 集合，
+                递归过滤掉未授权的后代菜单；None 表示不做白名单过滤（超级用户）。
+        """
         route_name = menu.name
 
         meta = RouteMetaResponse(
@@ -44,11 +52,12 @@ class RouteService:
         children = None
         if menu.children:
             child_routes = [
-                RouteService._menu_to_route(child)
+                RouteService._menu_to_route(child, menu_ids)
                 for child in menu.children
                 if child.type != MenuType.BUTTON
                 and child.status
                 and child.deleted_at is None
+                and (menu_ids is None or child.id in menu_ids)
             ]
             if child_routes:
                 children = child_routes
@@ -195,7 +204,10 @@ class RouteService:
             # 对顶层菜单过滤
             menus = [m for m in menus if m.id in menu_ids]
 
-        routes = [RouteService._menu_to_route(menu) for menu in menus]
+        routes = [
+            RouteService._menu_to_route(menu, None if user.is_superuser else menu_ids)
+            for menu in menus
+        ]
         return UserRouteResponse(routes=routes, home="home", buttons=buttons)
 
     @staticmethod
