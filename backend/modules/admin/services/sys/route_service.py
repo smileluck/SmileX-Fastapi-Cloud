@@ -89,6 +89,22 @@ class RouteService:
         )
 
     @staticmethod
+    def _first_page_route_name(routes: List[MenuRouteResponse]) -> str:
+        """深度优先查找第一个可访问内页路由的 name，作为登录后默认跳转页。
+
+        遍历顺序与左侧菜单一致；跳过外链（component 为空）与目录，
+        取第一个具有 component 的叶子路由。未找到时返回空串。
+        """
+        for route in routes:
+            if route.component:
+                return route.name
+            if route.children:
+                name = RouteService._first_page_route_name(route.children)
+                if name:
+                    return name
+        return ""
+
+    @staticmethod
     async def get_user_routes(
         db: AsyncSession, user: SysUser
     ) -> UserRouteResponse:
@@ -208,7 +224,8 @@ class RouteService:
             RouteService._menu_to_route(menu, None if user.is_superuser else menu_ids)
             for menu in menus
         ]
-        return UserRouteResponse(routes=routes, home="home", buttons=buttons)
+        home = RouteService._first_page_route_name(routes) or "home"
+        return UserRouteResponse(routes=routes, home=home, buttons=buttons)
 
     @staticmethod
     async def get_constant_routes() -> list[MenuRouteResponse]:
