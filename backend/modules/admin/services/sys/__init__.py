@@ -5,6 +5,8 @@
 系统管理服务模块
 """
 from .config_service import ConfigService
+from .data_scope_service import DataScopeService
+from .dept_service import DeptService
 from .dict_service import DictService
 from .menu_service import MenuService
 from .permission_service import PermissionService
@@ -19,6 +21,8 @@ from .file_service import FileService
 
 __all__ = [
     "ConfigService",
+    "DataScopeService",
+    "DeptService",
     "DictService",
     "MenuService",
     "PermissionService",

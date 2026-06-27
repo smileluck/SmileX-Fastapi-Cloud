@@ -1,12 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import enum
 from database.models.base import Base
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import String, Text, Boolean, ForeignKey, Table, Column
+from sqlalchemy import String, Text, Boolean, ForeignKey, Enum, Table, Column
 from typing import List, Optional
 from database.models.base import Base, DataClassBase
 from .association_tables import sys_role_menu_association, sys_user_role_association
+
+
+class DataScopeEnum(str, enum.Enum):
+    """
+    数据范围枚举：决定角色能看到哪些数据行
+    """
+    ALL = "ALL"                      # 全部数据
+    DEPT_AND_SUB = "DEPT_AND_SUB"    # 本部门 + 子部门
+    DEPT_ONLY = "DEPT_ONLY"          # 仅本部门
+    SELF = "SELF"                    # 仅本人
 
 
 class SysRole(Base):
@@ -20,6 +31,11 @@ class SysRole(Base):
         String(100), unique=True, nullable=False, comment="角色名称"
     )
     desc: Mapped[str] = mapped_column(Text, nullable=True, comment="角色描述")
+    data_scope: Mapped[DataScopeEnum] = mapped_column(
+        Enum(DataScopeEnum, name="sys_role_data_scope"),
+        default=DataScopeEnum.SELF,
+        comment="数据范围：ALL/DEPT_AND_SUB/DEPT_ONLY/SELF",
+    )
     # 关联关系
     # 与用户表的多对多关系
     users: Mapped[List["SysUser"]] = relationship(

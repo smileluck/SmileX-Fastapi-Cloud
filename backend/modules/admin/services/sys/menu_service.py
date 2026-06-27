@@ -312,6 +312,7 @@ class MenuService:
             redirect=menu_create.redirect,
             permission=menu_create.permission,
             meta_icon=menu_create.meta_icon,
+            meta_icon_type=menu_create.meta_icon_type,
             meta_hidden=menu_create.meta_hidden,
             meta_affix=menu_create.meta_affix,
             meta_breadcrumb=menu_create.meta_breadcrumb,

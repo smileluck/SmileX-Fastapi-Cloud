@@ -15,7 +15,19 @@ declare namespace Api {
       desc: string;
       /** menu ids */
       menu_ids?: number[];
+      /** data scope: ALL/DEPT_AND_SUB/DEPT_ONLY/SELF */
+      data_scope?: DataScope;
     }>;
+
+    /**
+     * data scope enum (mirrors backend DataScopeEnum)
+     *
+     * - "ALL": all data
+     * - "DEPT_AND_SUB": current dept + sub depts
+     * - "DEPT_ONLY": current dept only
+     * - "SELF": self only
+     */
+    type DataScope = 'ALL' | 'DEPT_AND_SUB' | 'DEPT_ONLY' | 'SELF';
 
     /** role search params */
     type RoleSearchParams = CommonType.RecordNullable<
@@ -50,6 +62,8 @@ declare namespace Api {
       is_superuser: boolean;
       /** user role name collection */
       userRoles: string[];
+      /** dept id */
+      dept_id?: number | null;
       /** last login time */
       last_login_at?: string;
       /** last login ip */
@@ -82,12 +96,57 @@ declare namespace Api {
       password: string;
       /** user role name collection */
       userRoles: string[];
+      /** dept id */
+      dept_id?: number | null;
     };
 
     /** user update */
     type UserUpdate = Pick<User, 'username' | 'nickname' | 'phone' | 'email' | 'status'> & {
       /** user role name collection */
       userRoles: string[];
+      /** dept id */
+      dept_id?: number | null;
+    };
+
+    /** dept */
+    type Dept = Common.CommonRecord<{
+      parent_id?: number | null;
+      name: string;
+      code?: string;
+      status: Common.EnableStatus;
+      sort: number;
+      children?: Dept[] | null;
+    }>;
+
+    /** dept tree (simplified, for dropdowns) */
+    type DeptTree = {
+      id: number;
+      label: string;
+      pId?: number | null;
+      status?: boolean;
+      children?: DeptTree[];
+    };
+
+    /** dept search params */
+    type DeptSearchParams = CommonType.RecordNullable<
+      Pick<Dept, 'name' | 'code' | 'status'> & CommonSearchParams
+    >;
+
+    /** dept list */
+    type DeptList = Common.PaginatingQueryRecord<Dept>;
+
+    /** dept create */
+    type DeptCreate = Pick<Dept, 'name' | 'code' | 'status' | 'sort'> & {
+      parent_id?: number | null;
+    };
+
+    /** dept update */
+    type DeptUpdate = Partial<DeptCreate>;
+
+    /** dept batch update status */
+    type DeptBatchUpdateStatus = {
+      dept_ids: number[];
+      status: boolean;
     };
 
     /**

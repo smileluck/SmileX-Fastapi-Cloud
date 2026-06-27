@@ -42,7 +42,7 @@ const title = computed(() => {
   return titles[props.operateType];
 });
 
-type Model = Pick<Api.SystemManage.Role, 'name' | 'desc' | 'status'>;
+type Model = Pick<Api.SystemManage.Role, 'name' | 'desc' | 'status' | 'data_scope'>;
 
 const model = ref(createDefaultModel());
 
@@ -50,15 +50,24 @@ function createDefaultModel(): Model {
   return {
     name: '',
     desc: '',
-    status: '1'
+    status: '1',
+    data_scope: 'SELF'
   };
 }
+
+const dataScopeOptions: { label: string; value: Api.SystemManage.DataScope }[] = [
+  { label: '全部数据', value: 'ALL' },
+  { label: '本部门及子部门', value: 'DEPT_AND_SUB' },
+  { label: '仅本部门', value: 'DEPT_ONLY' },
+  { label: '仅本人', value: 'SELF' }
+];
 
 type RuleKey = Exclude<keyof Model, 'desc'>;
 
 const rules: Record<RuleKey, App.Global.FormRule> = {
   name: defaultRequiredRule,
-  status: defaultRequiredRule
+  status: defaultRequiredRule,
+  data_scope: defaultRequiredRule
 };
 
 const roleId = computed(() => props.rowData?.id || -1);
@@ -157,6 +166,7 @@ function handleInitModel() {
     model.value.name = clonedData.name || '';
     model.value.desc = clonedData.desc || '';
     model.value.status = booleanToEnableStatus(clonedData.status);
+    model.value.data_scope = clonedData.data_scope || 'SELF';
   }
 }
 
@@ -213,6 +223,11 @@ watch(visible, async () => {
         </NFormItem>
         <NFormItem :label="$t('page.manage.role.roleDesc')" path="desc">
           <NInput v-model:value="model.desc" :placeholder="$t('page.manage.role.form.roleDesc')" />
+        </NFormItem>
+        <NFormItem label="数据范围" path="data_scope">
+          <NRadioGroup v-model:value="model.data_scope">
+            <NRadio v-for="item in dataScopeOptions" :key="item.value" :value="item.value" :label="item.label" />
+          </NRadioGroup>
         </NFormItem>
         <NFormItem :label="$t('page.manage.role.menuAuth')" class="flex-1-hidden">
           <NTree

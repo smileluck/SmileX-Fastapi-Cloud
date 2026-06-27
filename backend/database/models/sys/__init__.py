@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from .menu import SysMenu
-from .role import SysRole
+from .role import SysRole, DataScopeEnum
 from .user import SysUser
+from .dept import SysDept
 from .config import SysConfig
 from .dict import SysDict, SysDictItem
 from .operation_log import SysOperationLog
@@ -16,7 +17,9 @@ from .task_log import SysScheduledTaskLog
 __all__ = [
     "SysMenu",
     "SysRole",
+    "DataScopeEnum",
     "SysUser",
+    "SysDept",
     "SysConfig",
     "SysDict",
     "SysDictItem",

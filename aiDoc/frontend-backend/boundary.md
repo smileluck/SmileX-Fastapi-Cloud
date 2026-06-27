@@ -151,6 +151,47 @@
 
 ---
 
+## 数据权限（行级可见性）
+
+### 后端
+
+- `SysRole.data_scope` 字段：枚举 `DataScopeEnum`（`ALL` / `DEPT_AND_SUB` / `DEPT_ONLY` / `SELF`），默认 `SELF`，序列化为字符串
+- `SysUser.dept_id` 字段：可空外键，关联 `sys_dept.id`
+- `DataScopeService.get_effective_scope(db, user)`：聚合用户角色的 data_scope，返回 `DataScopeEnum | None`（None=不限，超管/含 ALL 角色）
+- `DataScopeService.get_permitted_dept_ids(db, user, scope)`：返回 `set[int] | None`
+  - `None` → 不加任何 dept 过滤（ALL/超管）
+  - 空集合 → Service 走 `where(id == user.id)`（SELF）
+  - 非空集合 → Service 走 `where(dept_id.in_(...))`（DEPT_AND_SUB / DEPT_ONLY）
+
+### 前端
+
+- `Api.SystemManage.DataScope` 类型：`'ALL' | 'DEPT_AND_SUB' | 'DEPT_ONLY' | 'SELF'`
+- 角色编辑表单使用 `NRadioGroup` 单选数据范围；提交时直接传字符串（后端 pydantic 接收 `DataScopeEnum`）
+- 用户编辑表单使用 `NTreeSelect` 选择部门，提交 `dept_id: number | null`
+
+### 接入新模块的方式
+
+业务模块要接入数据权限，需在 Service 的 `build_*_query()` 增加：
+```python
+def build_xxx_query(
+    query_params,
+    *,
+    data_scope: DataScopeEnum | None = None,
+    permitted_dept_ids: set[int] | None = None,
+    current_user_id: int | None = None,
+) -> Select:
+    # ... 原有过滤 ...
+    if data_scope == DataScopeEnum.SELF:
+        base_query = base_query.where(Xxx.created_by == current_user_id)
+    elif permitted_dept_ids is not None:
+        base_query = base_query.where(Xxx.dept_id.in_(permitted_dept_ids))
+    return base_query
+```
+
+Endpoint 注入 `current_user` 后调用 `DataScopeService` 算出 scope 与 permitted_dept_ids，传给 Service。
+
+---
+
 ## 变更规则
 
 - 破坏性接口变更（字段名/类型/结构改变）必须记录变更说明

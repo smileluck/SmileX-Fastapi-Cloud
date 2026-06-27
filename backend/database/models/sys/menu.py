@@ -3,7 +3,7 @@
 
 from database.models.base import Base
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import String, Text, Boolean, ForeignKey, Enum
+from sqlalchemy import String, Text, Boolean, ForeignKey, Enum, SmallInteger
 from typing import List, Optional
 import enum
 from .association_tables import sys_role_menu_association
@@ -48,6 +48,9 @@ class SysMenu(Base):
     # 路由元信息
     meta_icon: Mapped[str] = mapped_column(
         String(50), nullable=True, comment="路由图标"
+    )
+    meta_icon_type: Mapped[int] = mapped_column(
+        SmallInteger, default=1, comment="图标类型：1-iconify，2-本地"
     )
     # 关联关系
     # 与角色表的多对多关系

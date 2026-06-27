@@ -23,6 +23,18 @@ def _menu_type_to_str(v):
     return v
 
 
+def _int_icon_type_to_str(v):
+    """图标类型统一转为前端约定的字符串 "1"/"2"。"""
+    if v is None:
+        return "1"
+    if isinstance(v, bool):
+        return "1"
+    if isinstance(v, (int, float)):
+        return "2" if int(v) == 2 else "1"
+    s = str(v).strip()
+    return "2" if s == "2" else "1"
+
+
 class SysMenuQueryParams(PageRequest):
     """
     系统菜单查询参数模型
@@ -74,6 +86,7 @@ class SysMenuCreate(BaseEntity):
     redirect: Optional[str] = Field(None, description="重定向路径", max_length=255)
     permission: Optional[str] = Field(None, description="权限标识", max_length=100)
     meta_icon: Optional[str] = Field(None, description="路由图标", max_length=50)
+    meta_icon_type: int = Field(1, description="图标类型：1-iconify，2-本地")
     meta_hidden: bool = Field(False, description="是否隐藏菜单")
     meta_affix: bool = Field(False, description="是否固定标签")
     meta_breadcrumb: bool = Field(True, description="是否显示面包屑")
@@ -98,6 +111,7 @@ class SysMenuUpdate(BaseEntity):
     redirect: Optional[str] = Field(None, description="重定向路径", max_length=255)
     permission: Optional[str] = Field(None, description="权限标识", max_length=100)
     meta_icon: Optional[str] = Field(None, description="路由图标", max_length=50)
+    meta_icon_type: Optional[int] = Field(None, description="图标类型：1-iconify，2-本地")
     meta_hidden: Optional[bool] = Field(None, description="是否隐藏菜单")
     meta_affix: Optional[bool] = Field(None, description="是否固定标签")
     meta_breadcrumb: Optional[bool] = Field(None, description="是否显示面包屑")
@@ -142,7 +156,11 @@ class SysMenuResponseData(BaseRespEntity):
     routePath: Optional[str] = Field(None, validation_alias=AliasChoices("path", "routePath"), description="路由路径")
     component: Optional[str] = Field(None, description="组件路径")
     icon: Optional[str] = Field(None, validation_alias="meta_icon", description="图标")
-    iconType: str = Field("1", description="图标类型：1-iconify，2-本地")
+    iconType: Annotated[str, BeforeValidator(_int_icon_type_to_str)] = Field(
+        "1",
+        validation_alias=AliasChoices("meta_icon_type", "iconType"),
+        description="图标类型：1-iconify，2-本地",
+    )
     menuType: Annotated[str, BeforeValidator(_menu_type_to_str)] = Field(..., validation_alias=AliasChoices("type", "menuType"), description="菜单类型：1-目录，2-菜单，3-按钮")
     order: int = Field(..., validation_alias=AliasChoices("sort", "order"), description="排序号")
     i18nKey: Optional[str] = Field(None, description="国际化键")

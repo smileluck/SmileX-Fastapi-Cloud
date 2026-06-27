@@ -7,6 +7,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from app.models.common.base import BaseRespEntity, BaseEntity, BoolField
 from app.models.common.page import PageRequest
+from database.models.sys.role import DataScopeEnum
 
 
 def _format_datetime(v):
@@ -36,6 +37,7 @@ class SysRoleCreate(BaseEntity):
     desc: Optional[str] = Field(None, description="角色描述")
     status: bool = Field(True, description="角色状态：1-启用，2-禁用")
     sort: int = Field(0, description="排序号")
+    data_scope: DataScopeEnum = Field(DataScopeEnum.SELF, description="数据范围：ALL/DEPT_AND_SUB/DEPT_ONLY/SELF")
     menu_ids: List[int] = Field([], description="菜单ID列表")
 
 
@@ -49,6 +51,7 @@ class SysRoleUpdate(BaseEntity):
     desc: Optional[str] = Field(None, description="角色描述")
     status: BoolField = Field(None, description="角色状态：True-启用，False-禁用")
     sort: Optional[int] = Field(None, description="排序号")
+    data_scope: Optional[DataScopeEnum] = Field(None, description="数据范围：ALL/DEPT_AND_SUB/DEPT_ONLY/SELF")
     menu_ids: Optional[List[int]] = Field(None, description="菜单ID列表")
 
 
@@ -77,6 +80,7 @@ class SysRoleListResponse(BaseRespEntity):
     name: str = Field(..., description="角色名称")
     desc: Optional[str] = Field(None, description="角色描述")
     status: bool = Field(True, description="角色状态：1-启用，2-禁用")
+    data_scope: DataScopeEnum = Field(DataScopeEnum.SELF, description="数据范围")
     is_default: bool = Field(..., description="是否为默认角色")
     is_system: bool = Field(..., description="是否为系统内置角色")
     sort: int = Field(..., description="排序号")
@@ -96,6 +100,7 @@ class SysRoleResponseData(BaseRespEntity):
     name: str = Field(..., description="角色名称")
     desc: Optional[str] = Field(None, description="角色描述")
     status: bool = Field(True, description="角色状态：1-启用，2-禁用")
+    data_scope: DataScopeEnum = Field(DataScopeEnum.SELF, description="数据范围")
     is_default: bool = Field(..., description="是否为默认角色")
     is_system: bool = Field(..., description="是否为系统内置角色")
     sort: int = Field(..., description="排序号")

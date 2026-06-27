@@ -33,6 +33,7 @@ declare module "@elegant-router/types" {
     "manage": "/manage";
     "manage_announcement": "/manage/announcement";
     "manage_config": "/manage/config";
+    "manage_dept": "/manage/dept";
     "manage_dict": "/manage/dict";
     "manage_file": "/manage/file";
     "manage_ip-blacklist": "/manage/ip-blacklist";
@@ -113,6 +114,7 @@ declare module "@elegant-router/types" {
     | "manage_announcement"
     | "manage_config"
     | "manage_dict"
+    | "manage_dept"
     | "manage_file"
     | "manage_ip-blacklist"
     | "manage_menu"

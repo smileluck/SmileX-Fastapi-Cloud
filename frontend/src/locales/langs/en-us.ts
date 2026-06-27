@@ -244,6 +244,7 @@ const local: App.I18n.Schema = {
     home: 'Home',
     manage: 'Manage',
     manage_menu: 'Menu Management',
+    manage_dept: 'Department Management',
     manage_role: 'Role Management',
     manage_user: 'User Management',
     manage_dict: 'Dict Management',

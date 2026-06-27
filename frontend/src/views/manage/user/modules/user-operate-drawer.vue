@@ -3,7 +3,7 @@ import { computed, ref, watch } from 'vue';
 import { jsonClone } from '@sa/utils';
 import { enableStatusOptions, userGenderOptions } from '@/constants/business';
 import { REG_EMAIL, REG_PHONE } from '@/constants/reg';
-import { fetchCreateUser, fetchGetAllRoles, fetchUpdateUser } from '@/service/api';
+import { fetchCreateUser, fetchGetAllRoles, fetchGetDeptTreeSelect, fetchUpdateUser } from '@/service/api';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
 
@@ -40,6 +40,7 @@ interface RoleInfo {
   code: string;
 }
 const allRoles = ref<RoleInfo[]>([]);
+const deptOptions = ref<Api.SystemManage.DeptTree[]>([]);
 
 const title = computed(() => {
   const titles: Record<NaiveUI.TableOperateType, string> = {
@@ -52,6 +53,7 @@ const title = computed(() => {
 type Model = Pick<Api.SystemManage.User, 'username' | 'nickname' | 'phone' | 'email' | 'userRoles' | 'status'> & {
   password: string;
   confirmPassword: string;
+  dept_id: number | null;
 };
 
 const model = ref(createDefaultModel());
@@ -65,9 +67,13 @@ function createDefaultModel(): Model {
     password: '',
     confirmPassword: '',
     userRoles: [],
-    status: '1'
+    status: '1',
+    dept_id: null
   };
 }
+
+/** flatten dept tree to NaiveUI NTree-compatible options */
+const deptTreeOptions = computed(() => deptOptions.value);
 
 type RuleKey = Extract<keyof Model, 'username' | 'status' | 'password' | 'confirmPassword' | 'email' | 'phone'>;
 
@@ -167,6 +173,13 @@ async function getRoleOptions() {
   }
 }
 
+async function getDeptOptions() {
+  const { error, data } = await fetchGetDeptTreeSelect(true);
+  if (!error) {
+    deptOptions.value = data;
+  }
+}
+
 function handleInitModel() {
   model.value = createDefaultModel();
 
@@ -197,7 +210,8 @@ async function handleSubmit() {
         status: model.value.status,
         userRoles: model.value.userRoles,
         // 额外传递 role_ids 给后端
-        role_ids: roleIds
+        role_ids: roleIds,
+        dept_id: model.value.dept_id
       });
       window.$message?.success($t('common.addSuccess'));
     } else if (props.operateType === 'edit' && props.rowData) {
@@ -210,7 +224,8 @@ async function handleSubmit() {
         status: model.value.status,
         userRoles: model.value.userRoles,
         // 额外传递 role_ids 给后端
-        role_ids: roleIds
+        role_ids: roleIds,
+        dept_id: model.value.dept_id
       });
       window.$message?.success($t('common.updateSuccess'));
     }
@@ -227,6 +242,7 @@ watch(visible, () => {
     handleInitModel();
     restoreValidation();
     getRoleOptions();
+    getDeptOptions();
   }
 });
 </script>
@@ -276,6 +292,18 @@ watch(visible, () => {
             multiple
             :options="roleOptions"
             :placeholder="$t('page.manage.user.form.userRole')"
+          />
+        </NFormItem>
+        <NFormItem label="所属部门" path="dept_id">
+          <NTreeSelect
+            v-model:value="model.dept_id"
+            :options="deptTreeOptions"
+            key-field="id"
+            label-field="label"
+            children-field="children"
+            clearable
+            check-strategy="child"
+            placeholder="请选择部门"
           />
         </NFormItem>
       </NForm>

@@ -27,7 +27,7 @@ from modules.admin.deps.auth.permission import require_permission
 from modules.admin.exports import get_export_config
 from database.models.sys.user import SysUser
 
-from modules.admin.services.sys import UserService
+from modules.admin.services.sys import UserService, DataScopeService
 from modules.admin.schemas.sys.user import (
     SysUserResponseData,
     SysUserListResponse,
@@ -51,6 +51,7 @@ async def get_user_list(
     page_params: PageRequest = Depends(get_page_params),
     query_params: SysUserQueryParams = Depends(),
     db: AsyncSession = Depends(get_session),
+    user: SysUser = Depends(current_user),
 ):
     """
     获取用户列表
@@ -61,8 +62,17 @@ async def get_user_list(
     query_params.page = page_params.page
     query_params.page_size = page_params.page_size
 
+    # 计算数据权限范围（None=不限，超管/ALL；SELF 走 current_user_id 过滤）
+    scope = await DataScopeService.get_effective_scope(db, user)
+    permitted_dept_ids = await DataScopeService.get_permitted_dept_ids(db, user, scope)
+
     # 构建查询对象（不加载关联角色）
-    query = UserService.build_user_list_query(query_params)
+    query = UserService.build_user_list_query(
+        query_params,
+        data_scope=scope,
+        permitted_dept_ids=permitted_dept_ids,
+        current_user_id=user.id,
+    )
 
     # 使用通用分页方法
     page_data = await get_paginated_results(

@@ -54,6 +54,7 @@ class SysUserCreate(BaseEntity):
     avatar: Optional[str] = Field(None, description="头像URL")
     status: bool = Field(True, description="用户状态：True-启用，False-禁用")
     role_ids: List[int] = Field([], description="角色ID列表")
+    dept_id: Optional[int] = Field(None, description="所属部门ID")
 
     @field_validator("email")
     @classmethod
@@ -95,6 +96,7 @@ class SysUserUpdate(BaseEntity):
     avatar: Optional[str] = Field(None, description="头像URL")
     status: BoolField = Field(None, description="用户状态：True-启用，False-禁用")
     role_ids: Optional[List[int]] = Field(None, description="角色ID列表")
+    dept_id: Optional[int] = Field(None, description="所属部门ID")
 
     @field_validator("email")
     @classmethod
@@ -173,6 +175,7 @@ class SysUserListResponse(BaseRespEntity):
     avatar: Optional[str] = Field(None, description="头像URL")
     is_superuser: bool = Field(..., description="是否为超级管理员")
     status: bool = Field(..., description="用户状态")
+    dept_id: Optional[int] = Field(None, description="所属部门ID")
     last_login_at: Optional[datetime] = Field(None, description="最后登录时间")
     last_login_ip: Optional[str] = Field(None, description="最后登录IP")
     created_at: datetime = Field(..., description="创建时间")
@@ -195,6 +198,7 @@ class SysUserResponseData(BaseRespEntity):
     avatar: Optional[str] = Field(None, description="头像URL")
     is_superuser: bool = Field(..., description="是否为超级管理员")
     status: bool = Field(..., description="用户状态")
+    dept_id: Optional[int] = Field(None, description="所属部门ID")
     last_login_at: Optional[datetime] = Field(None, description="最后登录时间")
     last_login_ip: Optional[str] = Field(None, description="最后登录IP")
     created_at: datetime = Field(..., description="创建时间")

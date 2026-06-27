@@ -12,7 +12,7 @@ from sqlalchemy.orm import joinedload, selectinload, load_only
 from typing import List, Optional, Tuple
 
 from database.models.sys.user import SysUser
-from database.models.sys.role import SysRole
+from database.models.sys.role import SysRole, DataScopeEnum
 from core.exception.errors import NotFoundError, ConflictError, ForbiddenError
 from core.utils.memory_cache import get_memory_cache, CacheNamespace
 from core.security.oauth.jwt import JWTAuthManager
@@ -41,7 +41,12 @@ class UserService:
 
     @staticmethod
     def _apply_user_filters(
-        base_query: Select, query_params: SysUserQueryParams
+        base_query: Select,
+        query_params: SysUserQueryParams,
+        *,
+        data_scope: DataScopeEnum | None = None,
+        permitted_dept_ids: set[int] | None = None,
+        current_user_id: int | None = None,
     ) -> Select:
         conditions = []
         if query_params.status is not None:
@@ -64,17 +69,30 @@ class UserService:
         if conditions:
             base_query = base_query.where(and_(*conditions))
 
+        # 行级数据权限：scope is None 表示不限（超管/ALL）
+        if data_scope == DataScopeEnum.SELF:
+            base_query = base_query.where(SysUser.id == current_user_id)
+        elif permitted_dept_ids is not None:
+            base_query = base_query.where(SysUser.dept_id.in_(permitted_dept_ids))
+
         return base_query.order_by(SysUser.created_at.desc())
 
     @staticmethod
     def build_user_list_query(
         query_params: SysUserQueryParams,
+        *,
+        data_scope: DataScopeEnum | None = None,
+        permitted_dept_ids: set[int] | None = None,
+        current_user_id: int | None = None,
     ) -> Select:
         """
         构建用户列表查询对象（不加载关联角色）
 
         Args:
             query_params: 查询参数
+            data_scope: 数据范围（None=不限）；SELF 时按 current_user_id 过滤
+            permitted_dept_ids: 允许可见的部门 ID 集合（None=不限）
+            current_user_id: 当前操作用户 ID（SELF 范围使用）
 
         Returns:
             SQLAlchemy查询对象
@@ -91,32 +109,56 @@ class UserService:
                 SysUser.is_superuser,
                 SysUser.last_login_at,
                 SysUser.last_login_ip,
+                SysUser.dept_id,
                 SysUser.created_at,
                 SysUser.updated_at,
             )
         )
-        return UserService._apply_user_filters(base_query, query_params)
+        return UserService._apply_user_filters(
+            base_query,
+            query_params,
+            data_scope=data_scope,
+            permitted_dept_ids=permitted_dept_ids,
+            current_user_id=current_user_id,
+        )
 
     @staticmethod
     def build_user_query(
         query_params: SysUserQueryParams,
+        *,
+        data_scope: DataScopeEnum | None = None,
+        permitted_dept_ids: set[int] | None = None,
+        current_user_id: int | None = None,
     ) -> Select:
         """
         构建用户查询对象（加载关联角色，用于导出等需要角色信息的场景）
 
         Args:
             query_params: 查询参数
+            data_scope: 数据范围（None=不限）；SELF 时按 current_user_id 过滤
+            permitted_dept_ids: 允许可见的部门 ID 集合（None=不限）
+            current_user_id: 当前操作用户 ID（SELF 范围使用）
 
         Returns:
             SQLAlchemy查询对象
         """
         base_query = select(SysUser).options(selectinload(SysUser.roles))
-        return UserService._apply_user_filters(base_query, query_params)
+        return UserService._apply_user_filters(
+            base_query,
+            query_params,
+            data_scope=data_scope,
+            permitted_dept_ids=permitted_dept_ids,
+            current_user_id=current_user_id,
+        )
 
     @staticmethod
     async def get_user_list(
         db: AsyncSession,
         query_params: SysUserQueryParams,
+        *,
+        data_scope: DataScopeEnum | None = None,
+        permitted_dept_ids: set[int] | None = None,
+        current_user_id: int | None = None,
     ) -> Tuple[List[SysUser], int]:
         """
         获取用户列表（带分页和查询条件）
@@ -124,6 +166,9 @@ class UserService:
         Args:
             db: 数据库会话
             query_params: 查询参数
+            data_scope: 数据范围（None=不限）；SELF 时按 current_user_id 过滤
+            permitted_dept_ids: 允许可见的部门 ID 集合（None=不限）
+            current_user_id: 当前操作用户 ID（SELF 范围使用）
 
         Returns:
             Tuple[用户列表, 总记录数]
@@ -131,7 +176,12 @@ class UserService:
         logger.debug("获取用户列表，查询参数: %s", query_params)
 
         # 构建查询（列表页不需要角色信息）
-        base_query = UserService.build_user_list_query(query_params)
+        base_query = UserService.build_user_list_query(
+            query_params,
+            data_scope=data_scope,
+            permitted_dept_ids=permitted_dept_ids,
+            current_user_id=current_user_id,
+        )
 
         # 统计总数
         count_query = select(func.count()).select_from(base_query.subquery())
@@ -247,6 +297,7 @@ class UserService:
             avatar=user_create.avatar,
             status=user_create.status,
             is_superuser=False,
+            dept_id=user_create.dept_id,
         )
 
         # 分配角色

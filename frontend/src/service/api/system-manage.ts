@@ -39,6 +39,7 @@ export function fetchCreateRole(role: Partial<Api.SystemManage.Role> & { menu_id
       desc: role.desc,
       status: enableStatusToBoolean(role.status),
       sort: 0,
+      data_scope: role.data_scope || 'SELF',
       menu_ids: role.menu_ids || []
     }
   });
@@ -53,6 +54,7 @@ export function fetchUpdateRole(roleId: number, role: Partial<Api.SystemManage.R
       name: role.name,
       desc: role.desc,
       status: enableStatusToBoolean(role.status),
+      data_scope: role.data_scope || 'SELF',
       menu_ids: role.menu_ids || []
     }
   });
@@ -139,6 +141,7 @@ export function fetchCreateMenu(menu: Partial<Api.SystemManage.Menu>) {
       redirect: null,
       permission: menu.permission || null,
       meta_icon: menu.icon,
+      meta_icon_type: Number(menu.iconType) || 1,
       meta_hidden: menu.hideInMenu || false,
       meta_breadcrumb: true,
       meta_href: menu.href || null,
@@ -162,6 +165,7 @@ export function fetchUpdateMenu(menuId: number, menu: Partial<Api.SystemManage.M
       path: menu.routePath,
       component: menu.component,
       meta_icon: menu.icon,
+      meta_icon_type: Number(menu.iconType) || 1,
       meta_hidden: menu.hideInMenu || false,
       meta_href: menu.href || null,
       meta_keep_alive: menu.keepAlive || false,
@@ -212,7 +216,8 @@ export function fetchCreateUser(user: Api.SystemManage.UserCreate & { role_ids?:
       email: user.email,
       password: user.password,
       status: enableStatusToBoolean(user.status),
-      role_ids: user.role_ids || []
+      role_ids: user.role_ids || [],
+      dept_id: user.dept_id ?? null
     }
   });
 }
@@ -228,7 +233,8 @@ export function fetchUpdateUser(userId: number, user: Api.SystemManage.UserUpdat
       phone: user.phone,
       email: user.email,
       status: enableStatusToBoolean(user.status),
-      ...(user.role_ids !== undefined ? { role_ids: user.role_ids } : {})
+      ...(user.role_ids !== undefined ? { role_ids: user.role_ids } : {}),
+      ...(user.dept_id !== undefined ? { dept_id: user.dept_id } : {})
     }
   });
 }
@@ -562,5 +568,92 @@ export function fetchBatchDeleteIpBlacklist(ids: number[]) {
     url: '/admin/sys/ip-blacklist/batch/delete',
     method: 'delete',
     data: { ids }
+  });
+}
+
+/** ==================== 部门管理 API ==================== */
+
+/** get dept list */
+export function fetchGetDeptList(params?: Api.SystemManage.DeptSearchParams) {
+  return request<Api.SystemManage.DeptList>({
+    url: '/admin/sys/dept/list',
+    method: 'get',
+    params
+  });
+}
+
+/** get dept tree (full fields) */
+export function fetchGetDeptTree(onlyActive = false) {
+  return request<Api.SystemManage.Dept[]>({
+    url: '/admin/sys/dept/tree',
+    method: 'get',
+    params: { only_active: onlyActive }
+  });
+}
+
+/** get dept tree (simplified, for dropdowns) */
+export function fetchGetDeptTreeSelect(onlyActive = true) {
+  return request<Api.SystemManage.DeptTree[]>({
+    url: '/admin/sys/dept/tree-select',
+    method: 'get',
+    params: { only_active: onlyActive }
+  });
+}
+
+/** get dept by id */
+export function fetchGetDept(deptId: number) {
+  return request<Api.SystemManage.Dept>({
+    url: `/admin/sys/dept/${deptId}`,
+    method: 'get'
+  });
+}
+
+/** create dept */
+export function fetchCreateDept(dept: Api.SystemManage.DeptCreate) {
+  return request<Api.SystemManage.Dept>({
+    url: '/admin/sys/dept/add',
+    method: 'post',
+    data: {
+      ...dept,
+      status: enableStatusToBoolean(dept.status)
+    }
+  });
+}
+
+/** update dept */
+export function fetchUpdateDept(deptId: number, dept: Api.SystemManage.DeptUpdate) {
+  return request<Api.SystemManage.Dept>({
+    url: `/admin/sys/dept/${deptId}`,
+    method: 'put',
+    data: {
+      ...dept,
+      ...(dept.status !== undefined ? { status: enableStatusToBoolean(dept.status) } : {})
+    }
+  });
+}
+
+/** delete dept */
+export function fetchDeleteDept(deptId: number) {
+  return request<void>({
+    url: `/admin/sys/dept/${deptId}`,
+    method: 'delete'
+  });
+}
+
+/** batch delete depts */
+export function fetchBatchDeleteDept(deptIds: number[]) {
+  return request<void>({
+    url: '/admin/sys/dept/batch',
+    method: 'delete',
+    data: deptIds
+  });
+}
+
+/** batch update dept status */
+export function fetchBatchUpdateDeptStatus(data: Api.SystemManage.DeptBatchUpdateStatus) {
+  return request<void>({
+    url: '/admin/sys/dept/batch/status',
+    method: 'put',
+    data
   });
 }

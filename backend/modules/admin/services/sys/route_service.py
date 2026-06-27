@@ -39,10 +39,19 @@ class RouteService:
         """
         route_name = menu.name
 
+        icon = None
+        local_icon = None
+        if menu.meta_icon:
+            if getattr(menu, "meta_icon_type", 1) == 2:
+                local_icon = menu.meta_icon
+            else:
+                icon = menu.meta_icon
+
         meta = RouteMetaResponse(
             title=menu.name,
             i18nKey=f"route.{menu.name}",
-            icon=menu.meta_icon,
+            icon=icon,
+            localIcon=local_icon,
             order=menu.sort if menu.sort else None,
             hideInMenu=menu.meta_hidden if menu.meta_hidden else None,
             keepAlive=menu.meta_keep_alive if menu.meta_keep_alive else None,

@@ -10,6 +10,7 @@ class RouteMetaResponse(BaseModel):
     title: str = Field(..., description="路由标题")
     i18nKey: str | None = Field(None, description="国际化键")
     icon: str | None = Field(None, description="路由图标")
+    localIcon: str | None = Field(None, description="本地 SVG 图标名（meta_icon_type=2 时使用）")
     order: int | None = Field(None, description="排序号")
     hideInMenu: bool | None = Field(None, description="是否隐藏菜单")
     keepAlive: bool | None = Field(None, description="是否缓存路由")

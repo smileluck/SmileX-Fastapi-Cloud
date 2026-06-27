@@ -39,5 +39,7 @@ declare namespace StorageType {
     };
     /** The last login user id */
     lastLoginUserId: string;
+    /** 记住密码：勾选后保存登录表单，下次自动回填；取消勾选时清除 */
+    rememberLogin: { userName: string; password: string };
   }
 }

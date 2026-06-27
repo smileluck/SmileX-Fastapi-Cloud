@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { loginModuleRecord } from '@/constants/app';
 import { useAuthStore } from '@/store/modules/auth';
 import { useRouterPush } from '@/hooks/common/router';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { useSliderCaptcha } from '@/hooks/business/slider-captcha';
+import { localStg } from '@/utils/storage';
 import { $t } from '@/locales';
 import SliderCaptcha from '@/components/custom/slider-captcha.vue';
 
@@ -35,14 +36,24 @@ const loginDisabled = computed(() => {
   return captchaRequired.value && !captchaToken.value;
 });
 
+const REMEMBER_KEY = 'rememberLogin';
+const savedLogin = localStg.get(REMEMBER_KEY);
+const rememberMe = ref(Boolean(savedLogin?.userName));
+
 interface FormModel {
   userName: string;
   password: string;
 }
 
 const model: FormModel = reactive({
-  userName: 'admin',
-  password: 'admin123'
+  userName: savedLogin?.userName ?? '',
+  password: savedLogin?.password ?? ''
+});
+
+watch(rememberMe, val => {
+  if (!val) {
+    localStg.remove(REMEMBER_KEY);
+  }
 });
 
 const rules = computed<Record<keyof FormModel, App.Global.FormRule[]>>(() => {
@@ -71,6 +82,11 @@ async function handleSubmit() {
     captchaToken.value = null;
     showCaptcha();
   } else {
+    if (rememberMe.value) {
+      localStg.set(REMEMBER_KEY, { userName: model.userName, password: model.password });
+    } else {
+      localStg.remove(REMEMBER_KEY);
+    }
     resetCaptcha();
   }
 }
@@ -134,7 +150,7 @@ async function handleAccountLogin(account: Account) {
     </NFormItem>
     <NSpace vertical :size="24">
       <div class="flex-y-center justify-between">
-        <NCheckbox>{{ $t('page.login.pwdLogin.rememberMe') }}</NCheckbox>
+        <NCheckbox v-model:checked="rememberMe">{{ $t('page.login.pwdLogin.rememberMe') }}</NCheckbox>
         <!-- <NButton quaternary @click="toggleLoginModule('reset-pwd')">
           {{ $t('page.login.pwdLogin.forgetPassword') }}
         </NButton> -->

@@ -158,6 +158,7 @@ class RoleService:
             desc=role_create.desc,
             status=role_create.status,
             sort=role_create.sort,
+            data_scope=role_create.data_scope,
             is_system=False if not is_superuser else getattr(role_create, 'is_system', False),
             is_default=False,
         )

@@ -239,6 +239,7 @@ const local: App.I18n.Schema = {
     'iframe-page': '外链页面',
     home: '首页',
     manage: '管理',
+    manage_dept: '部门管理',
     manage_menu: '菜单管理',
     manage_role: '角色管理',
     manage_user: '用户管理',

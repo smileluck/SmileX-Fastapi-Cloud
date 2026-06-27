@@ -56,6 +56,14 @@ class SysUser(Base):
         BigInteger, nullable=True, default=None, comment="最后选择的租户ID",
         server_default=None,
     )
+    dept_id: Mapped[Optional[int]] = mapped_column(
+        BigInteger,
+        ForeignKey("sys_dept.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+        default=None,
+        comment="所属部门ID",
+    )
     # 关联关系
     # 与角色表的多对多关系
     roles: Mapped[List["SysRole"]] = relationship(
