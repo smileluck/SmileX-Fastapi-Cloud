@@ -176,6 +176,15 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
+        name: 'manage_dept',
+        path: '/manage/dept',
+        component: 'view.manage_dept',
+        meta: {
+          title: 'manage_dept',
+          i18nKey: 'route.manage_dept'
+        }
+      },
+      {
         name: 'manage_dict',
         path: '/manage/dict',
         component: 'view.manage_dict',
@@ -209,15 +218,6 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'manage_menu',
           i18nKey: 'route.manage_menu'
-        }
-      },
-      {
-        name: 'manage_dept',
-        path: '/manage/dept',
-        component: 'view.manage_dept',
-        meta: {
-          title: 'manage_dept',
-          i18nKey: 'route.manage_dept'
         }
       },
       {
