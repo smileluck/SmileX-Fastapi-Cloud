@@ -1,12 +1,13 @@
-# 登录与菜单三件套修复
+# 登录与菜单三件套修复 + 在线用户去重
 
 ## 需求描述
 
-用户报告了 3 个独立问题：
+用户报告了 4 个独立问题：
 
 1. **菜单 icon 类型未持久化 + 侧边栏不支持本地 icon 渲染**：菜单管理弹窗可选 iconify / 本地图标，但 iconType 字段从未真正写入数据库（响应硬编码 `"1"`），侧边栏因此始终只能渲染 iconify 图标。
 2. **黑名单自动拉黑 IP 来源**：登录失败超限触发自动拉黑时，IP 必须来自客户端请求（不能被前端伪造）。
 3. **记住密码不生效**：登录页"记住密码"复选框没有 v-model，也没有 localStorage 读写逻辑。
+4. **在线用户存在重复**：同一用户在 Redis 中堆积了大量 session（实测最多一个用户 78 个），在线用户列表把同一 IP/UA 显示成多行。
 
 ## 状态
 
@@ -71,6 +72,22 @@
 - `frontend/src/typings/storage.d.ts`：`StorageType.Local` 加 `rememberLogin: { userName: string; password: string }`
 
 **安全说明：** 明文存 localStorage 是用户主动要求的行为，与典型"记住密码"语义一致。
+
+### 问题 4：在线用户存在重复
+
+**根因：** Redis 实测 `JWT_SESSION:ADMIN:0:2250298479026176` 有 78 个 session。`BaseUserManager.create_token` 每次登录都 `hset` 一个新 session_id 进 Redis Hash，但没有任何机制清理同 IP/UA 反复登录堆积的旧 session，直到 `REFRESH_LIFETIME`（默认 7 天）自然过期。在线用户列表把同一用户同一 IP/UA 显示成多行。
+
+**改造：**
+- `backend/core/security/oauth/user_manager.py`：`BaseUserManager` 新增静态方法 `_evict_duplicate_sessions(redis_key, ip, user_agent)`，扫描同 redis_key（= 同 user_id+tenant_id）下 IP 与 UA 完全相同的旧 session 并 `hdel`；在 `create_token` 写入新 session_meta 之前调用
+- `backend/scripts/cleanup_duplicate_sessions.py`（新增）：一次性脚本，扫描全部 `JWT_SESSION:*` key，按 `(ip, user_agent)` 分组保留 `login_time` 最新的一条，删除其余
+
+**关键设计决策：**
+1. **仅当 ip 和 user_agent 都非空才清理**：app 端登录默认传空字符串，那种情况下保持原有"允许多 session"语义，避免误伤
+2. **同 redis_key 内清理，不跨租户**：每个 tenant_id 是独立 key，跨租户会话互不干涉
+3. **保留多端语义**：不同 IP/UA（PC + 手机）仍可并存，符合后台系统偶尔多端的需求
+4. **登录即清理**：用户下次登录自动顶掉旧 session，无需主动触发；存量数据用一次性脚本处理
+
+**部署提示：** 上线后建议立刻跑一次 `cd backend && python -m scripts.cleanup_duplicate_sessions` 清理存量堆积，避免列表显示需要等用户重新登录才清爽。
 
 ## 关键设计决策
 

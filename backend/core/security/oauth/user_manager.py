@@ -42,6 +42,37 @@ class BaseUserManager:
     def __init__(self):
         self.jwt_manager = JWTAuthManager()
 
+    @staticmethod
+    async def _evict_duplicate_sessions(redis_key: str, ip: str, user_agent: str) -> None:
+        """删除同 user_id+tenant_id 下 IP 和 UA 完全相同的旧 session。
+
+        防止同一浏览器反复登录堆积大量 session，污染在线用户列表。
+
+        - 仅当 ip 和 user_agent 都非空时才执行，避免误伤未传 IP/UA 的调用方
+          （如 app 端登录默认传空字符串，那种情况下保持原有"允许多 session"语义）
+        - 跨 tenant_id 的 redis_key 不受影响（每个 tenant_id 一个独立 key）
+        """
+        if not ip or not user_agent:
+            return
+        redis_util = get_redis_util()
+        all_fields = await redis_util.hgetall(redis_key)
+        if not all_fields:
+            return
+        stale_sids: list[str] = []
+        for sid, meta_raw in all_fields.items():
+            if isinstance(sid, bytes):
+                sid = sid.decode("utf-8")
+            if isinstance(meta_raw, bytes):
+                meta_raw = meta_raw.decode("utf-8")
+            try:
+                meta = json.loads(meta_raw)
+            except (json.JSONDecodeError, TypeError):
+                continue
+            if meta.get("ip") == ip and meta.get("user_agent") == user_agent:
+                stale_sids.append(sid)
+        if stale_sids:
+            await redis_util.hdel(redis_key, *stale_sids)
+
     async def create_token(
         self,
         user_id: int,
@@ -79,6 +110,9 @@ class BaseUserManager:
                 old_key = build_session_key(user_role, user_id, tenant_id=0)
                 if old_key != redis_key:
                     await get_redis_util().delete(old_key)
+
+            # 清理同 IP+UA 的旧 session，防止同浏览器反复登录堆积
+            await self._evict_duplicate_sessions(redis_key, ip, user_agent)
 
             session_meta = json.dumps({
                 "session_id": session_id,
