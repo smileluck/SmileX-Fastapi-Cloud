@@ -206,6 +206,7 @@ class MenuService:
                 id=menu.id,
                 label=menu.name,
                 pId=menu.parent_id,
+                path=menu.path,
                 menuType=_type_to_str(menu.type),
                 children=[],
             )
@@ -414,10 +415,21 @@ class MenuService:
                     ancestor_id = anc_result.scalar_one_or_none()
 
         # 更新菜单信息
+        old_path = menu.path
         update_data = menu_update.model_dump(exclude_unset=True)
         for key, value in update_data.items():
             if hasattr(menu, key):
                 setattr(menu, key, value)
+
+        # 目录 path 变化时，同步所有后代菜单的 path 前缀，避免路由失联
+        new_path = update_data.get("path")
+        if (
+            menu.type == MenuType.CATALOG
+            and new_path is not None
+            and old_path
+            and new_path != old_path
+        ):
+            await MenuService._cascade_update_descendants_path(db, menu_id, old_path, new_path)
 
         await db.commit()
         get_memory_cache().invalidate(CacheNamespace.PERMISSION)
@@ -425,6 +437,26 @@ class MenuService:
 
         logger.info("更新菜单信息成功，菜单ID: %s", menu_id)
         return menu
+
+    @staticmethod
+    async def _cascade_update_descendants_path(
+        db: AsyncSession, parent_id: int, old_prefix: str, new_prefix: str
+    ) -> None:
+        """递归把后代 menu 的 path 前缀从 old_prefix 替换为 new_prefix。
+
+        仅做字符串前缀替换，保留后代自身的路径后缀（如 /manage/dept → /system/dept）。
+        """
+        result = await db.execute(
+            select(SysMenu).where(SysMenu.parent_id == parent_id)
+        )
+        children = result.scalars().all()
+        for child in children:
+            if child.path and child.path.startswith(old_prefix):
+                child.path = new_prefix + child.path[len(old_prefix):]
+            if child.type != MenuType.BUTTON:
+                await MenuService._cascade_update_descendants_path(
+                    db, child.id, old_prefix, new_prefix
+                )
 
     @staticmethod
     async def delete_menu(db: AsyncSession, menu_id: int, *, is_superuser: bool = False) -> bool:
@@ -627,6 +659,7 @@ class MenuService:
                 id=menu.id,
                 label=menu.name,
                 pId=menu.parent_id,
+                path=menu.path,
                 menuType=_type_to_str(menu.type),
                 children=[],
             )
@@ -739,6 +772,7 @@ class MenuService:
                 id=menu.id,
                 label=menu.name,
                 pId=menu.parent_id,
+                path=menu.path,
                 menuType=_type_to_str(menu.type),
                 children=[],
             )

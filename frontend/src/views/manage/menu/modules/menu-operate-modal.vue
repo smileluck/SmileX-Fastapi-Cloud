@@ -1,6 +1,7 @@
 <script setup lang="tsx">
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import type { SelectOption } from 'naive-ui';
+import { NInputGroup } from 'naive-ui';
 import { enableStatusOptions, menuIconTypeOptions, menuTypeOptions } from '@/constants/business';
 import { fetchCreateMenu, fetchGetMenuTree, fetchUpdateMenu } from '@/service/api';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
@@ -77,10 +78,84 @@ const model = ref(createDefaultModel());
 
 const menuTreeRaw = ref<Api.SystemManage.MenuTree[]>([]);
 
+/**
+ * 初始化期间禁用 watch 触发的 composeRoutePath。
+ *
+ * 时序问题：handleInitModel 改 parentId、menuTreeRaw 加载触发 routePrefix 重算时，
+ * watch 会用空 routeSuffix 覆盖 model.routePath，破坏编辑回显。
+ * 在 init 期间通过该标志禁用 compose，由 splitRoutePathToSuffix 单向从 model.routePath → routeSuffix。
+ */
+let suppressCompose = false;
+
 async function getMenuTree() {
   const { data } = await fetchGetMenuTree();
   menuTreeRaw.value = data || [];
+  // 菜单树加载完成后，重新拆分 path（编辑场景需要 prefix 来拆分）
+  splitRoutePathToSuffix();
 }
+
+/**
+ * 在菜单树中按 id 查找节点（含其 path）
+ */
+function findTreeNode(id: number | null | undefined): Api.SystemManage.MenuTree | null {
+  if (!id) return null;
+  function walk(nodes: Api.SystemManage.MenuTree[]): Api.SystemManage.MenuTree | null {
+    for (const n of nodes) {
+      if (n.id === id) return n;
+      if (n.children) {
+        const r = walk(n.children);
+        if (r) return r;
+      }
+    }
+    return null;
+  }
+  return walk(menuTreeRaw.value);
+}
+
+/**
+ * 父级目录/菜单的 path —— 当 menuType='2' 且选了父级时作为路径前缀（锁定不可改）。
+ */
+const routePrefix = computed(() => {
+  if (model.value.menuType !== '2' || !model.value.parentId) return '';
+  const parent = findTreeNode(model.value.parentId);
+  return parent?.path || '';
+});
+
+/**
+ * 可编辑的路径后缀（不含父级 prefix）。
+ */
+const routeSuffix = ref('');
+
+/**
+ * 把 model.routePath 按 routePrefix 拆分到 routeSuffix。
+ * 用于编辑回显：完整 path - 父级 prefix = 后缀。
+ */
+function splitRoutePathToSuffix() {
+  const full = model.value.routePath;
+  const prefix = routePrefix.value;
+  if (prefix && full && full.startsWith(prefix)) {
+    routeSuffix.value = full.slice(prefix.length);
+  } else if (model.value.menuType === '2' && prefix) {
+    routeSuffix.value = '';
+  }
+}
+
+/**
+ * 用 prefix + suffix 重组 model.routePath。
+ * 当 suffix 或 prefix 变化时调用。
+ */
+function composeRoutePath() {
+  if (model.value.menuType === '2' && model.value.parentId && routePrefix.value) {
+    model.value.routePath = `${routePrefix.value}${routeSuffix.value}`;
+  }
+}
+
+watch(routeSuffix, () => {
+  if (!suppressCompose) composeRoutePath();
+});
+watch(routePrefix, () => {
+  if (!suppressCompose) composeRoutePath();
+});
 
 function collectDescendantIds(trees: Api.SystemManage.MenuTree[], excludeId: number): Set<number> {
   const ids = new Set<number>();
@@ -266,10 +341,21 @@ function openIconLibrary() {
 }
 
 function handleUpdateRoutePathByMenuName() {
-  if (model.value.menuName) {
-    model.value.routePath = getRoutePathByRouteName(model.value.menuName);
+  if (!model.value.menuName) {
+    if (model.value.menuType === '2' && routePrefix.value) {
+      routeSuffix.value = '';
+    } else {
+      model.value.routePath = '';
+    }
+    return;
+  }
+  const generated = getRoutePathByRouteName(model.value.menuName); // e.g. /manage/dept
+  // 菜单类型且有父级：只填后缀，前缀锁定由 routePrefix 提供
+  if (model.value.menuType === '2' && routePrefix.value) {
+    routeSuffix.value = generated;
   } else {
-    model.value.routePath = '';
+    // 目录或根菜单：完整路径直接可编辑
+    model.value.routePath = generated;
   }
 }
 
@@ -313,11 +399,15 @@ async function handleSubmit() {
   }
 }
 
-watch(visible, () => {
+watch(visible, async () => {
   if (visible.value) {
+    // 初始化期间禁用 compose watch，避免 routePrefix/routeSuffix 变化覆盖 model.routePath
+    suppressCompose = true;
     handleInitModel();
     restoreValidation();
-    getMenuTree();
+    await getMenuTree();
+    await nextTick();
+    suppressCompose = false;
   }
 });
 
@@ -364,7 +454,13 @@ watch(
             <NInput v-model:value="model.permission" :placeholder="$t('page.manage.menu.form.permission')" />
           </NFormItemGi>
           <NFormItemGi v-if="!isButton" span="24 m:12" :label="$t('page.manage.menu.routePath')" path="routePath">
-            <NInput v-model:value="model.routePath" disabled :placeholder="$t('page.manage.menu.form.routePath')" />
+            <!-- 菜单类型 + 有父级：前缀锁定只读 + 后缀可编辑 -->
+            <NInputGroup v-if="model.menuType === '2' && routePrefix">
+              <NInput :value="routePrefix" disabled style="max-width: 42%" />
+              <NInput v-model:value="routeSuffix" :placeholder="$t('page.manage.menu.form.routePath')" />
+            </NInputGroup>
+            <!-- 目录或根菜单：完整路径可编辑 -->
+            <NInput v-else v-model:value="model.routePath" :placeholder="$t('page.manage.menu.form.routePath')" />
           </NFormItemGi>
           <NFormItemGi v-if="!isButton && showLayout" span="24 m:12" :label="$t('page.manage.menu.layout')" path="layout">
             <NSelect
