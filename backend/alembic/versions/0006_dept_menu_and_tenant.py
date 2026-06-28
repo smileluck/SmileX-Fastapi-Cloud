@@ -37,9 +37,7 @@ ADMIN_ROLE_ID = 2874692539129900
 def _dept_menu_rows() -> list[dict]:
     now = datetime(2026, 6, 27, 10, 0, 0)
     base = {
-        'parent_id': MANAGE_DIR_ID,
         'redirect': None,
-        'meta_icon': 'ic:outline-account-tree',
         'meta_affix': False,
         'meta_breadcrumb': True,
         'status': True,
@@ -53,10 +51,12 @@ def _dept_menu_rows() -> list[dict]:
         {
             **base,
             'id': DEPT_MENU_ID,
+            'parent_id': MANAGE_DIR_ID,
             'name': 'manage_dept',
             'path': '/manage/dept',
             'component': 'view.manage_dept',
             'permission': 'sys:dept:list',
+            'meta_icon': 'ic:outline-account-tree',
             'meta_hidden': False,
             'type': 'MENU',
             'sort': 6,
@@ -73,6 +73,7 @@ def _dept_menu_rows() -> list[dict]:
         rows.append({
             **base,
             'id': bid,
+            'parent_id': DEPT_MENU_ID,  # 按钮挂在 manage_dept 主菜单下
             'name': name,
             'path': None,
             'component': None,
