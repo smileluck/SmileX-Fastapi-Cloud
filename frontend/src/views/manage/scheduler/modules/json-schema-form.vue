@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue';
 import { NDynamicInput, NForm, NFormItem, NInput, NInputNumber, NSelect, NSwitch } from 'naive-ui';
+import { $t } from '@/locales';
 
 defineOptions({ name: 'JsonSchemaForm' });
 
@@ -85,7 +86,7 @@ function isStringType(prop: Api.Scheduler.JsonSchemaProperty): boolean {
 
 <template>
   <div v-if="entries.length === 0" class="text-13px text-gray-400">
-    该任务无参数。
+    {{ $t('page.manage.scheduler.noParams') }}
   </div>
   <NForm v-else label-placement="left" :show-require-mark="requiredMark" :show-feedback="false" size="small">
     <NFormItem
@@ -132,7 +133,7 @@ function isStringType(prop: Api.Scheduler.JsonSchemaProperty): boolean {
         :value="typeof modelValue[entry.key] === 'string' ? modelValue[entry.key] : JSON.stringify(modelValue[entry.key] ?? '')"
         type="textarea"
         :rows="2"
-        :placeholder="entry.prop.description || `请输入 ${labelOf(entry)}`"
+        :placeholder="entry.prop.description || $t('page.manage.scheduler.paramPlaceholder', { label: labelOf(entry) })"
         @update:value="v => updateField(entry.key, v)"
       />
       <span v-if="entry.prop.description" class="ml-8px text-12px text-gray-400">{{ entry.prop.description }}</span>

@@ -81,7 +81,7 @@ function createDefaultModel(): Api.Scheduler.ScheduledTaskCreate {
 
 const rules = {
   name: { required: true, message: $t('page.manage.scheduler.form.taskName'), trigger: 'blur' },
-  task_key: { required: true, message: '请输入任务实例标识（唯一）', trigger: 'blur' },
+  task_key: { required: true, message: $t('page.manage.scheduler.taskKeyRequired'), trigger: 'blur' },
   cron_expression: { required: true, message: $t('page.manage.scheduler.form.cronExpression'), trigger: 'blur' },
   trigger_type: { required: true, message: $t('page.manage.scheduler.form.triggerType'), trigger: 'change' },
   concurrent_policy: { required: true, message: $t('page.manage.scheduler.form.concurrentPolicy'), trigger: 'change' }
@@ -221,18 +221,18 @@ watch(visible, async visibleState => {
   <NDrawer v-model:show="visible" display-directive="show" :width="640">
     <NDrawerContent :title="title" :native-scrollbar="false" closable>
       <NForm ref="formRef" :model="model" :rules="rules">
-        <NFormItem label="任务模板" path="template" v-if="!isEdit">
+        <NFormItem :label="$t('page.manage.scheduler.template')" path="template" v-if="!isEdit">
           <NSelect
             v-model:value="selectedTemplateKey"
             :options="genericTemplateOptions"
-            placeholder="请选择任务模板（决定执行逻辑）"
+            :placeholder="$t('page.manage.scheduler.templatePlaceholder')"
             filterable
             @update:value="onTemplateChange"
           />
         </NFormItem>
-        <NFormItem label="任务类别" path="task_category">
+        <NFormItem :label="$t('page.manage.scheduler.taskCategory')" path="task_category">
           <NTag v-if="currentTemplate" :type="currentTemplate.task_category === 'generic' ? 'success' : 'info'" size="small">
-            {{ currentTemplate.task_category === 'generic' ? '通用任务' : '专用任务' }}
+            {{ currentTemplate.task_category === 'generic' ? $t('page.manage.scheduler.taskCategories.generic') : $t('page.manage.scheduler.taskCategories.specialist') }}
           </NTag>
           <span v-else class="text-gray-400 text-13px">—</span>
         </NFormItem>
@@ -242,7 +242,7 @@ watch(visible, async visibleState => {
         <NFormItem :label="$t('page.manage.scheduler.taskKey')" path="task_key">
           <NInput
             v-model:value="model.task_key"
-            :placeholder="isEdit ? '' : '请输入任务实例标识，例如 my-daily-ping'"
+            :placeholder="isEdit ? '' : $t('page.manage.scheduler.taskKeyHint')"
             maxlength="200"
             :disabled="isEdit"
           />
@@ -252,8 +252,8 @@ watch(visible, async visibleState => {
         </NFormItem>
 
         <template v-if="hasParams">
-          <NDivider title-placement="left" class="text-13px">任务参数</NDivider>
-          <div v-if="schemaLoading" class="text-gray-400 text-13px">参数表单加载中…</div>
+          <NDivider title-placement="left" class="text-13px">{{ $t('page.manage.scheduler.triggerParams') }}</NDivider>
+          <div v-if="schemaLoading" class="text-gray-400 text-13px">{{ $t('page.manage.scheduler.schemaLoading') }}</div>
           <JsonSchemaForm
             v-else
             v-model="paramsModel"
@@ -262,7 +262,7 @@ watch(visible, async visibleState => {
           />
         </template>
 
-        <NDivider title-placement="left" class="text-13px">调度配置</NDivider>
+        <NDivider title-placement="left" class="text-13px">{{ $t('page.manage.scheduler.advancedConfig') }}</NDivider>
         <NFormItem :label="$t('page.manage.scheduler.triggerType')" path="trigger_type">
           <NSelect v-model:value="model.trigger_type" :options="triggerTypeOptions" />
         </NFormItem>

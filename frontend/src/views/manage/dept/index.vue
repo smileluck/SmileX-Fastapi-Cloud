@@ -50,25 +50,25 @@ async function handleDelete(id: number) {
 const columns = [
   {
     key: 'name',
-    title: '部门名称',
+    title: $t('page.manage.dept.deptName'),
     minWidth: 200
   },
   {
     key: 'code',
-    title: '部门编码',
+    title: $t('page.manage.dept.deptCode'),
     align: 'center' as const,
     minWidth: 140,
     render: (row: Api.SystemManage.Dept) => row.code || '-'
   },
   {
     key: 'sort',
-    title: '排序',
+    title: $t('page.manage.dept.sort'),
     align: 'center' as const,
     width: 80
   },
   {
     key: 'status',
-    title: '状态',
+    title: $t('page.manage.dept.status'),
     align: 'center' as const,
     width: 100,
     render: (row: Api.SystemManage.Dept) => {
@@ -90,7 +90,7 @@ const columns = [
       <div class="flex flex-wrap justify-center gap-8px">
         {hasAuth('sys:dept:add') && (
           <NButton type="primary" text size="small" onClick={() => handleAdd(row.id)}>
-            添加子部门
+            {$t('page.manage.dept.addChild')}
           </NButton>
         )}
         {hasAuth('sys:dept:edit') && (
@@ -120,7 +120,7 @@ getData();
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <NCard title="部门管理" :bordered="false" size="small" class="card-wrapper sm:flex-1-hidden">
+    <NCard :title="$t('page.manage.dept.title')" :bordered="false" size="small" class="card-wrapper sm:flex-1-hidden">
       <template #header-extra>
         <NSpace :size="12">
           <NButton @click="getData">{{ $t('common.refresh') }}</NButton>

@@ -381,6 +381,14 @@ declare namespace App {
         tokenExpired: string;
         error: string;
       };
+      captcha: {
+        success: string;
+        fail: string;
+        refresh: string;
+        slideToVerify: string;
+        completeFirst: string;
+        selectPlaceholder: string;
+      };
       theme: {
         themeDrawerTitle: string;
         tabs: {
@@ -628,6 +636,13 @@ declare namespace App {
             roleCode: string;
             roleStatus: string;
             roleDesc: string;
+            dataScope: string;
+            dataScopes: {
+              ALL: string;
+              DEPT_AND_SUB: string;
+              DEPT_ONLY: string;
+              SELF: string;
+            };
             form: {
               roleName: string;
               roleCode: string;
@@ -674,6 +689,7 @@ declare namespace App {
             };
             addUser: string;
             editUser: string;
+            dept: string;
             gender: {
               male: string;
               female: string;
@@ -865,12 +881,18 @@ declare namespace App {
           announcement: {
             title: string;
             noticeType: string;
+            noticeContent: string;
             targetTypeLabel: string;
+            targetRole: string;
+            targetUser: string;
             priority: string;
             senderName: string;
             publishedAt: string;
             publish: string;
             publishSuccess: string;
+            addAnnouncement: string;
+            editAnnouncement: string;
+            deleteAnnouncement: string;
             status: {
               published: string;
               draft: string;
@@ -886,12 +908,23 @@ declare namespace App {
               role: string;
               user: string;
             };
+            priorities: {
+              low: string;
+              normal: string;
+              high: string;
+              urgent: string;
+            };
             form: {
               title: string;
+              content: string;
               type: string;
               targetType: string;
               status: string;
               priority: string;
+              roleIds: string;
+              userIds: string;
+              roleIdsPlaceholder: string;
+              userIdsPlaceholder: string;
             };
           };
           file: {
@@ -905,6 +938,9 @@ declare namespace App {
             upload: string;
             download: string;
             preview: string;
+            previewTitle: string;
+            previewNotSupported: string;
+            videoNotSupported: string;
             platform: {
               local: string;
               oss: string;
@@ -913,6 +949,22 @@ declare namespace App {
               fileName: string;
               fileExtension: string;
               storagePlatform: string;
+            };
+          };
+          dept: {
+            title: string;
+            deptName: string;
+            deptCode: string;
+            parentDept: string;
+            sort: string;
+            status: string;
+            addDept: string;
+            editDept: string;
+            addChild: string;
+            form: {
+              parentDept: string;
+              deptName: string;
+              deptCode: string;
             };
           };
           scheduler: {
@@ -961,6 +1013,21 @@ declare namespace App {
             addTask: string;
             editTask: string;
             isSystem: string;
+            taskCategory: string;
+            taskCategories: {
+              generic: string;
+              system: string;
+              specialist: string;
+            };
+            template: string;
+            templatePlaceholder: string;
+            taskKeyPlaceholder: string;
+            taskKeyHint: string;
+            taskKeyRequired: string;
+            advancedConfig: string;
+            schemaLoading: string;
+            noParams: string;
+            paramPlaceholder: string;
             form: {
               taskName: string;
               taskKey: string;
@@ -1109,103 +1176,13 @@ declare namespace App {
       };
     };
 
-    type PluginI18nSchema = {
-      route: {
-        scheduler: string;
-      };
-      page: {
-        manage: {
-          scheduler: {
-            title: string;
-            taskName: string;
-            taskKey: string;
-            description: string;
-            cronExpression: string;
-            triggerType: string;
-            triggerTypes: {
-              cron: string;
-              interval: string;
-              date: string;
-            };
-            status: string;
-            statusEnabled: string;
-            statusDisabled: string;
-            enable: string;
-            disable: string;
-            lastRunAt: string;
-            nextRunAt: string;
-            lastStatus: string;
-            lastStatuses: {
-              success: string;
-              failed: string;
-              running: string;
-              timeout: string;
-            };
-            timeout: string;
-            maxRetries: string;
-            concurrentPolicy: string;
-            concurrentPolicies: {
-              skip: string;
-              replace: string;
-              run: string;
-            };
-            manualTrigger: string;
-            manualTriggerConfirm: string;
-            manualTriggerSuccess: string;
-            cronPreview: string;
-            nextRunTimes: string;
-            syncRegistry: string;
-            syncRegistrySuccess: string;
-            viewLogs: string;
-            triggerParams: string;
-            addTask: string;
-            editTask: string;
-            isSystem: string;
-            form: {
-              taskName: string;
-              taskKey: string;
-              cronExpression: string;
-              triggerType: string;
-              status: string;
-              concurrentPolicy: string;
-              description: string;
-            };
-          };
-          schedulerLog: {
-            title: string;
-            taskName: string;
-            status: string;
-            startTime: string;
-            endTime: string;
-            duration: string;
-            triggeredBy: string;
-            triggeredByValues: {
-              scheduler: string;
-              manual: string;
-            };
-            result: string;
-            errorMessage: string;
-            viewDetail: string;
-            clear: string;
-            clearConfirm: string;
-            detailTitle: string;
-            form: {
-              taskName: string;
-              status: string;
-              timeRange: string;
-            };
-          };
-        };
-      };
-    }
-
     type GetI18nKey<T extends Record<string, unknown>, K extends keyof T = keyof T> = K extends string
       ? T[K] extends Record<string, unknown>
         ? `${K}.${GetI18nKey<T[K]>}`
         : K
       : never;
 
-    type I18nKey = GetI18nKey<Schema> | GetI18nKey<PluginI18nSchema>;
+    type I18nKey = GetI18nKey<Schema>;
 
     type TranslateOptions<Locales extends string> = import('vue-i18n').TranslateOptions<Locales>;
 

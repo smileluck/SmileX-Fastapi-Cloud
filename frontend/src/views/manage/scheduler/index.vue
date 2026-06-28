@@ -98,13 +98,14 @@ const {
     },
     {
       key: 'task_category',
-      title: '任务类别',
+      title: $t('page.manage.scheduler.taskCategory'),
       align: 'center',
       width: 90,
       render: row => {
         const isGeneric = row.task_key?.startsWith('generic.');
         const isSystem = row.task_key?.startsWith('system.');
-        const label = isGeneric ? '通用' : isSystem ? '系统' : '专用';
+        const category = isGeneric ? 'generic' : isSystem ? 'system' : 'specialist';
+        const label = $t(`page.manage.scheduler.taskCategories.${category}`);
         const type: NaiveUI.ThemeColor = isGeneric ? 'success' : isSystem ? 'warning' : 'info';
         return <NTag type={type} size="small">{label}</NTag>;
       }

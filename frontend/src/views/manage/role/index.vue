@@ -61,16 +61,10 @@ const { columns, columnChecks, data, loading, getData, getDataByPage, mobilePagi
     },
     {
       key: 'data_scope',
-      title: '数据范围',
+      title: $t('page.manage.role.dataScope'),
       align: 'center',
       width: 140,
       render: (row: Api.SystemManage.Role) => {
-        const map: Record<Api.SystemManage.DataScope, string> = {
-          ALL: '全部数据',
-          DEPT_AND_SUB: '本部门及子部门',
-          DEPT_ONLY: '仅本部门',
-          SELF: '仅本人'
-        };
         const colorMap: Record<Api.SystemManage.DataScope, NaiveUI.ThemeColor> = {
           ALL: 'success',
           DEPT_AND_SUB: 'info',
@@ -78,7 +72,7 @@ const { columns, columnChecks, data, loading, getData, getDataByPage, mobilePagi
           SELF: 'default'
         };
         if (!row.data_scope) return null;
-        return <NTag type={colorMap[row.data_scope]} size="small">{map[row.data_scope]}</NTag>;
+        return <NTag type={colorMap[row.data_scope]} size="small">{$t(`page.manage.role.dataScopes.${row.data_scope}`)}</NTag>;
       }
     },
     {

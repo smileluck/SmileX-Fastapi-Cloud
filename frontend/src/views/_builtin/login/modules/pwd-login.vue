@@ -158,7 +158,7 @@ async function handleAccountLogin(account: Account) {
       <!-- Slider Captcha -->
       <div v-if="captchaRequired" class="captcha-wrapper">
         <NText v-if="loginDisabled" depth="3" class="captcha-hint">
-          请先完成下方滑块验证后再登录
+          {{ $t('captcha.completeFirst') }}
         </NText>
         <NSpin :show="captchaLoading">
           <SliderCaptcha

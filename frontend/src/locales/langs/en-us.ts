@@ -70,6 +70,14 @@ const local: App.I18n.Schema = {
     tokenExpired: 'The requested token has expired',
     error: 'Request Exception'
   },
+  captcha: {
+    success: 'Verification succeeded',
+    fail: 'Verification failed',
+    refresh: 'Refresh captcha',
+    slideToVerify: 'Slide right to verify',
+    completeFirst: 'Please complete the slider verification below before logging in',
+    selectPlaceholder: 'Please select'
+  },
   theme: {
     themeDrawerTitle: 'Theme Configuration',
     tabs: {
@@ -400,6 +408,13 @@ const local: App.I18n.Schema = {
         roleCode: 'Role Code',
         roleStatus: 'Role Status',
         roleDesc: 'Role Description',
+        dataScope: 'Data Scope',
+        dataScopes: {
+          ALL: 'All Data',
+          DEPT_AND_SUB: 'Dept & Sub',
+          DEPT_ONLY: 'Dept Only',
+          SELF: 'Self Only'
+        },
         menuAuth: 'Permission Config',
         buttonAuth: 'Button Auth',
         form: {
@@ -446,6 +461,7 @@ const local: App.I18n.Schema = {
         },
         addUser: 'Add User',
         editUser: 'Edit User',
+        dept: 'Department',
         gender: {
           male: 'Male',
           female: 'Female'
@@ -637,12 +653,18 @@ const local: App.I18n.Schema = {
       announcement: {
         title: 'Announcement List',
         noticeType: 'Type',
+        noticeContent: 'Content',
         targetTypeLabel: 'Target',
+        targetRole: 'Target Roles',
+        targetUser: 'Target Users',
         priority: 'Priority',
         senderName: 'Sender',
         publishedAt: 'Published At',
         publish: 'Publish',
         publishSuccess: 'Published successfully',
+        addAnnouncement: 'Add Announcement',
+        editAnnouncement: 'Edit Announcement',
+        deleteAnnouncement: 'Delete Announcement',
         status: {
           published: 'Published',
           draft: 'Draft'
@@ -654,16 +676,27 @@ const local: App.I18n.Schema = {
           approval: 'Approval'
         },
         targetType: {
-          all: 'All',
-          role: 'Role',
-          user: 'User'
+          all: 'Broadcast',
+          role: 'By Role',
+          user: 'Specific User'
+        },
+        priorities: {
+          low: 'Low',
+          normal: 'Normal',
+          high: 'High',
+          urgent: 'Urgent'
         },
         form: {
-          title: 'Please enter title',
+          title: 'Please enter notice title',
+          content: 'Please enter notice content',
           type: 'Please select notice type',
-          targetType: 'Please select target type',
+          targetType: 'Please select target',
           status: 'Please select status',
-          priority: 'Please select priority'
+          priority: 'Please select priority',
+          roleIds: 'Please enter role IDs',
+          userIds: 'Please enter user IDs',
+          roleIdsPlaceholder: 'Enter role IDs, multi-select',
+          userIdsPlaceholder: 'Enter user IDs, multi-select'
         }
       },
       file: {
@@ -677,6 +710,9 @@ const local: App.I18n.Schema = {
         upload: 'Upload Files',
         download: 'Download',
         preview: 'Preview',
+        previewTitle: 'Preview',
+        previewNotSupported: 'This file type does not support online preview',
+        videoNotSupported: 'Your browser does not support video playback.',
         platform: {
           local: 'Local Storage',
           oss: 'Aliyun OSS'
@@ -685,6 +721,22 @@ const local: App.I18n.Schema = {
           fileName: 'Enter file name',
           fileExtension: 'Enter extension',
           storagePlatform: 'Select storage platform'
+        }
+      },
+      dept: {
+        title: 'Department',
+        deptName: 'Department Name',
+        deptCode: 'Department Code',
+        parentDept: 'Parent Dept',
+        sort: 'Sort',
+        status: 'Status',
+        addDept: 'Add Department',
+        editDept: 'Edit Department',
+        addChild: 'Add SubDept',
+        form: {
+          parentDept: 'Select parent department (optional)',
+          deptName: 'Enter department name',
+          deptCode: 'Enter department code (optional)'
         }
       },
       scheduler: {
@@ -733,6 +785,21 @@ const local: App.I18n.Schema = {
         addTask: 'Add Task',
         editTask: 'Edit Task',
         isSystem: 'System Task',
+        taskCategory: 'Category',
+        taskCategories: {
+          generic: 'Generic',
+          system: 'System',
+          specialist: 'Specialist'
+        },
+        template: 'Task Template',
+        templatePlaceholder: 'Select task template (no logic)',
+        taskKeyPlaceholder: 'Enter task key',
+        taskKeyHint: 'Enter a unique task key, e.g. my-daily-ping',
+        taskKeyRequired: 'Please enter task key, must be unique',
+        advancedConfig: 'Advanced',
+        schemaLoading: 'Loading parameters...',
+        noParams: 'No parameters',
+        paramPlaceholder: 'Enter {label}',
         form: {
           taskName: 'Enter task name',
           taskKey: 'Enter task key',

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { fetchVerifyCaptcha } from '@/service/api/auth';
+import { $t } from '@/locales';
 
 defineOptions({ name: 'SliderCaptcha' });
 
@@ -121,15 +122,15 @@ onBeforeUnmount(() => {
       <transition name="sc-fade">
         <div v-if="status === 'success'" class="sc-image__mask sc-image__mask--success">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-          <span>验证成功</span>
+          <span>{{ $t('captcha.success') }}</span>
         </div>
         <div v-else-if="status === 'fail'" class="sc-image__mask sc-image__mask--fail">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-          <span>验证失败</span>
+          <span>{{ $t('captcha.fail') }}</span>
         </div>
       </transition>
       <!-- 刷新按钮 -->
-      <button v-if="status !== 'success'" class="sc-image__refresh" :disabled="verifyLoading" @click="handleRefresh" title="刷新验证码">
+      <button v-if="status !== 'success'" class="sc-image__refresh" :disabled="verifyLoading" @click="handleRefresh" :title="$t('captcha.refresh')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" /></svg>
       </button>
     </div>
@@ -153,7 +154,7 @@ onBeforeUnmount(() => {
         <svg v-else-if="status === 'fail'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
         <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 4 12 8 18" /><polyline points="16 6 20 12 16 18" /></svg>
       </div>
-      <span v-if="sliderX === 0 && status === 'idle'" class="sc-track__hint">向右滑动完成验证</span>
+      <span v-if="sliderX === 0 && status === 'idle'" class="sc-track__hint">{{ $t('captcha.slideToVerify') }}</span>
     </div>
   </div>
 </template>

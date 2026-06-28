@@ -56,10 +56,10 @@ function createDefaultModel(): Model {
 }
 
 const dataScopeOptions: { label: string; value: Api.SystemManage.DataScope }[] = [
-  { label: '全部数据', value: 'ALL' },
-  { label: '本部门及子部门', value: 'DEPT_AND_SUB' },
-  { label: '仅本部门', value: 'DEPT_ONLY' },
-  { label: '仅本人', value: 'SELF' }
+  { label: $t('page.manage.role.dataScopes.ALL'), value: 'ALL' },
+  { label: $t('page.manage.role.dataScopes.DEPT_AND_SUB'), value: 'DEPT_AND_SUB' },
+  { label: $t('page.manage.role.dataScopes.DEPT_ONLY'), value: 'DEPT_ONLY' },
+  { label: $t('page.manage.role.dataScopes.SELF'), value: 'SELF' }
 ];
 
 type RuleKey = Exclude<keyof Model, 'desc'>;
@@ -224,7 +224,7 @@ watch(visible, async () => {
         <NFormItem :label="$t('page.manage.role.roleDesc')" path="desc">
           <NInput v-model:value="model.desc" :placeholder="$t('page.manage.role.form.roleDesc')" />
         </NFormItem>
-        <NFormItem label="数据范围" path="data_scope">
+        <NFormItem :label="$t('page.manage.role.dataScope')" path="data_scope">
           <NRadioGroup v-model:value="model.data_scope">
             <NRadio v-for="item in dataScopeOptions" :key="item.value" :value="item.value" :label="item.label" />
           </NRadioGroup>

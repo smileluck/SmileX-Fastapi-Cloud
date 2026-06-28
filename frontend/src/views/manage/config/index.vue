@@ -229,7 +229,7 @@ async function handleBatchDeleteConfig() {
 /** 批量重置配置 */
 async function handleBatchResetConfig() {
   if (checkedConfigRowKeys.value.length === 0) {
-    message.warning('请选择要重置的配置');
+    message.warning($t('common.pleaseSelect'));
     return;
   }
   try {

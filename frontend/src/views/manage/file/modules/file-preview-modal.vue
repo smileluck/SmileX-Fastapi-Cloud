@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { NModal, NImage } from 'naive-ui';
 import { getFilePreviewUrl } from '@/service/api/file';
+import { $t } from '@/locales';
 
 defineOptions({
   name: 'FilePreviewModal'
@@ -42,7 +43,7 @@ const previewUrl = computed(() => {
   <NModal
     v-model:show="showModal"
     preset="card"
-    :title="file?.original_name ?? '预览'"
+    :title="file?.original_name ?? $t('page.manage.file.previewTitle')"
     style="max-width: 90vw; max-height: 90vh"
     :segmented="{ content: true }"
   >
@@ -60,9 +61,9 @@ const previewUrl = computed(() => {
         controls
         style="max-width: 100%; max-height: 75vh"
       >
-        您的浏览器不支持视频播放
+        {{ $t('page.manage.file.videoNotSupported') }}
       </video>
-      <span v-else style="color: #999">该文件类型暂不支持在线预览</span>
+      <span v-else style="color: #999">{{ $t('page.manage.file.previewNotSupported') }}</span>
     </div>
   </NModal>
 </template>

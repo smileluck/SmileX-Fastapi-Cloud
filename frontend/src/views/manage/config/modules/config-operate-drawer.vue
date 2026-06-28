@@ -334,7 +334,7 @@ async function handleSubmit() {
   </NDrawer>
 
   <!-- JSON 编辑弹窗 -->
-  <NModal v-model:show="jsonModalVisible" :width="800" preset="card" title="编辑JSON">
+  <NModal v-model:show="jsonModalVisible" :width="800" preset="card" :title="$t('page.manage.config.editJson')">
     <div class="mb-12px">
       <NInput
         v-model:value="jsonModalContent"

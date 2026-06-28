@@ -294,7 +294,7 @@ watch(visible, () => {
             :placeholder="$t('page.manage.user.form.userRole')"
           />
         </NFormItem>
-        <NFormItem label="所属部门" path="dept_id">
+        <NFormItem :label="$t('page.manage.user.dept')" path="dept_id">
           <NTreeSelect
             v-model:value="model.dept_id"
             :options="deptTreeOptions"
@@ -303,7 +303,7 @@ watch(visible, () => {
             children-field="children"
             clearable
             check-strategy="child"
-            placeholder="请选择部门"
+            :placeholder="$t('captcha.selectPlaceholder')"
           />
         </NFormItem>
       </NForm>

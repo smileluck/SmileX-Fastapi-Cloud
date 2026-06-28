@@ -35,7 +35,7 @@ const visible = defineModel<boolean>('visible', {
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { defaultRequiredRule } = useFormRules();
 
-const title = computed(() => (props.operateType === 'add' ? '添加部门' : '编辑部门'));
+const title = computed(() => (props.operateType === 'add' ? $t('page.manage.dept.addDept') : $t('page.manage.dept.editDept')));
 
 type Model = {
   parent_id: number | null;
@@ -125,7 +125,7 @@ watch(visible, async () => {
   <NDrawer v-model:show="visible" display-directive="show" :width="420">
     <NDrawerContent :title="title" :native-scrollbar="false" closable>
       <NForm ref="formRef" :model="model" :rules="rules">
-        <NFormItem label="上级部门" path="parent_id">
+        <NFormItem :label="$t('page.manage.dept.parentDept')" path="parent_id">
           <NTreeSelect
             v-model:value="model.parent_id"
             :options="deptOptions"
@@ -133,19 +133,19 @@ watch(visible, async () => {
             label-field="label"
             clearable
             check-strategy="child"
-            placeholder="留空表示顶级部门"
+            :placeholder="$t('page.manage.dept.form.parentDept')"
           />
         </NFormItem>
-        <NFormItem label="部门名称" path="name">
-          <NInput v-model:value="model.name" placeholder="请输入部门名称" />
+        <NFormItem :label="$t('page.manage.dept.deptName')" path="name">
+          <NInput v-model:value="model.name" :placeholder="$t('page.manage.dept.form.deptName')" />
         </NFormItem>
-        <NFormItem label="部门编码" path="code">
-          <NInput v-model:value="model.code" placeholder="请输入部门编码（可选）" />
+        <NFormItem :label="$t('page.manage.dept.deptCode')" path="code">
+          <NInput v-model:value="model.code" :placeholder="$t('page.manage.dept.form.deptCode')" />
         </NFormItem>
-        <NFormItem label="排序" path="sort">
+        <NFormItem :label="$t('page.manage.dept.sort')" path="sort">
           <NInputNumber v-model:value="model.sort" :min="0" class="w-full" />
         </NFormItem>
-        <NFormItem label="状态" path="status">
+        <NFormItem :label="$t('page.manage.dept.status')" path="status">
           <NRadioGroup v-model:value="model.status">
             <NRadio v-for="item in enableStatusOptions" :key="item.value" :value="item.value" :label="item.label" />
           </NRadioGroup>

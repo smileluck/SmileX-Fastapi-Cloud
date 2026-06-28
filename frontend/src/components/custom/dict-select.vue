@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { NSelect } from 'naive-ui';
 import { useDict } from '@/hooks/business/dict';
+import { $t } from '@/locales';
 
 defineOptions({ name: 'DictSelect', inheritAttrs: false });
 
@@ -18,7 +19,7 @@ const props = withDefaults(
     clearable: true,
     disabled: false,
     multiple: false,
-    placeholder: '请选择'
+    placeholder: () => $t('captcha.selectPlaceholder')
   }
 );
 
