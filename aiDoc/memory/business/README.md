@@ -20,4 +20,4 @@
 - [2026-06-17 登录 redirect 不生效修复](./2026-06-17_login_redirect_fix.md) — checkTabClear 在首次登录会吞掉 redirect 参数，登录后误回首页
 - [2026-06-25 登录默认页改为权限列表第一项](./2026-06-25_login_home_from_first_permission.md) — 后端按菜单顺序 DFS 取首个有 component 的叶子作为 home
 - [2026-06-25 数据权限（行级可见性）](./2026-06-25_data_scope_permission.md) — 角色配置 data_scope（ALL/DEPT_AND_SUB/DEPT_ONLY/SELF）+ 部门树 + Service 层注入过滤；含用户管理示范
-- [2026-06-27 登录与菜单三件套修复](./2026-06-27_login_misc_fixes.md) — 菜单 iconType 持久化 + 侧边栏本地 icon 渲染；确认黑名单自动拉黑 IP 来源；记住密码本地缓存回填；在线用户列表去重（同 IP+UA 顶掉旧 session）
+- [2026-06-27 登录与菜单三件套修复](./2026-06-27_login_misc_fixes.md) — 菜单 iconType 持久化 + 侧边栏本地 icon 渲染；确认黑名单自动拉黑 IP 来源；记住密码本地缓存回填；在线用户列表去重（同 IP+UA 顶掉旧 session）；补全部门管理菜单种子 + 多租户插件支持 sys_dept 隔离

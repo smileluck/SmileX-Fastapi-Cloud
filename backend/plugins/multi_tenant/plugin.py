@@ -18,6 +18,7 @@ TENANT_STRICT_TABLES = [
     "app_user",
     "sys_operation_log",
     "sys_login_log",
+    "sys_dept",
 ]
 
 # 可选租户隔离的表（查询返回当前租户 + 全局数据，tenant_id IS NULL 为全局）
@@ -38,6 +39,7 @@ MODEL_MAP = {
     "sys_login_log": "database.models.sys.login_log:SysLoginLog",
     "sys_menu": "database.models.sys.menu:SysMenu",
     "sys_notice": "database.models.sys.notice:SysNotice",
+    "sys_dept": "database.models.sys.dept:SysDept",
 }
 
 
