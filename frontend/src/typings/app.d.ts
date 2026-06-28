@@ -915,6 +915,86 @@ declare namespace App {
               storagePlatform: string;
             };
           };
+          scheduler: {
+            title: string;
+            taskName: string;
+            taskKey: string;
+            description: string;
+            cronExpression: string;
+            triggerType: string;
+            triggerTypes: {
+              cron: string;
+              interval: string;
+              date: string;
+            };
+            status: string;
+            statusEnabled: string;
+            statusDisabled: string;
+            enable: string;
+            disable: string;
+            lastRunAt: string;
+            nextRunAt: string;
+            lastStatus: string;
+            lastStatuses: {
+              success: string;
+              failed: string;
+              running: string;
+              timeout: string;
+            };
+            timeout: string;
+            maxRetries: string;
+            concurrentPolicy: string;
+            concurrentPolicies: {
+              skip: string;
+              replace: string;
+              run: string;
+            };
+            manualTrigger: string;
+            manualTriggerConfirm: string;
+            manualTriggerSuccess: string;
+            cronPreview: string;
+            nextRunTimes: string;
+            syncRegistry: string;
+            syncRegistrySuccess: string;
+            viewLogs: string;
+            triggerParams: string;
+            addTask: string;
+            editTask: string;
+            isSystem: string;
+            form: {
+              taskName: string;
+              taskKey: string;
+              cronExpression: string;
+              triggerType: string;
+              status: string;
+              concurrentPolicy: string;
+              description: string;
+            };
+          };
+          schedulerLog: {
+            title: string;
+            taskName: string;
+            status: string;
+            startTime: string;
+            endTime: string;
+            duration: string;
+            triggeredBy: string;
+            triggeredByValues: {
+              scheduler: string;
+              manual: string;
+            };
+            result: string;
+            errorMessage: string;
+            viewDetail: string;
+            clear: string;
+            clearConfirm: string;
+            detailTitle: string;
+            form: {
+              taskName: string;
+              status: string;
+              timeRange: string;
+            };
+          };
         };
       log: {
         loginLog: {

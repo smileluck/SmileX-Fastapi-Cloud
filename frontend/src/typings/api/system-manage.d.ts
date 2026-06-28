@@ -228,6 +228,8 @@ declare namespace Api {
       pId: number;
       menuType: MenuType;
       children?: MenuTree[];
+      /** 客户端标记：在父级菜单选择树中是否禁用选择（仍可展开） */
+      disabled?: boolean;
     };
 
     /** 字典 */

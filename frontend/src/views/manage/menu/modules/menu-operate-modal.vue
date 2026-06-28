@@ -110,16 +110,17 @@ function filterTree(
     }));
 }
 
-function filterTreeByType(
+function markDisabledByType(
   trees: Api.SystemManage.MenuTree[],
   allowedParentType: Api.SystemManage.MenuType
 ): Api.SystemManage.MenuTree[] {
-  return trees
-    .filter(t => t.menuType === allowedParentType)
-    .map(t => ({
-      ...t,
-      children: t.children ? filterTreeByType(t.children, allowedParentType) : undefined
-    }));
+  // 保留所有节点（让用户能看到完整树结构），但只允许选择指定类型的节点。
+  // 不能用过滤，否则父级是 CATALOG 时会把其下的 MENU 一并丢掉，导致编辑时父级显示为空。
+  return trees.map(t => ({
+    ...t,
+    disabled: t.menuType !== allowedParentType,
+    children: t.children ? markDisabledByType(t.children, allowedParentType) : undefined
+  }));
 }
 
 const parentMenuOptions = computed(() => {
@@ -131,10 +132,12 @@ const parentMenuOptions = computed(() => {
     excludeIds.add(props.rowData.id);
     trees = filterTree(trees, excludeIds);
   }
+  // 菜单(type='2')的父级只能是目录(type='1')；按钮(type='3')的父级只能是菜单(type='2')。
+  // 其他类型节点保留显示但标记 disabled，避免用户误选。
   if (model.value.menuType === '2') {
-    trees = filterTreeByType(trees, '1');
+    trees = markDisabledByType(trees, '1');
   } else if (model.value.menuType === '3') {
-    trees = filterTreeByType(trees, '2');
+    trees = markDisabledByType(trees, '2');
   }
   return trees;
 });
