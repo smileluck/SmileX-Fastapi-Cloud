@@ -371,6 +371,24 @@ declare namespace App {
           yes: string;
           no: string;
         };
+        actions: {
+          list: string;
+          add: string;
+          edit: string;
+          delete: string;
+          remove: string;
+          publish: string;
+          detail: string;
+          status: string;
+          trigger: string;
+          view: string;
+          kick: string;
+          download: string;
+          upload: string;
+          assign: string;
+          logDetail: string;
+          logDelete: string;
+        };
       };
       request: {
         logout: string;

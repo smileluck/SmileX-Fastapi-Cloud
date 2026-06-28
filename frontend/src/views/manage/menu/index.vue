@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import type { Ref } from 'vue';
 import { NButton, NPopconfirm, NTag } from 'naive-ui';
 import { useBoolean } from '@sa/hooks';
@@ -9,6 +9,7 @@ import { fetchDeleteMenu, fetchGetAllPages, fetchGetMenuListTree } from '@/servi
 import { useAppStore } from '@/store/modules/app';
 import { useAuth } from '@/hooks/business/auth';
 import { $t } from '@/locales';
+import { formatButtonLabel } from '@/utils/menu-button';
 import SvgIcon from '@/components/custom/svg-icon.vue';
 import MenuOperateModal, { type OperateType } from './modules/menu-operate-modal.vue';
 
@@ -29,12 +30,30 @@ async function getData() {
   loading.value = false;
 }
 
+// 建立 id → 菜单 name 索引，供按钮行查父菜单用
+const menuIdToName = computed(() => {
+  const map = new Map<number, string>();
+  function walk(items: Api.SystemManage.Menu[]) {
+    for (const item of items) {
+      map.set(item.id, item.routeName);
+      if (item.children) walk(item.children);
+    }
+  }
+  walk(data.value);
+  return map;
+});
+
 const columns = [
   {
     key: 'menuName',
     title: $t('page.manage.menu.menuName'),
     minWidth: 160,
     render: (row: Api.SystemManage.Menu) => {
+      // 按钮类型：用 permission 解析动作，拼接父菜单名
+      if (row.menuType === '3') {
+        const parentName = row.parentId ? menuIdToName.value.get(row.parentId) : null;
+        return <span>{formatButtonLabel(row.menuName, row.permission, parentName)}</span>;
+      }
       const { i18nKey, menuName } = row;
       const label = i18nKey ? $t(i18nKey) : menuName;
       return <span>{label}</span>;

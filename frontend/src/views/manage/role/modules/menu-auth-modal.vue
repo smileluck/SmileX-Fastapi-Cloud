@@ -4,6 +4,7 @@ import { NTag } from 'naive-ui';
 import { fetchAssignMenuToRole, fetchGetAllPages, fetchGetAssignMenuTree, fetchGetRole } from '@/service/api';
 import { menuTypeRecord } from '@/constants/business';
 import { $t } from '@/locales';
+import { formatButtonLabel } from '@/utils/menu-button';
 
 defineOptions({
   name: 'MenuAuthModal'
@@ -119,6 +120,24 @@ async function handleSubmit() {
   }
 }
 
+// 建立 id → 父节点 name 索引（按钮要拼父级菜单名）
+const parentIdToName = computed(() => {
+  const map = new Map<number, string>();
+  function walk(nodes: Api.SystemManage.MenuTree[], parentId: number | null) {
+    for (const node of nodes) {
+      if (parentId !== null) {
+        // 只记录非按钮节点作为父级候选
+        if (node.menuType !== '3') map.set(node.id, node.label);
+      }
+      if (node.children && node.children.length > 0) {
+        walk(node.children, node.id);
+      }
+    }
+  }
+  walk(tree.value, null);
+  return map;
+});
+
 function getTranslatedLabel(node: Api.SystemManage.MenuTree): string {
   const i18nKey = `route.${node.label}` as App.I18n.I18nKey;
   return $t(i18nKey);
@@ -127,22 +146,35 @@ function getTranslatedLabel(node: Api.SystemManage.MenuTree): string {
 function renderLabel({ option }: { option: Record<string, unknown> }) {
   const node = option as unknown as Api.SystemManage.MenuTree;
   const tagType = tagTypeMap[node.menuType];
-  const displayLabel = getTranslatedLabel(node);
 
+  // 按钮节点：显示 "{父菜单 i18n} - {动作}"，并把 type tag 移到末尾以强化主语
   if (node.menuType === '3') {
+    const parentName = node.pId ? parentIdToName.value.get(node.pId) : null;
+    const buttonLabel = formatButtonLabel(node.label, null, parentName);
     return h(
       'span',
       { class: 'flex items-center gap-8px' },
       {
         default: () => [
-          h(NTag, { type: tagType, size: 'small', bordered: false }, { default: () => $t(menuTypeRecord[node.menuType]) }),
-          displayLabel
+          buttonLabel,
+          h(NTag, { type: tagType, size: 'small', bordered: false }, { default: () => $t(menuTypeRecord[node.menuType]) })
         ]
       }
     );
   }
 
-  return displayLabel;
+  // 目录/菜单节点：原 i18n 名 + 类型 tag
+  const displayLabel = getTranslatedLabel(node);
+  return h(
+    'span',
+    { class: 'flex items-center gap-8px' },
+    {
+      default: () => [
+        displayLabel,
+        h(NTag, { type: tagType, size: 'small', bordered: false }, { default: () => $t(menuTypeRecord[node.menuType]) })
+      ]
+    }
+  );
 }
 
 async function init() {

@@ -59,7 +59,33 @@ const local: App.I18n.Schema = {
     yesOrNo: {
       yes: '是',
       no: '否'
+    },
+    actions: {
+      list: '查看列表',
+      add: '新增',
+      edit: '编辑',
+      delete: '删除',
+      remove: '移除',
+      publish: '发布',
+      detail: '详情',
+      status: '状态切换',
+      trigger: '手动执行',
+      view: '查看',
+      kick: '踢下线',
+      download: '下载',
+      upload: '上传',
+      assign: '分配',
+      logDetail: '日志详情',
+      logDelete: '删除日志'
     }
+  },
+  captcha: {
+    success: '验证成功',
+    fail: '验证失败',
+    refresh: '刷新验证码',
+    slideToVerify: '向右滑动完成验证',
+    completeFirst: '请先完成下方滑块验证后再登录',
+    selectPlaceholder: '请选择'
   },
   request: {
     logout: '请求失败后登出用户',
@@ -69,14 +95,6 @@ const local: App.I18n.Schema = {
     refreshToken: '请求的token已过期，刷新token',
     tokenExpired: 'token已过期',
     error: '请求异常'
-  },
-  captcha: {
-    success: '验证成功',
-    fail: '验证失败',
-    refresh: '刷新验证码',
-    slideToVerify: '向右滑动完成验证',
-    completeFirst: '请先完成下方滑块验证后再登录',
-    selectPlaceholder: '请选择'
   },
   theme: {
     themeDrawerTitle: '主题配置',
@@ -403,13 +421,6 @@ const local: App.I18n.Schema = {
         roleCode: '角色编码',
         roleStatus: '角色状态',
         roleDesc: '角色描述',
-        dataScope: '数据范围',
-        dataScopes: {
-          ALL: '全部数据',
-          DEPT_AND_SUB: '本部门及子部门',
-          DEPT_ONLY: '仅本部门',
-          SELF: '仅本人'
-        },
         menuAuth: '权限配置',
         buttonAuth: '按钮权限',
         form: {
@@ -419,7 +430,14 @@ const local: App.I18n.Schema = {
           roleDesc: '请输入角色描述'
         },
         addRole: '新增角色',
-        editRole: '编辑角色'
+        editRole: '编辑角色',
+        dataScope: '数据范围',
+        dataScopes: {
+          ALL: '全部数据',
+          DEPT_AND_SUB: '本部门及子部门',
+          DEPT_ONLY: '仅本部门',
+          SELF: '仅本人'
+        }
       },
       user: {
         title: '用户列表',
@@ -454,13 +472,13 @@ const local: App.I18n.Schema = {
         },
         addUser: '新增用户',
         editUser: '编辑用户',
-        dept: '所属部门',
         gender: {
           male: '男',
           female: '女'
         },
         lastLoginTime: '最后登陆时间',
-        lastLoginIp: '最后登录IP'
+        lastLoginIp: '最后登录IP',
+        dept: '所属部门'
       },
       menu: {
         home: '首页',
@@ -647,19 +665,13 @@ const local: App.I18n.Schema = {
       },
       announcement: {
         title: '通知公告列表',
-        noticeType: '通知类型',
-        noticeContent: '通知内容',
+        noticeType: '类型',
         targetTypeLabel: '推送范围',
-        targetRole: '目标角色',
-        targetUser: '目标用户',
         priority: '优先级',
         senderName: '发送人',
         publishedAt: '发布时间',
         publish: '发布',
         publishSuccess: '发布成功',
-        addAnnouncement: '新增通知',
-        editAnnouncement: '编辑通知',
-        deleteAnnouncement: '删除通知',
         status: {
           published: '已发布',
           draft: '草稿'
@@ -671,27 +683,33 @@ const local: App.I18n.Schema = {
           approval: '审批通知'
         },
         targetType: {
-          all: '全员广播',
+          all: '全员',
           role: '按角色',
-          user: '指定用户'
+          user: '按用户'
         },
+        form: {
+          title: '请输入标题',
+          type: '请选择通知类型',
+          targetType: '请选择推送范围',
+          status: '请选择状态',
+          priority: '请选择优先级',
+          content: '请输入通知内容',
+          roleIds: '请输入角色ID',
+          userIds: '请输入用户ID',
+          roleIdsPlaceholder: '请输入角色ID，多选',
+          userIdsPlaceholder: '请输入用户ID，多选'
+        },
+        noticeContent: '通知内容',
+        targetRole: '目标角色',
+        targetUser: '目标用户',
+        addAnnouncement: '新增通知',
+        editAnnouncement: '编辑通知',
+        deleteAnnouncement: '删除通知',
         priorities: {
           low: '低',
           normal: '普通',
           high: '高',
           urgent: '紧急'
-        },
-        form: {
-          title: '请输入通知标题',
-          content: '请输入通知内容',
-          type: '请选择通知类型',
-          targetType: '请选择推送范围',
-          status: '请选择状态',
-          priority: '请选择优先级',
-          roleIds: '请输入角色ID',
-          userIds: '请输入用户ID',
-          roleIdsPlaceholder: '请输入角色ID，多选',
-          userIdsPlaceholder: '请输入用户ID，多选'
         }
       },
       file: {
@@ -705,9 +723,6 @@ const local: App.I18n.Schema = {
         upload: '上传文件',
         download: '下载',
         preview: '预览',
-        previewTitle: '预览',
-        previewNotSupported: '该文件类型暂不支持在线预览',
-        videoNotSupported: '您的浏览器不支持视频播放。',
         platform: {
           local: '本地存储',
           oss: '阿里云OSS'
@@ -716,7 +731,10 @@ const local: App.I18n.Schema = {
           fileName: '请输入文件名称',
           fileExtension: '请输入扩展名',
           storagePlatform: '请选择存储平台'
-        }
+        },
+        previewTitle: '预览',
+        previewNotSupported: '该文件类型暂不支持在线预览',
+        videoNotSupported: '您的浏览器不支持视频播放。'
       },
       dept: {
         title: '部门管理',

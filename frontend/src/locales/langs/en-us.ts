@@ -59,6 +59,24 @@ const local: App.I18n.Schema = {
     yesOrNo: {
       yes: 'Yes',
       no: 'No'
+    },
+    actions: {
+      list: 'List',
+      add: 'Add',
+      edit: 'Edit',
+      delete: 'Delete',
+      remove: 'Remove',
+      publish: 'Publish',
+      detail: 'Detail',
+      status: 'Toggle Status',
+      trigger: 'Run Now',
+      view: 'View',
+      kick: 'Kick',
+      download: 'Download',
+      upload: 'Upload',
+      assign: 'Assign',
+      logDetail: 'Log Detail',
+      logDelete: 'Delete Log'
     }
   },
   request: {
