@@ -282,8 +282,9 @@ const local: App.I18n.Schema = {
     demo_upload: '上传演示',
     demo_dict: '字典组件演示',
     manage_file: '文件管理',
-    manage_scheduler: '任务管理',
-    'manage_scheduler-log': '执行日志'
+    scheduler: '定时任务',
+    scheduler_task: '任务管理',
+    scheduler_log: '执行日志'
   },
   page: {
     login: {

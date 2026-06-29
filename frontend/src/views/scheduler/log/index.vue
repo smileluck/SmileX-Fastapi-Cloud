@@ -8,7 +8,7 @@ import { defaultTransform, useNaivePaginatedTable, useTableOperate } from '@/hoo
 import { useAuth } from '@/hooks/business/auth';
 import { $t } from '@/locales';
 import TaskLogSearch from './modules/task-log-search.vue';
-import TaskLogDrawer from '../scheduler/modules/task-log-drawer.vue';
+import TaskLogDrawer from '../task/modules/task-log-drawer.vue';
 
 defineOptions({ name: 'SchedulerLogPage' });
 

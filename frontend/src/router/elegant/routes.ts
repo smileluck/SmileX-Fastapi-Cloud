@@ -230,24 +230,6 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
-        name: 'manage_scheduler',
-        path: '/manage/scheduler',
-        component: 'view.manage_scheduler',
-        meta: {
-          title: 'manage_scheduler',
-          i18nKey: 'route.manage_scheduler'
-        }
-      },
-      {
-        name: 'manage_scheduler-log',
-        path: '/manage/scheduler-log',
-        component: 'view.manage_scheduler-log',
-        meta: {
-          title: 'manage_scheduler-log',
-          i18nKey: 'route.manage_scheduler-log'
-        }
-      },
-      {
         name: 'manage_user',
         path: '/manage/user',
         component: 'view.manage_user',
@@ -268,5 +250,34 @@ export const generatedRoutes: GeneratedRoute[] = [
       icon: 'mdi:chart-areaspline-variant',
       order: 4
     }
+  },
+  {
+    name: 'scheduler',
+    path: '/scheduler',
+    component: 'layout.base',
+    meta: {
+      title: 'scheduler',
+      i18nKey: 'route.scheduler'
+    },
+    children: [
+      {
+        name: 'scheduler_log',
+        path: '/scheduler/log',
+        component: 'view.scheduler_log',
+        meta: {
+          title: 'scheduler_log',
+          i18nKey: 'route.scheduler_log'
+        }
+      },
+      {
+        name: 'scheduler_task',
+        path: '/scheduler/task',
+        component: 'view.scheduler_task',
+        meta: {
+          title: 'scheduler_task',
+          i18nKey: 'route.scheduler_task'
+        }
+      }
+    ]
   }
 ];

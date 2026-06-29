@@ -185,10 +185,11 @@ const routeMap: RouteMap = {
   "manage_ip-blacklist": "/manage/ip-blacklist",
   "manage_menu": "/manage/menu",
   "manage_role": "/manage/role",
-  "manage_scheduler": "/manage/scheduler",
-  "manage_scheduler-log": "/manage/scheduler-log",
   "manage_user": "/manage/user",
-  "monitor": "/monitor"
+  "monitor": "/monitor",
+  "scheduler": "/scheduler",
+  "scheduler_log": "/scheduler/log",
+  "scheduler_task": "/scheduler/task"
 };
 
 /**

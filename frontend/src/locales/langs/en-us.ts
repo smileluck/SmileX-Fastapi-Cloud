@@ -286,8 +286,9 @@ const local: App.I18n.Schema = {
     demo_upload: 'Upload Demo',
     demo_dict: 'Dict Component Demo',
     manage_file: 'File Management',
-    manage_scheduler: 'Task Management',
-    'manage_scheduler-log': 'Execution Log'
+    scheduler: 'Scheduler',
+    scheduler_task: 'Task Management',
+    scheduler_log: 'Execution Log'
   },
   page: {
     login: {

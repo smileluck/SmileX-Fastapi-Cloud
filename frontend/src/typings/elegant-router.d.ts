@@ -39,10 +39,11 @@ declare module "@elegant-router/types" {
     "manage_ip-blacklist": "/manage/ip-blacklist";
     "manage_menu": "/manage/menu";
     "manage_role": "/manage/role";
-    "manage_scheduler": "/manage/scheduler";
-    "manage_scheduler-log": "/manage/scheduler-log";
     "manage_user": "/manage/user";
     "monitor": "/monitor";
+    "scheduler": "/scheduler";
+    "scheduler_log": "/scheduler/log";
+    "scheduler_task": "/scheduler/task";
   };
 
   /**
@@ -84,6 +85,7 @@ declare module "@elegant-router/types" {
     | "login"
     | "manage"
     | "monitor"
+    | "scheduler"
   >;
 
   /**
@@ -119,10 +121,10 @@ declare module "@elegant-router/types" {
     | "manage_ip-blacklist"
     | "manage_menu"
     | "manage_role"
-    | "manage_scheduler-log"
-    | "manage_scheduler"
     | "manage_user"
     | "monitor"
+    | "scheduler_log"
+    | "scheduler_task"
   >;
 
   /**
