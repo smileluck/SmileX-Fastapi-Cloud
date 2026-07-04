@@ -195,45 +195,43 @@ function closeDrawer() {
 async function handleSubmit() {
   await validate();
 
-  try {
-    // 将角色名称转换为角色ID
-    const roleIds = roleNamesToIds(model.value.userRoles);
+  // 将角色名称转换为角色ID
+  const roleIds = roleNamesToIds(model.value.userRoles);
 
-    if (props.operateType === 'add') {
-      // 创建用户
-      await fetchCreateUser({
-        username: model.value.username,
-        nickname: model.value.nickname,
-        phone: model.value.phone,
-        email: model.value.email,
-        password: model.value.password,
-        status: model.value.status,
-        userRoles: model.value.userRoles,
-        // 额外传递 role_ids 给后端
-        role_ids: roleIds,
-        dept_id: model.value.dept_id
-      });
-      window.$message?.success($t('common.addSuccess'));
-    } else if (props.operateType === 'edit' && props.rowData) {
-      // 更新用户
-      await fetchUpdateUser(props.rowData.id, {
-        username: model.value.username,
-        nickname: model.value.nickname,
-        phone: model.value.phone,
-        email: model.value.email,
-        status: model.value.status,
-        userRoles: model.value.userRoles,
-        // 额外传递 role_ids 给后端
-        role_ids: roleIds,
-        dept_id: model.value.dept_id
-      });
-      window.$message?.success($t('common.updateSuccess'));
-    }
+  let error: unknown = null;
+
+  if (props.operateType === 'add') {
+    // 创建用户
+    const result = await fetchCreateUser({
+      username: model.value.username,
+      nickname: model.value.nickname,
+      phone: model.value.phone,
+      email: model.value.email,
+      password: model.value.password,
+      status: model.value.status,
+      role_ids: roleIds,
+      dept_id: model.value.dept_id
+    });
+    error = result.error;
+  } else if (props.operateType === 'edit' && props.rowData) {
+    // 更新用户
+    const result = await fetchUpdateUser(props.rowData.id, {
+      username: model.value.username,
+      nickname: model.value.nickname,
+      phone: model.value.phone,
+      email: model.value.email,
+      status: model.value.status,
+      role_ids: roleIds,
+      dept_id: model.value.dept_id
+    });
+    error = result.error;
+  }
+
+  // flat request 不抛异常，需显式判断 error；后端错误 msg 已由全局拦截器弹出
+  if (!error) {
+    window.$message?.success(props.operateType === 'add' ? $t('common.addSuccess') : $t('common.updateSuccess'));
     closeDrawer();
     emit('submitted');
-  } catch (error) {
-    window.$message?.error($t('request.error'));
-    console.error('Failed to save user:', error);
   }
 }
 

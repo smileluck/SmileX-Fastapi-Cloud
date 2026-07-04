@@ -312,6 +312,14 @@ class UserService:
         await db.commit()
         await db.refresh(user)
 
+        # 重新查询以预加载角色关系，避免响应序列化时触发异步懒加载
+        result = await db.execute(
+            select(SysUser)
+            .options(joinedload(SysUser.roles))
+            .where(SysUser.id == user.id)
+        )
+        user = result.unique().scalar_one()
+
         logger.info("创建用户成功，用户ID: %s", user.id)
         return user
 

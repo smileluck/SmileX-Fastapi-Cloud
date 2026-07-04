@@ -31,10 +31,10 @@ class SysDeptCreate(BaseEntity):
     """
 
     parent_id: Optional[int] = Field(None, description="父部门ID，顶级部门为None")
-    name: str = Field(..., description="部门名称", max_length=100)
+    name: str = Field(..., description="部门名称", min_length=1, max_length=100)
     code: Optional[str] = Field(None, description="部门编码", max_length=100)
     status: bool = Field(True, description="部门状态：True-启用，False-禁用")
-    sort: int = Field(0, description="排序号")
+    sort: int = Field(0, description="排序号", ge=0)
 
 
 class SysDeptUpdate(BaseEntity):
@@ -43,10 +43,10 @@ class SysDeptUpdate(BaseEntity):
     """
 
     parent_id: Optional[int] = Field(None, description="父部门ID，顶级部门为None")
-    name: Optional[str] = Field(None, description="部门名称", max_length=100)
+    name: Optional[str] = Field(None, description="部门名称", min_length=1, max_length=100)
     code: Optional[str] = Field(None, description="部门编码", max_length=100)
     status: BoolField = Field(None, description="部门状态：True-启用，False-禁用")
-    sort: Optional[int] = Field(None, description="排序号")
+    sort: Optional[int] = Field(None, description="排序号", ge=0)
 
 
 class SysDeptTreeResponse(BaseRespEntity):

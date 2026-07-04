@@ -70,19 +70,13 @@ function closeDrawer() {
 async function handleSubmit() {
   await validate();
 
-  try {
-    // 调用修改密码的API
-    const { error, data } = await fetchChangeUserPassword(props.userId, model.value.newPassword);
+  // flat request 不抛异常，需显式判断 error；后端错误 msg 已由全局拦截器弹出
+  const { error } = await fetchChangeUserPassword(props.userId, model.value.newPassword);
 
-    if (!error) {
-      window.$message?.success($t('common.updateSuccess'));
-      closeDrawer();
-      emit('submitted');
-    } else {
-      window.$message?.error(error.message || $t('common.updateFailed'));
-    }
-  } catch (error) {
-    window.$message?.error($t('common.updateFailed'));
+  if (!error) {
+    window.$message?.success($t('common.updateSuccess'));
+    closeDrawer();
+    emit('submitted');
   }
 }
 </script>

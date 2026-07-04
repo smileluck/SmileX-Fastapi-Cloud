@@ -331,6 +331,11 @@ class DictService:
 
             # 更新字段
             update_data = dict_in.model_dump(exclude_unset=True)
+
+            # 非超级管理员不能将字典标记为系统内置（与 create_dict 保持一致）
+            if update_data.get("is_system") is True and not is_superuser:
+                update_data.pop("is_system", None)
+
             for field, value in update_data.items():
                 setattr(existing_dict, field, value)
 

@@ -152,6 +152,14 @@ class RoleService:
         """
         logger.info("创建角色，角色名: %s", role_create.name)
 
+        # 检查角色名称是否已存在
+        existing = await db.execute(
+            select(SysRole).where(SysRole.name == role_create.name)
+        )
+        if existing.scalar_one_or_none():
+            logger.warning("创建角色失败，角色名称已存在: %s", role_create.name)
+            raise ConflictError(msg="角色名称已存在")
+
         # 创建角色对象
         role = SysRole(
             name=role_create.name,
@@ -223,6 +231,20 @@ class RoleService:
         if role.is_system and not is_superuser:
             logger.warning("更新角色失败，不能修改系统内置角色，角色ID: %s", role_id)
             raise ForbiddenError(msg="不能修改系统内置角色")
+
+        # 检查角色名称是否与其他角色重复
+        if role_update.name and role_update.name != role.name:
+            duplicate = await db.execute(
+                select(SysRole).where(
+                    SysRole.name == role_update.name,
+                    SysRole.id != role_id,
+                )
+            )
+            if duplicate.scalar_one_or_none():
+                logger.warning(
+                    "更新角色失败，角色名称已存在: %s", role_update.name
+                )
+                raise ConflictError(msg="角色名称已存在")
 
         # 更新角色信息
         update_data = role_update.model_dump(exclude_unset=True)

@@ -33,10 +33,10 @@ class SysRoleCreate(BaseEntity):
     用于创建新角色时的请求数据
     """
 
-    name: str = Field(..., description="角色名称", max_length=100)
+    name: str = Field(..., description="角色名称", min_length=1, max_length=100)
     desc: Optional[str] = Field(None, description="角色描述")
     status: bool = Field(True, description="角色状态：1-启用，2-禁用")
-    sort: int = Field(0, description="排序号")
+    sort: int = Field(0, description="排序号", ge=0)
     data_scope: DataScopeEnum = Field(DataScopeEnum.SELF, description="数据范围：ALL/DEPT_AND_SUB/DEPT_ONLY/SELF")
     menu_ids: List[int] = Field([], description="菜单ID列表")
 
@@ -50,7 +50,7 @@ class SysRoleUpdate(BaseEntity):
     name: Optional[str] = Field(None, description="角色名称", max_length=100)
     desc: Optional[str] = Field(None, description="角色描述")
     status: BoolField = Field(None, description="角色状态：True-启用，False-禁用")
-    sort: Optional[int] = Field(None, description="排序号")
+    sort: Optional[int] = Field(None, description="排序号", ge=0)
     data_scope: Optional[DataScopeEnum] = Field(None, description="数据范围：ALL/DEPT_AND_SUB/DEPT_ONLY/SELF")
     menu_ids: Optional[List[int]] = Field(None, description="菜单ID列表")
 

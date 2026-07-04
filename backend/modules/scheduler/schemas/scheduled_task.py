@@ -12,15 +12,15 @@ from app.models.common.base import BaseEntity, BaseRespEntity, BoolField
 class ScheduledTaskCreate(BaseEntity):
     """创建定时任务"""
 
-    name: str = Field(..., description="任务名称")
-    task_key: str = Field(..., description="任务唯一标识（用户自定义实例名）")
+    name: str = Field(..., description="任务名称", min_length=1, max_length=100)
+    task_key: str = Field(..., description="任务唯一标识（用户自定义实例名）", min_length=1, max_length=100)
     description: str | None = Field(None, description="任务描述")
-    cron_expression: str = Field(..., description="Cron 表达式")
-    trigger_type: str = Field("cron", description="触发类型: cron/interval/date")
+    cron_expression: str = Field(..., description="Cron 表达式", min_length=1)
+    trigger_type: Literal["cron", "interval", "date"] = Field("cron", description="触发类型: cron/interval/date")
     trigger_params: str | None = Field(None, description="触发参数 JSON")
-    timeout: int = Field(300, description="超时时间(秒)")
-    max_retries: int = Field(0, description="最大重试次数")
-    concurrent_policy: str = Field("skip", description="并发策略: skip/replace/run")
+    timeout: int = Field(300, description="超时时间(秒)", ge=1)
+    max_retries: int = Field(0, description="最大重试次数", ge=0)
+    concurrent_policy: Literal["skip", "replace", "run"] = Field("skip", description="并发策略: skip/replace/run")
     params: dict | None = Field(None, description="通用任务参数 JSON")
     function_path: str | None = Field(None, description="模板函数路径（通用任务实例化时由前端传入）")
 
@@ -31,11 +31,11 @@ class ScheduledTaskUpdate(BaseEntity):
     name: str | None = Field(None, description="任务名称")
     description: str | None = Field(None, description="任务描述")
     cron_expression: str | None = Field(None, description="Cron 表达式")
-    trigger_type: str | None = Field(None, description="触发类型")
+    trigger_type: Literal["cron", "interval", "date"] | None = Field(None, description="触发类型")
     trigger_params: str | None = Field(None, description="触发参数 JSON")
-    timeout: int | None = Field(None, description="超时时间(秒)")
-    max_retries: int | None = Field(None, description="最大重试次数")
-    concurrent_policy: str | None = Field(None, description="并发策略")
+    timeout: int | None = Field(None, description="超时时间(秒)", ge=1)
+    max_retries: int | None = Field(None, description="最大重试次数", ge=0)
+    concurrent_policy: Literal["skip", "replace", "run"] | None = Field(None, description="并发策略")
     params: dict | None = Field(None, description="通用任务参数 JSON")
 
 

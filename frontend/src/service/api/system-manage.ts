@@ -30,7 +30,7 @@ export function fetchGetRole(roleId: number) {
 }
 
 /** create role */
-export function fetchCreateRole(role: Partial<Api.SystemManage.Role> & { menu_ids?: number[] }) {
+export function fetchCreateRole(role: Api.SystemManage.RoleCreateRequest) {
   return request<Api.SystemManage.Role>({
     url: '/admin/sys/role/add',
     method: 'post',
@@ -46,7 +46,7 @@ export function fetchCreateRole(role: Partial<Api.SystemManage.Role> & { menu_id
 }
 
 /** update role */
-export function fetchUpdateRole(roleId: number, role: Partial<Api.SystemManage.Role> & { menu_ids?: number[] }) {
+export function fetchUpdateRole(roleId: number, role: Api.SystemManage.RoleUpdateRequest) {
   return request<Api.SystemManage.Role>({
     url: `/admin/sys/role/${roleId}`,
     method: 'put',
@@ -205,7 +205,7 @@ export function fetchChangeUserPassword(userId: number, newPassword: string) {
 }
 
 /** create user */
-export function fetchCreateUser(user: Api.SystemManage.UserCreate & { role_ids?: number[] }) {
+export function fetchCreateUser(user: Api.SystemManage.UserCreateRequest) {
   return request<Api.SystemManage.User>({
     url: '/admin/sys/user/add',
     method: 'post',
@@ -223,7 +223,7 @@ export function fetchCreateUser(user: Api.SystemManage.UserCreate & { role_ids?:
 }
 
 /** update user */
-export function fetchUpdateUser(userId: number, user: Api.SystemManage.UserUpdate & { role_ids?: number[] }) {
+export function fetchUpdateUser(userId: number, user: Api.SystemManage.UserUpdateRequest) {
   return request<Api.SystemManage.User>({
     url: `/admin/sys/user/${userId}`,
     method: 'put',

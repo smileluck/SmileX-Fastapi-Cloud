@@ -25,9 +25,9 @@
     "semantic_hash": "8597ad1db16b994c2a8be22f05f9662e"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\main.py": {
-    "mtime": 1780468715.8769736,
-    "ast_hash": "73f6d81ab40ea67ac616bf58a850bac7",
-    "semantic_hash": "73f6d81ab40ea67ac616bf58a850bac7"
+    "mtime": 1782028516.2471564,
+    "ast_hash": "292786f16551b432b50c5981484aa6f2",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\settings.json": {
     "mtime": 1756350856.889842,
@@ -45,164 +45,14 @@
     "semantic_hash": "fc48370a58db8bf22814315414f7fb6c"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\env.py": {
-    "mtime": 1780468715.3201976,
-    "ast_hash": "4d849f69ddae0ca4829802022ee3738a",
-    "semantic_hash": "4d849f69ddae0ca4829802022ee3738a"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\0054cba63294_update_role_descript_to_desc.py": {
-    "mtime": 1780468715.3242881,
-    "ast_hash": "95247d9d1345a75609ab420425f9240b",
-    "semantic_hash": "95247d9d1345a75609ab420425f9240b"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\063fa99615d6_update_role_descript_to_desc.py": {
-    "mtime": 1780468715.3283608,
-    "ast_hash": "1716292d99b7ec39c21c3aee1d123a3c",
-    "semantic_hash": "1716292d99b7ec39c21c3aee1d123a3c"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\31d65bbf84bb_initial_migration.py": {
-    "mtime": 1780468715.3524637,
-    "ast_hash": "8b97574064c81313b191fe1d78ca1d76",
-    "semantic_hash": "8b97574064c81313b191fe1d78ca1d76"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\374cbaf336b5_add_operation_log_table.py": {
-    "mtime": 1780468715.3570654,
-    "ast_hash": "8cd4b08b66833af578ebbc855f554d63",
-    "semantic_hash": "8cd4b08b66833af578ebbc855f554d63"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\3bb7efe35943_update_role_descript_to_desc1.py": {
-    "mtime": 1780468715.3608677,
-    "ast_hash": "675fec1d61fb7884c4b9b8ebd1dd0ebe",
-    "semantic_hash": "675fec1d61fb7884c4b9b8ebd1dd0ebe"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\595b4f9bca68_update_user.py": {
-    "mtime": 1780468715.3701282,
-    "ast_hash": "95a053bac165af2bd713c5274e98bd22",
-    "semantic_hash": "95a053bac165af2bd713c5274e98bd22"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\5ef79f3941a4_add_login_log_table_and_response_result.py": {
-    "mtime": 1780468715.3749757,
-    "ast_hash": "2f8781d66423cf8105dc575929f241be",
-    "semantic_hash": "2f8781d66423cf8105dc575929f241be"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\8898846e731e_remove_email_unique.py": {
-    "mtime": 1780468715.392597,
-    "ast_hash": "ae10a978952c2bd7e80c33a7baadb01b",
-    "semantic_hash": "ae10a978952c2bd7e80c33a7baadb01b"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\8de335c0f786_add_notice_and_notice_read_tables.py": {
-    "mtime": 1780468715.3980083,
-    "ast_hash": "8a018cd81314e04f0a4abb36fabaf639",
-    "semantic_hash": "8a018cd81314e04f0a4abb36fabaf639"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\9a0589c7e855_update_system_user.py": {
-    "mtime": 1780468715.4081564,
-    "ast_hash": "028fd3e76ae562f63d201d878c4cdb23",
-    "semantic_hash": "028fd3e76ae562f63d201d878c4cdb23"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\a1b2c3d4e5f6_remove_salt_column.py": {
-    "mtime": 1780468715.4134433,
-    "ast_hash": "cd4115754b65b3e263399dbeef71af0f",
-    "semantic_hash": "cd4115754b65b3e263399dbeef71af0f"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\a3b4c5d6e7f8_seed_ip_blacklist_menu_and_config.py": {
-    "mtime": 1780468715.4180279,
-    "ast_hash": "af1d1427ede90a525cb985490e866ec3",
-    "semantic_hash": "af1d1427ede90a525cb985490e866ec3"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\a4ca5a267393_change_operation_log_user_id_to_bigint.py": {
-    "mtime": 1780468715.4225419,
-    "ast_hash": "4c6626ecdcabbb46664aa0c8f79ba157",
-    "semantic_hash": "4c6626ecdcabbb46664aa0c8f79ba157"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\a5b6c7d8e9f0_add_i18n_key_to_sys_menu.py": {
-    "mtime": 1780468715.4266534,
-    "ast_hash": "b63943423673d92a8edd50165b504179",
-    "semantic_hash": "b63943423673d92a8edd50165b504179"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\b1e2f3a4c5d6_seed_admin_log_menus.py": {
-    "mtime": 1780468715.4356444,
-    "ast_hash": "a6268d4598e4f100399248878cbe2603",
-    "semantic_hash": "a6268d4598e4f100399248878cbe2603"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\b3c4d5e6f7a8_create_sys_ip_blacklist.py": {
-    "mtime": 1780468715.4396708,
-    "ast_hash": "2ecea40fde23ee37c947b91603986ace",
-    "semantic_hash": "2ecea40fde23ee37c947b91603986ace"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\b6c7d8e9f0a1_fix_corrupted_menu_data.py": {
-    "mtime": 1780468715.4423506,
-    "ast_hash": "ab9829500640ebb1f4f00698d3a62489",
-    "semantic_hash": "ab9829500640ebb1f4f00698d3a62489"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\c1d2e3f4a5b6_fix_oversized_menu_ids.py": {
-    "mtime": 1780468715.4525192,
-    "ast_hash": "bb5f7c113d7cfe66e51ae5f76ae32c58",
-    "semantic_hash": "bb5f7c113d7cfe66e51ae5f76ae32c58"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\c2519d982254_update_config.py": {
-    "mtime": 1780468715.4550238,
-    "ast_hash": "56219d2af2c1d8b8759186807c68a675",
-    "semantic_hash": "56219d2af2c1d8b8759186807c68a675"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\c3d4e5f6a7b8_add_menu_is_system.py": {
-    "mtime": 1780468715.4600713,
-    "ast_hash": "eb1bf718f2f647d2d5ad09c6d9aadad8",
-    "semantic_hash": "eb1bf718f2f647d2d5ad09c6d9aadad8"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\c9d0e1f2a3b4_update_notice_menu_permissions.py": {
-    "mtime": 1780468715.469804,
-    "ast_hash": "629489bf5d3008f506db3ff644e84545",
-    "semantic_hash": "629489bf5d3008f506db3ff644e84545"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\d0e1f2a3b4c5_remove_redundant_notification_menu.py": {
-    "mtime": 1780468715.4736013,
-    "ast_hash": "181a22182907e2fddb14f6f723c0b80f",
-    "semantic_hash": "181a22182907e2fddb14f6f723c0b80f"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\d2e3f4a5b6c7_merge_icon_fields.py": {
-    "mtime": 1780468715.478067,
-    "ast_hash": "8a37a8e6be79ff46f310ff50d680d2e6",
-    "semantic_hash": "8a37a8e6be79ff46f310ff50d680d2e6"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\d682e7fcf71a_update_system_user_modules.py": {
-    "mtime": 1780468715.4860117,
-    "ast_hash": "a858e4a2c1c09b158072c4f322043be1",
-    "semantic_hash": "a858e4a2c1c09b158072c4f322043be1"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\e1f2a3b4c5d6_seed_online_user_menu.py": {
-    "mtime": 1780468715.4895487,
-    "ast_hash": "5a3669cd297d31f63f01b1d5e36fdc96",
-    "semantic_hash": "5a3669cd297d31f63f01b1d5e36fdc96"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\e3f4a5b6c7d8_merge_meta_title_i18n_key.py": {
-    "mtime": 1780468715.493912,
-    "ast_hash": "7c261b987d8360cdd93f82b4350589d2",
-    "semantic_hash": "7c261b987d8360cdd93f82b4350589d2"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\edc1e19c6cc2_add_sys_file_table.py": {
-    "mtime": 1780468715.5048876,
-    "ast_hash": "9bb093da4ab6c07665fc3e545dbbb429",
-    "semantic_hash": "9bb093da4ab6c07665fc3e545dbbb429"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\f2a3b4c5d6e7_seed_button_menus.py": {
-    "mtime": 1780468715.5145564,
-    "ast_hash": "0d2a2985a2c641d051dcb21b5ff38e5f",
-    "semantic_hash": "0d2a2985a2c641d051dcb21b5ff38e5f"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\f4a5b6c7d8e9_add_menu_meta_href.py": {
-    "mtime": 1780468715.5239742,
-    "ast_hash": "8aa7e24b39b3b115083af0c277f1dcf9",
-    "semantic_hash": "8aa7e24b39b3b115083af0c277f1dcf9"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\g5b6c7d8e9f0_add_menu_meta_keep_alive.py": {
-    "mtime": 1780468715.5355482,
-    "ast_hash": "a084877d0496c8a4a426aa6193c0f214",
-    "semantic_hash": "a084877d0496c8a4a426aa6193c0f214"
+    "mtime": 1782023650.8813708,
+    "ast_hash": "5b251faf338a66852746a964ad167d74",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\app\\models\\common\\base.py": {
-    "mtime": 1780468715.5469854,
-    "ast_hash": "0c173d9c5737fb18ac3f57b6f33f060f",
-    "semantic_hash": "0c173d9c5737fb18ac3f57b6f33f060f"
+    "mtime": 1780498702.0497246,
+    "ast_hash": "f01cac2de8de4f1f341e7b7868d18ed0",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\app\\models\\common\\mixin.py": {
     "mtime": 1780468715.550792,
@@ -210,9 +60,9 @@
     "semantic_hash": "088c97dbfa0e5c481104b8d58ea27bf7"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\app\\models\\common\\page.py": {
-    "mtime": 1780468715.5548031,
-    "ast_hash": "101ed2304210e128b67bec5fcc8e21ad",
-    "semantic_hash": "101ed2304210e128b67bec5fcc8e21ad"
+    "mtime": 1780556088.2483385,
+    "ast_hash": "34ba7a5c4bbdef54da0b7b603249c370",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\core\\config\\config.py": {
     "mtime": 1780468715.5609307,
@@ -340,14 +190,14 @@
     "semantic_hash": "2c22757e73258023214367625c1e41bc"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\core\\security\\rate_limit.py": {
-    "mtime": 1780468715.6663961,
-    "ast_hash": "10a34813e600337c8223e0bd11c7e5ba",
-    "semantic_hash": "10a34813e600337c8223e0bd11c7e5ba"
+    "mtime": 1780559159.010471,
+    "ast_hash": "73a97204912be53f78e8ca6cb5adda63",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\core\\security\\rate_limit_config.py": {
-    "mtime": 1780468715.670438,
-    "ast_hash": "e24cb38802f5122800b40af291f94910",
-    "semantic_hash": "e24cb38802f5122800b40af291f94910"
+    "mtime": 1780558993.747069,
+    "ast_hash": "ba91744db407debf58bc573d492cc3d7",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\core\\security\\sanitize.py": {
     "mtime": 1780468715.6739662,
@@ -360,9 +210,9 @@
     "semantic_hash": "5967be505ad88164687bfa0947446e92"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\core\\security\\oauth\\user_manager.py": {
-    "mtime": 1780468715.6586714,
-    "ast_hash": "74ff21a44cf6094c46df58c9a8740731",
-    "semantic_hash": "74ff21a44cf6094c46df58c9a8740731"
+    "mtime": 1782574129.8463826,
+    "ast_hash": "9d7b6d63dafa8165aa7ad1f364c1b247",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\core\\storage\\base.py": {
     "mtime": 1780468715.6782472,
@@ -398,11 +248,6 @@
     "mtime": 1780468715.7037742,
     "ast_hash": "02028f2028a3fa90415523bea0b2dae1",
     "semantic_hash": "02028f2028a3fa90415523bea0b2dae1"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\core\\utils\\session_cache.py": {
-    "mtime": 1780468715.7088068,
-    "ast_hash": "b5b5478a8757835cbefa6329af7616f6",
-    "semantic_hash": "b5b5478a8757835cbefa6329af7616f6"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\core\\utils\\session_utils.py": {
     "mtime": 1780468715.7126298,
@@ -500,14 +345,14 @@
     "semantic_hash": "315098401201367364ba95b8a2a92877"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\deps\\auth\\permission.py": {
-    "mtime": 1780468715.8830843,
-    "ast_hash": "1b07fa2e63014a08d5b329931b4b885f",
-    "semantic_hash": "1b07fa2e63014a08d5b329931b4b885f"
+    "mtime": 1780551891.4193597,
+    "ast_hash": "62a12b70eb8655af29d09dacad629170",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\deps\\auth\\user_manager.py": {
-    "mtime": 1780468715.8886096,
-    "ast_hash": "aff4011943e0f72359de403b05eac5f4",
-    "semantic_hash": "aff4011943e0f72359de403b05eac5f4"
+    "mtime": 1780555700.6180418,
+    "ast_hash": "eebf7dd30e1c6b8c9fe8c77f1a83cde9",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\deps\\auth\\__init__.py": {
     "mtime": 1780468715.8949,
@@ -520,9 +365,9 @@
     "semantic_hash": "b1dd2d3ac31c6ad02c332eb0ba892a76"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\endpoints\\ws.py": {
-    "mtime": 1780468715.9919915,
-    "ast_hash": "9ff87b40be1012ff89cdc5a18dee1462",
-    "semantic_hash": "9ff87b40be1012ff89cdc5a18dee1462"
+    "mtime": 1780551536.216499,
+    "ast_hash": "1f54e5b3f30be018e1af8d7aa3e85b63",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\endpoints\\__init__.py": {
     "mtime": 1780468715.9985633,
@@ -610,14 +455,14 @@
     "semantic_hash": "e5d3044354db5b0e0c8ca1643ed94102"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\endpoints\\sys\\user.py": {
-    "mtime": 1780468715.9802868,
-    "ast_hash": "d6ad7206d1f59f407cf6029a9766c45e",
-    "semantic_hash": "d6ad7206d1f59f407cf6029a9766c45e"
+    "mtime": 1782365139.8758373,
+    "ast_hash": "af7c2457de56a91839f9867f7ddcff70",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\endpoints\\sys\\__init__.py": {
-    "mtime": 1780468715.9853392,
-    "ast_hash": "3af7714d97e3618862de004abf4547a4",
-    "semantic_hash": "3af7714d97e3618862de004abf4547a4"
+    "mtime": 1782365410.6992993,
+    "ast_hash": "d398eb0c21aac70ba6b0bed79c2fc4f5",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\exports\\operation_log_export.py": {
     "mtime": 1780468716.0047023,
@@ -655,9 +500,9 @@
     "semantic_hash": "f0f35b94ca74704fc7ee157a75166632"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\schemas\\sys\\dict.py": {
-    "mtime": 1780468716.0469968,
-    "ast_hash": "8d52161ac7ad39461acdfaff493aab75",
-    "semantic_hash": "8d52161ac7ad39461acdfaff493aab75"
+    "mtime": 1783149315.681146,
+    "ast_hash": "d2dc5a2d3aa97021b64cd749af650c11",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\schemas\\sys\\export_task.py": {
     "mtime": 1780468716.0531936,
@@ -690,9 +535,9 @@
     "semantic_hash": "7b45d8929e0b9e4b566bb69f5a67c27b"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\schemas\\sys\\menu.py": {
-    "mtime": 1780468716.088267,
-    "ast_hash": "56a934b1a9e384ddc568678b09986495",
-    "semantic_hash": "56a934b1a9e384ddc568678b09986495"
+    "mtime": 1783149248.8195615,
+    "ast_hash": "601de868131d3ea8ceb3cee7ac9474e4",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\schemas\\sys\\monitor.py": {
     "mtime": 1780468716.0931275,
@@ -720,19 +565,19 @@
     "semantic_hash": "8c20373069e4161135de0b1f827c5cd7"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\schemas\\sys\\role.py": {
-    "mtime": 1780468716.1237895,
-    "ast_hash": "abd2018d8c8a7e47e89e7e5263e65dc1",
-    "semantic_hash": "abd2018d8c8a7e47e89e7e5263e65dc1"
+    "mtime": 1783149188.678513,
+    "ast_hash": "5a33235794ffbcfa3d251c6d4124d1db",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\schemas\\sys\\route.py": {
-    "mtime": 1780468716.12983,
-    "ast_hash": "503023f155aac527cef61452dc11d477",
-    "semantic_hash": "503023f155aac527cef61452dc11d477"
+    "mtime": 1782571428.312745,
+    "ast_hash": "28f108fdd716375ff8d60fde317346a9",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\schemas\\sys\\user.py": {
-    "mtime": 1780468716.1353495,
-    "ast_hash": "c57bc4e1c6c83b039c8a0608fe0e1fbf",
-    "semantic_hash": "c57bc4e1c6c83b039c8a0608fe0e1fbf"
+    "mtime": 1782365062.2316325,
+    "ast_hash": "5ac4fa6cc1c8dcc12681826af1f7c98e",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\schemas\\sys\\__init__.py": {
     "mtime": 1780468716.1411521,
@@ -745,9 +590,9 @@
     "semantic_hash": "f61051dbb917dbaac32cda5fb9710e98"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\dict_service.py": {
-    "mtime": 1780468716.1649632,
-    "ast_hash": "f1aea5daaf11ea43ddb9ecaf4edbac46",
-    "semantic_hash": "f1aea5daaf11ea43ddb9ecaf4edbac46"
+    "mtime": 1783148988.2227433,
+    "ast_hash": "cde4c6791740990af15e1d1b0253f8e4",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\export_task_service.py": {
     "mtime": 1780468716.1717124,
@@ -760,9 +605,9 @@
     "semantic_hash": "bcecf3461eed3598915f278e44b5647c"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\ip_blacklist_service.py": {
-    "mtime": 1780468716.1847723,
-    "ast_hash": "c0e2d0e90fade6b3e948ab61a2a942cb",
-    "semantic_hash": "c0e2d0e90fade6b3e948ab61a2a942cb"
+    "mtime": 1780551702.7836125,
+    "ast_hash": "5c5f5996a5419185982404ca3cfb3714",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\login_log_service.py": {
     "mtime": 1780468716.190352,
@@ -775,9 +620,9 @@
     "semantic_hash": "909b5ef355b1b1dc0342a52ae3501ac5"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\menu_service.py": {
-    "mtime": 1780468716.2021594,
-    "ast_hash": "8778ff09757b9978d72ff9387b7061d5",
-    "semantic_hash": "8778ff09757b9978d72ff9387b7061d5"
+    "mtime": 1782658913.2910767,
+    "ast_hash": "a7e993d65a2d99312f0842d14ae24f2c",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\monitor_service.py": {
     "mtime": 1780468716.210445,
@@ -790,9 +635,9 @@
     "semantic_hash": "e1ab1f2fb0ff173a2801bab290f8d365"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\online_user_service.py": {
-    "mtime": 1780468716.225935,
-    "ast_hash": "2583113d16ad6d4635483833639e78ba",
-    "semantic_hash": "2583113d16ad6d4635483833639e78ba"
+    "mtime": 1780551581.1833327,
+    "ast_hash": "dedec96491097d2862e10b51d59c4966",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\operation_log_service.py": {
     "mtime": 1780468716.2315214,
@@ -810,24 +655,24 @@
     "semantic_hash": "dd2fa376925e0578ce41ec714365cd4b"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\role_service.py": {
-    "mtime": 1780468716.2490609,
-    "ast_hash": "7d4a09922f9989bd65787d2b0be3223f",
-    "semantic_hash": "7d4a09922f9989bd65787d2b0be3223f"
+    "mtime": 1783148326.9422264,
+    "ast_hash": "143069cabebe9e471d83510aa7821733",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\route_service.py": {
-    "mtime": 1780468716.2561257,
-    "ast_hash": "661909336be281315ccfe991c0d18c28",
-    "semantic_hash": "661909336be281315ccfe991c0d18c28"
+    "mtime": 1782571443.9201896,
+    "ast_hash": "8109c8c5aa5ab20d1c32c2c55db1ae61",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\user_service.py": {
-    "mtime": 1780468716.26428,
-    "ast_hash": "3d5ccde10a6f59c25f49554df1097e2d",
-    "semantic_hash": "3d5ccde10a6f59c25f49554df1097e2d"
+    "mtime": 1783148345.9854271,
+    "ast_hash": "9f56b3b094db64430a31f823d9627b29",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\__init__.py": {
-    "mtime": 1780468716.2702415,
-    "ast_hash": "8a5045384c30b4c41f429ccb52b6f77a",
-    "semantic_hash": "8a5045384c30b4c41f429ccb52b6f77a"
+    "mtime": 1782365369.2343287,
+    "ast_hash": "5a0b5474998d9d54df2b48cb052f0a1d",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\app\\router.py": {
     "mtime": 1780468716.2998507,
@@ -835,9 +680,9 @@
     "semantic_hash": "0a60e7d9d332ec0cb9fc9d22623bcd4a"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\app\\deps\\auth\\user_manager.py": {
-    "mtime": 1780468716.274796,
-    "ast_hash": "ba8a981a5cf17766120b7fa9af0f224f",
-    "semantic_hash": "ba8a981a5cf17766120b7fa9af0f224f"
+    "mtime": 1780551502.2734487,
+    "ast_hash": "eff496326cfca2aaa96d923a14fec68d",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\app\\deps\\auth\\__init__.py": {
     "mtime": 1780468716.281693,
@@ -1335,9 +1180,9 @@
     "semantic_hash": "b8a898a44624de05c764134917e0daaf"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\components\\advanced\\table-header-operation.vue": {
-    "mtime": 1779606193.229882,
-    "ast_hash": "de03021ee73c56162174be71904ca559",
-    "semantic_hash": "de03021ee73c56162174be71904ca559"
+    "mtime": 1782123277.164426,
+    "ast_hash": "f0d4a16b691896e49998f99f50a0061b",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\components\\common\\app-provider.vue": {
     "mtime": 1770111666.6760457,
@@ -1750,14 +1595,14 @@
     "semantic_hash": "862ee0734543cd44e10cdcb495e5c96d"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\locales\\langs\\en-us.ts": {
-    "mtime": 1780378299.5930414,
-    "ast_hash": "f7c08acef820b29ef93ee072cd80711e",
-    "semantic_hash": "f7c08acef820b29ef93ee072cd80711e"
+    "mtime": 1782661887.9391348,
+    "ast_hash": "8dd05914d0610bbff74f45d30cc2cef0",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\locales\\langs\\zh-cn.ts": {
-    "mtime": 1780378212.1921186,
-    "ast_hash": "424cdd13701759263ec85bcc3b7182be",
-    "semantic_hash": "424cdd13701759263ec85bcc3b7182be"
+    "mtime": 1782661872.5198667,
+    "ast_hash": "9539f9ffa086e96104401b59ce6edbe6",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\plugins\\app.ts": {
     "mtime": 1770111666.769519,
@@ -1800,19 +1645,19 @@
     "semantic_hash": "d66af33d2516dfea96235b2471e8eea3"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\router\\elegant\\imports.ts": {
-    "mtime": 1780471768.6408043,
-    "ast_hash": "f6bba8fc77c1aad3e4635ae16cbdd7bf",
-    "semantic_hash": "f6bba8fc77c1aad3e4635ae16cbdd7bf"
+    "mtime": 1782661765.8898947,
+    "ast_hash": "2b0454a05eccfbc4e24a11834aff9086",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\router\\elegant\\routes.ts": {
-    "mtime": 1780471768.8815875,
-    "ast_hash": "a496457a949689c8bd66ac1bd1993b59",
-    "semantic_hash": "a496457a949689c8bd66ac1bd1993b59"
+    "mtime": 1782661766.1649747,
+    "ast_hash": "4d196dfa26e026f795af02d2174150bb",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\router\\elegant\\transform.ts": {
-    "mtime": 1780471768.6211123,
-    "ast_hash": "472a10010b159e3b78877cb087140e50",
-    "semantic_hash": "472a10010b159e3b78877cb087140e50"
+    "mtime": 1782661765.8534174,
+    "ast_hash": "0fdb63cb0732c8d165577b721b489c29",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\router\\guard\\index.ts": {
     "mtime": 1770111666.7795577,
@@ -1880,9 +1725,9 @@
     "semantic_hash": "b8a1aadc92fb67d723fc49a785b7d981"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\service\\api\\system-manage.ts": {
-    "mtime": 1780308572.933418,
-    "ast_hash": "847cfc9d288a64babf6d8b69a860345f",
-    "semantic_hash": "847cfc9d288a64babf6d8b69a860345f"
+    "mtime": 1783148905.585976,
+    "ast_hash": "62e4f237bc6fd07c3bbc303caa6f957a",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\service\\request\\index.ts": {
     "mtime": 1780155420.4125996,
@@ -1910,9 +1755,9 @@
     "semantic_hash": "d80424df58b2cd89516b2a6ffc68112f"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\store\\modules\\auth\\index.ts": {
-    "mtime": 1780154638.9341898,
-    "ast_hash": "82adb1cd7206cb7d9c8a0576f2667b78",
-    "semantic_hash": "82adb1cd7206cb7d9c8a0576f2667b78"
+    "mtime": 1781664842.0791051,
+    "ast_hash": "61bacb2fb4091d00c96bb41375ba5fc5",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\store\\modules\\auth\\shared.ts": {
     "mtime": 1770111666.7964852,
@@ -1985,9 +1830,9 @@
     "semantic_hash": "93b35fb8d94f973942adb8d53d42b932"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\typings\\app.d.ts": {
-    "mtime": 1780378248.890732,
-    "ast_hash": "524dd249a04f42c7118e29e054ef7ec2",
-    "semantic_hash": "524dd249a04f42c7118e29e054ef7ec2"
+    "mtime": 1782656128.5709925,
+    "ast_hash": "a976e9564299faa34fef3f4373977f94",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\typings\\common.d.ts": {
     "mtime": 1770111666.8223405,
@@ -1995,14 +1840,14 @@
     "semantic_hash": "6da5990c968280e250078f61b83683a4"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\typings\\components.d.ts": {
-    "mtime": 1780302011.743121,
-    "ast_hash": "ee48fb6bea0cc45370ad183bdf752447",
-    "semantic_hash": "ee48fb6bea0cc45370ad183bdf752447"
+    "mtime": 1781665464.2437613,
+    "ast_hash": "9e602381b4e8433edf03433b4f7164e7",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\typings\\elegant-router.d.ts": {
-    "mtime": 1780471768.6211123,
-    "ast_hash": "ba2c168acbaa5dc230ddb2d202d8025d",
-    "semantic_hash": "ba2c168acbaa5dc230ddb2d202d8025d"
+    "mtime": 1782661765.8544543,
+    "ast_hash": "122ca28b98857e39e8fdcd84673417b9",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\typings\\global.d.ts": {
     "mtime": 1770111666.8238673,
@@ -2020,9 +1865,9 @@
     "semantic_hash": "06cb0f87d700fb56f8766283835c5628"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\typings\\storage.d.ts": {
-    "mtime": 1770111666.8264103,
-    "ast_hash": "ad57e9f15456d915f48eeeafee76d77a",
-    "semantic_hash": "ad57e9f15456d915f48eeeafee76d77a"
+    "mtime": 1782571471.6570425,
+    "ast_hash": "11628404c6c6c247080946a9cc934cdc",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\typings\\union-key.d.ts": {
     "mtime": 1770111666.8269224,
@@ -2065,9 +1910,9 @@
     "semantic_hash": "d3075d4237440f0d70ab268a5e2bead3"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\typings\\api\\system-manage.d.ts": {
-    "mtime": 1780309117.2280889,
-    "ast_hash": "ee41cc3d48efb88444190ea4cab7c85a",
-    "semantic_hash": "ee41cc3d48efb88444190ea4cab7c85a"
+    "mtime": 1783150507.1585498,
+    "ast_hash": "c882fb38b1989b426244c95f98174636",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\utils\\agent.ts": {
     "mtime": 1770111666.829465,
@@ -2145,9 +1990,9 @@
     "semantic_hash": "c51893a58731d09a1c76f30d809e4999"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\log\\login-log\\index.vue": {
-    "mtime": 1779606150.3426301,
-    "ast_hash": "d3c507f6f828adeb393f130293d073a0",
-    "semantic_hash": "d3c507f6f828adeb393f130293d073a0"
+    "mtime": 1781666460.1644053,
+    "ast_hash": "dd2291092efb2c609ba14c9b22301309",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\log\\login-log\\modules\\login-log-search.vue": {
     "mtime": 1780368516.1404257,
@@ -2165,9 +2010,9 @@
     "semantic_hash": "7b7599784ff3583da85ec7e8b249f85c"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\log\\operation-log\\index.vue": {
-    "mtime": 1780070133.8806062,
-    "ast_hash": "827d9e546ae3d9f4fda67e7c93e36b2a",
-    "semantic_hash": "827d9e546ae3d9f4fda67e7c93e36b2a"
+    "mtime": 1781666461.2177863,
+    "ast_hash": "ceaddb514eb3be24693e1aa6e4521752",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\log\\operation-log\\modules\\operation-log-detail-drawer.vue": {
     "mtime": 1779356963.3817341,
@@ -2180,14 +2025,14 @@
     "semantic_hash": "9c2bed373f863ca10a072b3e91adb552"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\announcement\\index.vue": {
-    "mtime": 1780070228.5065594,
-    "ast_hash": "7988c868f909e1c074511cea7e88228e",
-    "semantic_hash": "7988c868f909e1c074511cea7e88228e"
+    "mtime": 1782123036.874228,
+    "ast_hash": "2b49d4bfa65bf42b3e7701d1ff2adc55",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\announcement\\modules\\notice-operate-drawer.vue": {
-    "mtime": 1780068338.608589,
-    "ast_hash": "7ef27b67842eabe97b12497d883fd92c",
-    "semantic_hash": "7ef27b67842eabe97b12497d883fd92c"
+    "mtime": 1782654304.4406526,
+    "ast_hash": "80e4925c860c5a5a32e868479756e80e",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\announcement\\modules\\notice-search.vue": {
     "mtime": 1779966727.8308027,
@@ -2195,14 +2040,14 @@
     "semantic_hash": "da76f5e8538e085217dde90c710e638f"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\config\\index.vue": {
-    "mtime": 1779606112.843039,
-    "ast_hash": "c484b329694b0b66cab5c34640f369be",
-    "semantic_hash": "c484b329694b0b66cab5c34640f369be"
+    "mtime": 1782654323.1667047,
+    "ast_hash": "87fccb4227c08e99bc43f1baeb8359a6",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\config\\modules\\config-operate-drawer.vue": {
-    "mtime": 1780068979.7792983,
-    "ast_hash": "cf923bfaa9ad34ad3bf1b2f550ce5f82",
-    "semantic_hash": "cf923bfaa9ad34ad3bf1b2f550ce5f82"
+    "mtime": 1782654352.253595,
+    "ast_hash": "6527e1928c723d81b3677d15c534867e",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\config\\modules\\config-search.vue": {
     "mtime": 1779966761.2627673,
@@ -2210,9 +2055,9 @@
     "semantic_hash": "f204e549ceddb7891414eadbb674a295"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\dict\\index.vue": {
-    "mtime": 1780070593.3053982,
-    "ast_hash": "5310c2b3d56e7cce13fde6c000ffde63",
-    "semantic_hash": "5310c2b3d56e7cce13fde6c000ffde63"
+    "mtime": 1781666465.3978355,
+    "ast_hash": "7e1ae04c529b143ab64d73b8e74e3642",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\dict\\modules\\dict-item-operate-drawer.vue": {
     "mtime": 1774506998.937716,
@@ -2230,14 +2075,14 @@
     "semantic_hash": "eeb848f9665c3a144e3ccb66ac0151e0"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\file\\index.vue": {
-    "mtime": 1780070521.0733802,
-    "ast_hash": "30893f6afca112b5ccb0455012aac9f4",
-    "semantic_hash": "30893f6afca112b5ccb0455012aac9f4"
+    "mtime": 1781666468.5065546,
+    "ast_hash": "3b4d10b98be7bbe8843d6decd6f1d994",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\file\\modules\\file-preview-modal.vue": {
-    "mtime": 1780070188.413966,
-    "ast_hash": "f9493c51f879872b9571e8551246d6c6",
-    "semantic_hash": "f9493c51f879872b9571e8551246d6c6"
+    "mtime": 1782655034.3960104,
+    "ast_hash": "4d5c1cb522a76c6f348cc85dafb6c127",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\file\\modules\\file-search.vue": {
     "mtime": 1779977291.6274729,
@@ -2250,9 +2095,9 @@
     "semantic_hash": "9f321da134f84a8e0437072500caf6f7"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\ip-blacklist\\index.vue": {
-    "mtime": 1779615890.314865,
-    "ast_hash": "79303d3cfe3d54d19320b225fb606b3f",
-    "semantic_hash": "79303d3cfe3d54d19320b225fb606b3f"
+    "mtime": 1782123049.426895,
+    "ast_hash": "eca2e0edd49b62020d9d70fe86a363d9",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\ip-blacklist\\modules\\ip-blacklist-operate-drawer.vue": {
     "mtime": 1780068758.5964413,
@@ -2265,14 +2110,14 @@
     "semantic_hash": "d8f279cd4b7e05529de74aea01b95225"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\menu\\index.vue": {
-    "mtime": 1780069032.507146,
-    "ast_hash": "6b006e937431d56230247f9863c09a58",
-    "semantic_hash": "6b006e937431d56230247f9863c09a58"
+    "mtime": 1782656258.2170527,
+    "ast_hash": "e25e147df437267931cf770eee37db5f",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\menu\\modules\\menu-operate-modal.vue": {
-    "mtime": 1780069010.6520731,
-    "ast_hash": "ef13a53f75baae0646c63dc98572ca7e",
-    "semantic_hash": "ef13a53f75baae0646c63dc98572ca7e"
+    "mtime": 1782660168.3442423,
+    "ast_hash": "1d0d0df74d2a16e24c9416fb69d054f5",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\menu\\modules\\shared.ts": {
     "mtime": 1780046196.00577,
@@ -2280,19 +2125,19 @@
     "semantic_hash": "a1d58febdf8e3d2577690635a3eac228"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\role\\index.vue": {
-    "mtime": 1780308485.4929054,
-    "ast_hash": "e4ef873f438e16852c2d9c161b208a59",
-    "semantic_hash": "e4ef873f438e16852c2d9c161b208a59"
+    "mtime": 1782654225.719339,
+    "ast_hash": "7aa476b91a29e6d47bb8b0d201068422",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\role\\modules\\menu-auth-modal.vue": {
-    "mtime": 1780307925.8445075,
-    "ast_hash": "4942121cd977aaad930433def053329a",
-    "semantic_hash": "4942121cd977aaad930433def053329a"
+    "mtime": 1782656325.8475845,
+    "ast_hash": "cc5883590168423101dcf5c374ee1ab3",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\role\\modules\\role-operate-drawer.vue": {
-    "mtime": 1780309204.1433787,
-    "ast_hash": "8cdb0d0b4669c73663ccc5a96b7373c2",
-    "semantic_hash": "8cdb0d0b4669c73663ccc5a96b7373c2"
+    "mtime": 1782654254.3223584,
+    "ast_hash": "8cb7f7831fef5485f3f3875e58e5d4be",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\role\\modules\\role-search.vue": {
     "mtime": 1780308543.051054,
@@ -2300,14 +2145,14 @@
     "semantic_hash": "d889c38ba61a900031ff8cc1d734fef2"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\user\\index.vue": {
-    "mtime": 1780308721.9251113,
-    "ast_hash": "fbf2f2a57289db5ad32d3c675ca923af",
-    "semantic_hash": "fbf2f2a57289db5ad32d3c675ca923af"
+    "mtime": 1783148424.3005674,
+    "ast_hash": "a49eb08f54e5830f80867bf6231c0364",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\user\\modules\\user-operate-drawer.vue": {
-    "mtime": 1780309037.4711778,
-    "ast_hash": "968fbb9ead09871b3261895dee18c675",
-    "semantic_hash": "968fbb9ead09871b3261895dee18c675"
+    "mtime": 1783148935.273527,
+    "ast_hash": "1b97e5f6296c18aef24d943c3f5a28a7",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\user\\modules\\user-search.vue": {
     "mtime": 1779071768.7189562,
@@ -2375,9 +2220,9 @@
     "semantic_hash": "479a2d40fe632c0e836ed8909abfa3cc"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\_builtin\\login\\modules\\pwd-login.vue": {
-    "mtime": 1780157250.5627718,
-    "ast_hash": "e72248606f6e68d1d1ce7ae524e31614",
-    "semantic_hash": "e72248606f6e68d1d1ce7ae524e31614"
+    "mtime": 1782655216.2837002,
+    "ast_hash": "1dbc00c911a35a6d430e6309656276e9",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\_builtin\\login\\modules\\register.vue": {
     "mtime": 1770111666.8438337,
@@ -2530,9 +2375,9 @@
     "semantic_hash": "713e7a8239f893fd92c6b7d6fd9d7c9e"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\.claude\\commands\\generate-aidoc.md": {
-    "mtime": 1780240227.5035326,
-    "ast_hash": "916704751482118c4d6c990314db783f",
-    "semantic_hash": "916704751482118c4d6c990314db783f"
+    "mtime": 1780632563.3562975,
+    "ast_hash": "0d8b5bb4a5a877d5eac573c6bfa8303b",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\.trae\\documents\\\u4fee\u590d\u524d\u7aef\u7528\u6237\u7ba1\u7406\u4e0e\u540e\u7aef\u63a5\u53e3\u7684\u5bf9\u5e94\u5173\u7cfb.md": {
     "mtime": 1770275909.2619202,
@@ -2595,9 +2440,9 @@
     "semantic_hash": "6b1b01a6d167f84f42a6206a045c02a5"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\examples\\README.md": {
-    "mtime": 1779081121.9893353,
-    "ast_hash": "9da2de7ce66427f3d1b5a9ed670b693b",
-    "semantic_hash": "9da2de7ce66427f3d1b5a9ed670b693b"
+    "mtime": 1780489144.0615406,
+    "ast_hash": "8087de459bf2a7e2a1d660f7934863d1",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\examples\\backend\\endpoint-example.md": {
     "mtime": 1779081126.1639876,
@@ -2640,9 +2485,9 @@
     "semantic_hash": "56a872c5d0bb9a16f94470e32b6c51aa"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\frontend-backend\\boundary.md": {
-    "mtime": 1779354080.232126,
-    "ast_hash": "e9cf6ead03b074b0e1b94404aaf82273",
-    "semantic_hash": "e9cf6ead03b074b0e1b94404aaf82273"
+    "mtime": 1782375123.4400249,
+    "ast_hash": "08ac25554d069e6b6c5de36c179ccd08",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\frontend-backend\\frontend-rules.md": {
     "mtime": 1780069680.4451234,
@@ -2670,9 +2515,9 @@
     "semantic_hash": "9a9ab700351768d6108eadb6088f2b3b"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\memory\\business\\README.md": {
-    "mtime": 1780478798.4723077,
-    "ast_hash": "ea178efb0122b4fb6215a90ef08b31c6",
-    "semantic_hash": "ea178efb0122b4fb6215a90ef08b31c6"
+    "mtime": 1782634009.9613743,
+    "ast_hash": "495ec811f02bf42235ff9f5c068d85d8",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\memory\\business\\TEMPLATE.md": {
     "mtime": 1779081162.416376,
@@ -2914,106 +2759,6 @@
     "ast_hash": "35e85676b957258a0e712a309d127065",
     "semantic_hash": "35e85676b957258a0e712a309d127065"
   },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\0b693f6f3408_install_multi_tenant_plugin.py": {
-    "mtime": 1780468715.3333948,
-    "ast_hash": "d920f6c5d74266bf5bfe1ddb74963fbd",
-    "semantic_hash": "d920f6c5d74266bf5bfe1ddb74963fbd"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\0ecdb0f59bd3_install_multi_tenant_plugin.py": {
-    "mtime": 1780468715.3382213,
-    "ast_hash": "3f17c850bcd7f1c1490471b951ae16b1",
-    "semantic_hash": "3f17c850bcd7f1c1490471b951ae16b1"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\0f1d417b6369_remove_multi_tenant_plugin.py": {
-    "mtime": 1780468715.3433392,
-    "ast_hash": "ce371b576f45fe25ee802d52abcb5b3c",
-    "semantic_hash": "ce371b576f45fe25ee802d52abcb5b3c"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\238492412489_install_multi_tenant_plugin.py": {
-    "mtime": 1780468715.3468685,
-    "ast_hash": "35f0e29b18ec9076212a8e2d0d1c7e0b",
-    "semantic_hash": "35f0e29b18ec9076212a8e2d0d1c7e0b"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\4659f1a93c90_remove_multi_tenant_plugin.py": {
-    "mtime": 1780468715.3655531,
-    "ast_hash": "814fdd6f84d5bd2d6823a85e5d6fbde7",
-    "semantic_hash": "814fdd6f84d5bd2d6823a85e5d6fbde7"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\65c1afdd5be6_install_multi_tenant_plugin.py": {
-    "mtime": 1780468715.3790145,
-    "ast_hash": "840c4681b10afcf22e68661f308909f2",
-    "semantic_hash": "840c4681b10afcf22e68661f308909f2"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\699332cc0089_install_multi_tenant_plugin.py": {
-    "mtime": 1780468715.3840528,
-    "ast_hash": "1b67db4e4a8bb2f6f746d13a090b9206",
-    "semantic_hash": "1b67db4e4a8bb2f6f746d13a090b9206"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\76e0fc2dcf1a_install_multi_tenant_plugin.py": {
-    "mtime": 1780468715.388579,
-    "ast_hash": "eaa47c58aa027686993fc8d1eb668449",
-    "semantic_hash": "eaa47c58aa027686993fc8d1eb668449"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\99fe5c28d4be_install_multi_tenant_plugin.py": {
-    "mtime": 1780468715.4046035,
-    "ast_hash": "a84cf0ad64e7777edeb8501a75cc2124",
-    "semantic_hash": "a84cf0ad64e7777edeb8501a75cc2124"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\a737127368bd_install_multi_tenant_plugin.py": {
-    "mtime": 1780468715.4298844,
-    "ast_hash": "55e6e47db9ef55a516a3f8b8296b28bd",
-    "semantic_hash": "55e6e47db9ef55a516a3f8b8296b28bd"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\b713ee0de03e_remove_multi_tenant_plugin.py": {
-    "mtime": 1780468715.447643,
-    "ast_hash": "57942bf2ffa3ebf2e21efaf2fa8ebd0a",
-    "semantic_hash": "57942bf2ffa3ebf2e21efaf2fa8ebd0a"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\c8befd8ddc3e_install_multi_tenant_plugin.py": {
-    "mtime": 1780468715.464609,
-    "ast_hash": "4e3503570bfcb1f4be1d4f94d4f7a7f7",
-    "semantic_hash": "4e3503570bfcb1f4be1d4f94d4f7a7f7"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\d4e5f6a7b8c9_drop_tenant_id_from_dict_config.py": {
-    "mtime": 1780468715.481956,
-    "ast_hash": "010865270df4d26a878bc35a867425ab",
-    "semantic_hash": "010865270df4d26a878bc35a867425ab"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\ec20748d2885_restore_notice_tables.py": {
-    "mtime": 1780468715.498776,
-    "ast_hash": "42ca1de52338f6ed7929654e214ff3c1",
-    "semantic_hash": "42ca1de52338f6ed7929654e214ff3c1"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\f15c128af6cb_remove_multi_tenant_plugin.py": {
-    "mtime": 1780468715.510461,
-    "ast_hash": "b5dd687cc4819df3bf9dbb94ede774c9",
-    "semantic_hash": "b5dd687cc4819df3bf9dbb94ede774c9"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\f42a896eda19_remove_multi_tenant_plugin.py": {
-    "mtime": 1780468715.5181007,
-    "ast_hash": "9ff9ea1e8bd22a62ad0e7496eea31037",
-    "semantic_hash": "9ff9ea1e8bd22a62ad0e7496eea31037"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\f8cc24898343_install_multi_tenant_plugin.py": {
-    "mtime": 1780468715.5269928,
-    "ast_hash": "c5d4e5001dacd0fdd2e859e1d2b16ca1",
-    "semantic_hash": "c5d4e5001dacd0fdd2e859e1d2b16ca1"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\ffbe6dad1139_remove_multi_tenant_plugin.py": {
-    "mtime": 1780468715.5310285,
-    "ast_hash": "ed9bfbca42a656dbe7ffbd819d88411d",
-    "semantic_hash": "ed9bfbca42a656dbe7ffbd819d88411d"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\h1i2j3k4l5m6_add_last_tenant_id_to_sys_user.py": {
-    "mtime": 1780468715.5396857,
-    "ast_hash": "b49f2eecbe88ab499c391357616b5912",
-    "semantic_hash": "b49f2eecbe88ab499c391357616b5912"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\i2j3k4l5m6n7_remove_role_code_column.py": {
-    "mtime": 1780468715.542737,
-    "ast_hash": "18286c7c480f1182e9f58d7bd7afbb56",
-    "semantic_hash": "18286c7c480f1182e9f58d7bd7afbb56"
-  },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\database\\models\\business\\user.py": {
     "mtime": 1780468715.7571692,
     "ast_hash": "83d2b57ea84d6748e33a76522a0ad1e0",
@@ -3065,9 +2810,9 @@
     "semantic_hash": "9a8e64b759031a453563b15f5ce8884b"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\database\\models\\sys\\menu.py": {
-    "mtime": 1780468715.8076625,
-    "ast_hash": "ef70b5f09b850e27a6eeadd58908ac6b",
-    "semantic_hash": "ef70b5f09b850e27a6eeadd58908ac6b"
+    "mtime": 1782571331.8505168,
+    "ast_hash": "faab1595e59cec04028b4e7bb4695e80",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\database\\models\\sys\\notice.py": {
     "mtime": 1780468715.811851,
@@ -3090,19 +2835,19 @@
     "semantic_hash": "7a6786815aacbeed48289e358f5fafa0"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\database\\models\\sys\\role.py": {
-    "mtime": 1780468715.8283334,
-    "ast_hash": "ef4b41b10a88cc600e99f363f1aaec7a",
-    "semantic_hash": "ef4b41b10a88cc600e99f363f1aaec7a"
+    "mtime": 1782364748.6296842,
+    "ast_hash": "147c820c12501163af6a28997f4db29c",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\database\\models\\sys\\user.py": {
-    "mtime": 1780468715.8348145,
-    "ast_hash": "7f8e3e77c1c5e295cc13aefd0fdb88cc",
-    "semantic_hash": "7f8e3e77c1c5e295cc13aefd0fdb88cc"
+    "mtime": 1782364796.3793645,
+    "ast_hash": "e47b7c0470795f02acb2c22ed4d8f5ba",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\database\\models\\sys\\__init__.py": {
-    "mtime": 1780468715.8390691,
-    "ast_hash": "f57a74b4579cd743fd385b9f4949269e",
-    "semantic_hash": "f57a74b4579cd743fd385b9f4949269e"
+    "mtime": 1782364778.54576,
+    "ast_hash": "766f1e40a97e4e9f1dac132517948eb0",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\schemas\\captcha.py": {
     "mtime": 1780468716.0323062,
@@ -3115,9 +2860,9 @@
     "semantic_hash": "c5bec279190e694bc82b1e54b8cf4858"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\alembic_utils.py": {
-    "mtime": 1780468716.314185,
-    "ast_hash": "7017731d4032380e52edf78e72edc539",
-    "semantic_hash": "7017731d4032380e52edf78e72edc539"
+    "mtime": 1780494326.2316773,
+    "ast_hash": "7051048be08ca61a73f30baf6f29fdd1",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\base.py": {
     "mtime": 1780468716.3212755,
@@ -3135,9 +2880,9 @@
     "semantic_hash": "c111c6181bd48ec3500fd8a5a843d29d"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\__init__.py": {
-    "mtime": 1780468716.580341,
-    "ast_hash": "0e3f89d644c14b173e7ef85cb94eb3e9",
-    "semantic_hash": "0e3f89d644c14b173e7ef85cb94eb3e9"
+    "mtime": 1780558348.454739,
+    "ast_hash": "0bdc87d46f6360f2bc583dd89254e7b0",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\__main__.py": {
     "mtime": 1780468716.5858722,
@@ -3150,9 +2895,9 @@
     "semantic_hash": "d50c87abfe091f0cc2a6d287ba447179"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\multi_tenant\\plugin.py": {
-    "mtime": 1780470772.466396,
-    "ast_hash": "cefcb3654b2889b2c2dfac8635155a77",
-    "semantic_hash": "cefcb3654b2889b2c2dfac8635155a77"
+    "mtime": 1782633963.6990206,
+    "ast_hash": "379fb4a71e539bd2c32e9d05e2afdb36",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\multi_tenant\\router.py": {
     "mtime": 1780468716.4298477,
@@ -3304,120 +3049,20 @@
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\plugin.py": {
-    "mtime": 1780468716.5172634,
-    "ast_hash": "56b6a089e707f22f89a6bac903e07475",
-    "semantic_hash": "56b6a089e707f22f89a6bac903e07475"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\router.py": {
-    "mtime": 1780468716.5219083,
-    "ast_hash": "3cc8538862bdbfa23d92c10765af1ae1",
-    "semantic_hash": "3cc8538862bdbfa23d92c10765af1ae1"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\__init__.py": {
-    "mtime": 1780468716.575307,
-    "ast_hash": "db19e86796379f1d78300200df16f042",
-    "semantic_hash": "db19e86796379f1d78300200df16f042"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\core\\registry.py": {
-    "mtime": 1780468716.4649227,
-    "ast_hash": "d59876ec4c5ad5492feffed70d239668",
-    "semantic_hash": "d59876ec4c5ad5492feffed70d239668"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\core\\scheduler.py": {
-    "mtime": 1780468716.473673,
-    "ast_hash": "bd6a349c27a327d845fad311d9d752a2",
-    "semantic_hash": "bd6a349c27a327d845fad311d9d752a2"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\core\\__init__.py": {
-    "mtime": 1780468716.4782317,
-    "ast_hash": "db19e86796379f1d78300200df16f042",
-    "semantic_hash": "db19e86796379f1d78300200df16f042"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\endpoints\\scheduled_task.py": {
-    "mtime": 1780468716.4843833,
-    "ast_hash": "07b91fc6847ed4472dc138e8ea39d6b7",
-    "semantic_hash": "07b91fc6847ed4472dc138e8ea39d6b7"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\endpoints\\task_log.py": {
-    "mtime": 1780468716.4884048,
-    "ast_hash": "2013fb8b035b6d4ea90dca776939ccd1",
-    "semantic_hash": "2013fb8b035b6d4ea90dca776939ccd1"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\endpoints\\__init__.py": {
-    "mtime": 1780468716.4939356,
-    "ast_hash": "db19e86796379f1d78300200df16f042",
-    "semantic_hash": "db19e86796379f1d78300200df16f042"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\models\\scheduled_task.py": {
-    "mtime": 1780468716.5010118,
-    "ast_hash": "4b9c7d0795dab55bdc2682ad066f0b03",
-    "semantic_hash": "4b9c7d0795dab55bdc2682ad066f0b03"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\models\\task_log.py": {
-    "mtime": 1780468716.5060117,
-    "ast_hash": "6261b1a4bca7322885a62861dfe26d93",
-    "semantic_hash": "6261b1a4bca7322885a62861dfe26d93"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\models\\__init__.py": {
-    "mtime": 1780468716.5125759,
-    "ast_hash": "db19e86796379f1d78300200df16f042",
-    "semantic_hash": "db19e86796379f1d78300200df16f042"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\schemas\\scheduled_task.py": {
-    "mtime": 1780468716.530087,
-    "ast_hash": "b99042bf9ca82fd56e79d052b34b657a",
-    "semantic_hash": "b99042bf9ca82fd56e79d052b34b657a"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\schemas\\task_log.py": {
-    "mtime": 1780468716.5357533,
-    "ast_hash": "2336cd8150958702c73d723fb7d9cd7e",
-    "semantic_hash": "2336cd8150958702c73d723fb7d9cd7e"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\schemas\\__init__.py": {
-    "mtime": 1780468716.5443125,
-    "ast_hash": "db19e86796379f1d78300200df16f042",
-    "semantic_hash": "db19e86796379f1d78300200df16f042"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\services\\scheduler_service.py": {
-    "mtime": 1780468716.5497582,
-    "ast_hash": "9a62728dce981677e1ab5368b7a20d24",
-    "semantic_hash": "9a62728dce981677e1ab5368b7a20d24"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\services\\task_log_service.py": {
-    "mtime": 1780468716.5543294,
-    "ast_hash": "d643751d3e46a1b924738483fd1a4281",
-    "semantic_hash": "d643751d3e46a1b924738483fd1a4281"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\services\\__init__.py": {
-    "mtime": 1780468716.5609014,
-    "ast_hash": "db19e86796379f1d78300200df16f042",
-    "semantic_hash": "db19e86796379f1d78300200df16f042"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\tasks\\builtin.py": {
-    "mtime": 1780468716.565681,
-    "ast_hash": "02ba0e898da85d618f9c136d51546acd",
-    "semantic_hash": "02ba0e898da85d618f9c136d51546acd"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\plugins\\scheduler\\tasks\\__init__.py": {
-    "mtime": 1780468716.5707717,
-    "ast_hash": "db19e86796379f1d78300200df16f042",
-    "semantic_hash": "db19e86796379f1d78300200df16f042"
-  },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\deploy\\deploy.sh": {
     "mtime": 1780302750.4623032,
     "ast_hash": "5b27aca1da0067bac6ece669f2883086",
     "semantic_hash": "5b27aca1da0067bac6ece669f2883086"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\doc\\db\\init.sql": {
-    "mtime": 1780383281.4741657,
-    "ast_hash": "9cb73cec674defe59ef7cc33748c655d",
-    "semantic_hash": "9cb73cec674defe59ef7cc33748c655d"
+    "mtime": 1780901978.637769,
+    "ast_hash": "7cb82440bedae73614a9e684a8658b8a",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\components\\custom\\slider-captcha.vue": {
-    "mtime": 1780156886.7945063,
-    "ast_hash": "7090856ef50b3172c0ab6bf7dd1a7e10",
-    "semantic_hash": "7090856ef50b3172c0ab6bf7dd1a7e10"
+    "mtime": 1782655210.4440646,
+    "ast_hash": "7704c3a96c0f301ad5a44a34588f304f",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\hooks\\business\\slider-captcha.ts": {
     "mtime": 1780154545.9420147,
@@ -3435,44 +3080,14 @@
     "semantic_hash": "7954b05a66de00c9e1c9adad9a8cdcba"
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\service\\api\\scheduler.ts": {
-    "mtime": 1780377950.1635325,
-    "ast_hash": "6206d851a4550cc7d3480af9284bf8e8",
-    "semantic_hash": "6206d851a4550cc7d3480af9284bf8e8"
+    "mtime": 1782028570.7771406,
+    "ast_hash": "69651d4cc6bd07c26c2a9a9041e72bbe",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\typings\\api\\scheduler.d.ts": {
-    "mtime": 1780377855.2913988,
-    "ast_hash": "c97a510085e6f513214e948d746617dc",
-    "semantic_hash": "c97a510085e6f513214e948d746617dc"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\scheduler\\index.vue": {
-    "mtime": 1780377918.2601871,
-    "ast_hash": "bac884738e2383a2a716737ed8c3692d",
-    "semantic_hash": "bac884738e2383a2a716737ed8c3692d"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\scheduler\\modules\\task-execution-log.vue": {
-    "mtime": 1780378064.7148957,
-    "ast_hash": "e70f74aa7128bf2c087ccd672d6c87ac",
-    "semantic_hash": "e70f74aa7128bf2c087ccd672d6c87ac"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\scheduler\\modules\\task-log-drawer.vue": {
-    "mtime": 1780378063.6622355,
-    "ast_hash": "bfe8d601e4c37819aa90c138d7628e1a",
-    "semantic_hash": "bfe8d601e4c37819aa90c138d7628e1a"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\scheduler\\modules\\task-operate-drawer.vue": {
-    "mtime": 1780378022.0731018,
-    "ast_hash": "6711159fec17a235f56368730847191e",
-    "semantic_hash": "6711159fec17a235f56368730847191e"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\scheduler\\modules\\task-search.vue": {
-    "mtime": 1780378021.0214918,
-    "ast_hash": "cb6c966c9c232e61d3c0ac63b06543cd",
-    "semantic_hash": "cb6c966c9c232e61d3c0ac63b06543cd"
-  },
-  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\scheduler-log\\index.vue": {
-    "mtime": 1780378331.4245684,
-    "ast_hash": "eceae37850b69daaaca03e4374d02b8e",
-    "semantic_hash": "eceae37850b69daaaca03e4374d02b8e"
+    "mtime": 1782039881.5979707,
+    "ast_hash": "79387402625d114edd97aa984f69a879",
+    "semantic_hash": ""
   },
   "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\memory\\business\\2026-05-31_multi_tenant_plugin.md": {
     "mtime": 1780238473.7824876,
@@ -3538,5 +3153,290 @@
     "mtime": 1780154402.3773115,
     "ast_hash": "e914227a241576d77d96971ca98c2d01",
     "semantic_hash": "e914227a241576d77d96971ca98c2d01"
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\0001_initial_schema.py": {
+    "mtime": 1782661824.81517,
+    "ast_hash": "a2e3c6724ff65a6d0967d846058c846f",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\0002_seed_data.py": {
+    "mtime": 1782661802.772245,
+    "ast_hash": "306eed8d804b1cc3315d9f70909dbbbe",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\0003_scheduled_task_params.py": {
+    "mtime": 1782028307.7135808,
+    "ast_hash": "e2f305155ac6cc892e7e76ab2188d984",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\0004_data_scope_permission.py": {
+    "mtime": 1782371119.7840354,
+    "ast_hash": "3041d4bab476cfe316f55cbe19186d5a",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\0005_menu_icon_type.py": {
+    "mtime": 1782571343.3118262,
+    "ast_hash": "c25d3c20399af391ba0eb4c3834ee15c",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\0006_dept_menu_and_tenant.py": {
+    "mtime": 1782638303.6959026,
+    "ast_hash": "0da0a0e4b08758b7348473fada17bc10",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\alembic\\versions\\0007_scheduler_menu_rename.py": {
+    "mtime": 1782661787.9026694,
+    "ast_hash": "2270ffa8bd8cb5861fc6360658295b72",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\core\\utils\\cache_decorator.py": {
+    "mtime": 1780559207.755301,
+    "ast_hash": "140a822a2d7e358de71856699a16a452",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\core\\utils\\memory_cache.py": {
+    "mtime": 1780559112.8680384,
+    "ast_hash": "c712faf48d350bd3094ce84fba99c765",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\database\\models\\sys\\dept.py": {
+    "mtime": 1782378786.9625905,
+    "ast_hash": "4424adc975cacbc4209bad01873a5552",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\database\\models\\sys\\scheduled_task.py": {
+    "mtime": 1782028293.543395,
+    "ast_hash": "b1e9fb87ff87383fccf322d2d6ddb089",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\database\\models\\sys\\task_log.py": {
+    "mtime": 1780557731.9366083,
+    "ast_hash": "6261b1a4bca7322885a62861dfe26d93",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\endpoints\\sys\\dept.py": {
+    "mtime": 1782365397.5635183,
+    "ast_hash": "a204fc871ae64efac615bc7cb2ecc4c0",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\schemas\\sys\\dept.py": {
+    "mtime": 1783149227.595116,
+    "ast_hash": "95fa37b7c4dbafae2913da288115019f",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\data_scope_service.py": {
+    "mtime": 1782364879.504191,
+    "ast_hash": "272fc54597617ef681dc2e8f7d485a46",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\admin\\services\\sys\\dept_service.py": {
+    "mtime": 1782365356.2322972,
+    "ast_hash": "1a1c6cf93010112e413d7fa722f167bc",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\seed.py": {
+    "mtime": 1780557870.2609978,
+    "ast_hash": "45bdd7004991e9abbf2b111b53be3b34",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\__init__.py": {
+    "mtime": 1780557731.9638317,
+    "ast_hash": "db19e86796379f1d78300200df16f042",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\core\\registry.py": {
+    "mtime": 1782039557.244797,
+    "ast_hash": "b7112c9fd63fac9e4e220a455e251cab",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\core\\scheduler.py": {
+    "mtime": 1782039606.759673,
+    "ast_hash": "b548c7e7255beb7e130fa4f0e095d3dd",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\core\\__init__.py": {
+    "mtime": 1780557731.9262757,
+    "ast_hash": "db19e86796379f1d78300200df16f042",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\endpoints\\scheduled_task.py": {
+    "mtime": 1782037528.770804,
+    "ast_hash": "28173f2c477dabed34d2a84adf4b941c",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\endpoints\\task_log.py": {
+    "mtime": 1780557731.9303274,
+    "ast_hash": "632f27378016e7659956b677ecb64828",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\endpoints\\__init__.py": {
+    "mtime": 1780557731.9324918,
+    "ast_hash": "db19e86796379f1d78300200df16f042",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\schemas\\scheduled_task.py": {
+    "mtime": 1783149353.3353066,
+    "ast_hash": "efcf77d260825da4b14220341ef2086b",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\schemas\\task_log.py": {
+    "mtime": 1780557731.948387,
+    "ast_hash": "9044b856e4123de90b91edfd9eeed465",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\schemas\\__init__.py": {
+    "mtime": 1780557731.9494226,
+    "ast_hash": "db19e86796379f1d78300200df16f042",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\services\\scheduler_service.py": {
+    "mtime": 1782039577.3337212,
+    "ast_hash": "a26dcbb4c4243d17fc293780a7cbf6ae",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\services\\task_log_service.py": {
+    "mtime": 1782028427.8532314,
+    "ast_hash": "e0e0033437a1b0e473b6e15eac240672",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\services\\__init__.py": {
+    "mtime": 1780557731.957105,
+    "ast_hash": "db19e86796379f1d78300200df16f042",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\tasks\\builtin.py": {
+    "mtime": 1780557731.9601216,
+    "ast_hash": "4d4c66ca6a4286927b031398246c392c",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\tasks\\generic.py": {
+    "mtime": 1782028508.313767,
+    "ast_hash": "4dc162ae13dc52fee59aa972eb8f996a",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\tasks\\rate_limit_config.py": {
+    "mtime": 1780558981.0905776,
+    "ast_hash": "db8230ea33695ea59ff46e91adeb5e47",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\modules\\scheduler\\tasks\\__init__.py": {
+    "mtime": 1780557731.9621346,
+    "ast_hash": "db19e86796379f1d78300200df16f042",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\backend\\scripts\\cleanup_duplicate_sessions.py": {
+    "mtime": 1782574168.3546083,
+    "ast_hash": "19051c05b212c0c87f8c5240b9d5a43c",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\components\\custom\\dict-select.vue": {
+    "mtime": 1782655172.588752,
+    "ast_hash": "ac47545decb7605e564695fffd6d3b3c",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\components\\custom\\dict-tag.vue": {
+    "mtime": 1780481817.9753604,
+    "ast_hash": "d7b70ebb3477abd5da580018fe885cb4",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\components\\custom\\dict-text.vue": {
+    "mtime": 1780481802.3373642,
+    "ast_hash": "867d16e0c947a5622cbf16666bee1409",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\hooks\\business\\dict.ts": {
+    "mtime": 1780481784.1229641,
+    "ast_hash": "c9d51109b7a3b21b423d383e6e4d8633",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\utils\\menu-button.ts": {
+    "mtime": 1782657691.537966,
+    "ast_hash": "ca53c0d934a129e31f79261277518fb4",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\demo\\dict\\index.vue": {
+    "mtime": 1780568964.790548,
+    "ast_hash": "c6431050f4d01d57f11cc1b344f16985",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\dept\\index.vue": {
+    "mtime": 1782654171.7354474,
+    "ast_hash": "b4e70b071236241d6f48734432873caf",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\manage\\dept\\modules\\dept-operate-drawer.vue": {
+    "mtime": 1782654203.3669958,
+    "ast_hash": "89b3e5487368b898dd8201468074b910",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\scheduler\\log\\index.vue": {
+    "mtime": 1782662089.925761,
+    "ast_hash": "4549e8dc51e56425dcf316ed132fe470",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\scheduler\\log\\modules\\task-log-search.vue": {
+    "mtime": 1782661765.5326045,
+    "ast_hash": "9734f35125cc1d959cbcf5e36b2daa33",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\scheduler\\task\\index.vue": {
+    "mtime": 1782661765.287152,
+    "ast_hash": "1998631f8ef7b5c7fb3326c7ef3f822c",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\scheduler\\task\\modules\\json-schema-form.vue": {
+    "mtime": 1782661765.369972,
+    "ast_hash": "e09c490f32ed35066dd313c78f7a54fd",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\scheduler\\task\\modules\\task-execution-log.vue": {
+    "mtime": 1782661765.3838995,
+    "ast_hash": "11331d35bac3ef52062eb916e9c882e0",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\scheduler\\task\\modules\\task-log-drawer.vue": {
+    "mtime": 1782661765.3730977,
+    "ast_hash": "b113908503ea60404b0c444679f18a51",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\scheduler\\task\\modules\\task-operate-drawer.vue": {
+    "mtime": 1782661765.3663938,
+    "ast_hash": "e799023ce44ad027eb642fb227106b83",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\frontend\\src\\views\\scheduler\\task\\modules\\task-search.vue": {
+    "mtime": 1782661765.3762195,
+    "ast_hash": "cb6c966c9c232e61d3c0ac63b06543cd",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\examples\\frontend\\dict-component-example.md": {
+    "mtime": 1780568870.531345,
+    "ast_hash": "96f5600cdf0ba3b39d4eb9de4d46fcc1",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\memory\\business\\2026-06-03_dict_components.md": {
+    "mtime": 1780489133.0364797,
+    "ast_hash": "e31db7a309be405cc25a59f153b04963",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\memory\\business\\2026-06-17_login_redirect_fix.md": {
+    "mtime": 1781664885.2609859,
+    "ast_hash": "d5e3bbaf933cfdc37567612c5483781d",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\memory\\business\\2026-06-25_data_scope_permission.md": {
+    "mtime": 1782375069.9410777,
+    "ast_hash": "faa44d7eee15c69ca5b72ad08d25a675",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\memory\\business\\2026-06-25_login_home_from_first_permission.md": {
+    "mtime": 1782361856.531433,
+    "ast_hash": "7b5e2f72eedc815d29c3b15157607763",
+    "semantic_hash": ""
+  },
+  "D:\\project\\SmileX\\SmileX-Fastapi-Cloud\\aiDoc\\memory\\business\\2026-06-27_login_misc_fixes.md": {
+    "mtime": 1782634000.9249716,
+    "ast_hash": "4e124a9ebbfd76a6679d68bf4b67f1fe",
+    "semantic_hash": ""
   }
 }

@@ -80,13 +80,13 @@ class SysMenuCreate(BaseEntity):
     """
 
     parent_id: Optional[int] = Field(None, description="父菜单ID，顶级菜单为None")
-    name: str = Field(..., description="菜单名称", max_length=100)
+    name: str = Field(..., description="菜单名称", min_length=1, max_length=100)
     path: Optional[str] = Field(None, description="路由路径", max_length=255)
     component: Optional[str] = Field(None, description="组件路径", max_length=255)
     redirect: Optional[str] = Field(None, description="重定向路径", max_length=255)
     permission: Optional[str] = Field(None, description="权限标识", max_length=100)
     meta_icon: Optional[str] = Field(None, description="路由图标", max_length=50)
-    meta_icon_type: int = Field(1, description="图标类型：1-iconify，2-本地")
+    meta_icon_type: int = Field(1, description="图标类型：1-iconify，2-本地", ge=1, le=2)
     meta_hidden: bool = Field(False, description="是否隐藏菜单")
     meta_affix: bool = Field(False, description="是否固定标签")
     meta_breadcrumb: bool = Field(True, description="是否显示面包屑")
@@ -95,7 +95,7 @@ class SysMenuCreate(BaseEntity):
     status: bool = Field(True, description="菜单状态：True-启用，False-禁用")
     type: MenuType = Field(MenuType.MENU, description="菜单类型")
     is_system: bool = Field(False, description="是否为系统内置菜单")
-    sort: int = Field(0, description="排序号")
+    sort: int = Field(0, description="排序号", ge=0)
 
 
 class SysMenuUpdate(BaseEntity):
@@ -111,7 +111,7 @@ class SysMenuUpdate(BaseEntity):
     redirect: Optional[str] = Field(None, description="重定向路径", max_length=255)
     permission: Optional[str] = Field(None, description="权限标识", max_length=100)
     meta_icon: Optional[str] = Field(None, description="路由图标", max_length=50)
-    meta_icon_type: Optional[int] = Field(None, description="图标类型：1-iconify，2-本地")
+    meta_icon_type: Optional[int] = Field(None, description="图标类型：1-iconify，2-本地", ge=1, le=2)
     meta_hidden: Optional[bool] = Field(None, description="是否隐藏菜单")
     meta_affix: Optional[bool] = Field(None, description="是否固定标签")
     meta_breadcrumb: Optional[bool] = Field(None, description="是否显示面包屑")
@@ -119,7 +119,7 @@ class SysMenuUpdate(BaseEntity):
     meta_keep_alive: Optional[bool] = Field(None, description="是否缓存路由")
     status: BoolField = Field(None, description="菜单状态：True-启用，False-禁用")
     type: Optional[MenuType] = Field(None, description="菜单类型")
-    sort: Optional[int] = Field(None, description="排序号")
+    sort: Optional[int] = Field(None, description="排序号", ge=0)
     is_system: Optional[bool] = Field(None, description="是否为系统内置菜单")
 
 

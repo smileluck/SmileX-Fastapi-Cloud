@@ -38,11 +38,14 @@ class SysDictCreate(BaseReqEntity):
     用于创建新字典时的请求数据
     """
 
-    name: str = Field(..., description="字典名称", max_length=100)
-    code: str = Field(..., description="字典编码", max_length=100)
+    name: str = Field(..., description="字典名称", min_length=1, max_length=100)
+    code: str = Field(..., description="字典编码", min_length=1, max_length=100)
     description: Optional[str] = Field(None, description="字典描述")
     status: bool = Field(True, description="字典状态：True-启用，False-禁用")
-    sort: int = Field(0, description="排序号")
+    sort: int = Field(0, description="排序号", ge=0)
+    is_system: bool = Field(
+        False, description="是否为系统内置字典：True-是，False-否（仅超级管理员可置 True）"
+    )
 
 
 class SysDictUpdate(BaseReqEntity):
@@ -54,7 +57,10 @@ class SysDictUpdate(BaseReqEntity):
     name: Optional[str] = Field(None, description="字典名称", max_length=100)
     description: Optional[str] = Field(None, description="字典描述")
     status: BoolField = Field(None, description="字典状态：True-启用，False-禁用")
-    sort: Optional[int] = Field(None, description="排序号")
+    sort: Optional[int] = Field(None, description="排序号", ge=0)
+    is_system: BoolField = Field(
+        None, description="是否为系统内置字典：True-是，False-否（仅超级管理员可置 True）"
+    )
 
 
 class SysDictSimpleResponse(BaseRespEntity):
@@ -126,12 +132,12 @@ class SysDictItemCreate(BaseReqEntity):
     """
 
     dict_id: int = Field(..., description="关联字典ID")
-    value: str = Field(..., description="字典项值", max_length=100)
-    label: str = Field(..., description="字典项文本", max_length=100)
+    value: str = Field(..., description="字典项值", min_length=1, max_length=100)
+    label: str = Field(..., description="字典项文本", min_length=1, max_length=100)
     description: Optional[str] = Field(None, description="字典项描述")
     ext_info: Optional[str] = Field(None, description="扩展信息(JSON格式)")
     status: bool = Field(True, description="字典项状态：True-启用，False-禁用")
-    sort: int = Field(0, description="排序号")
+    sort: int = Field(0, description="排序号", ge=0)
 
     @field_validator("ext_info")
     @classmethod
@@ -156,7 +162,7 @@ class SysDictItemUpdate(BaseReqEntity):
     description: Optional[str] = Field(None, description="字典项描述")
     ext_info: Optional[str] = Field(None, description="扩展信息(JSON格式)")
     status: BoolField = Field(None, description="字典项状态：True-启用，False-禁用")
-    sort: Optional[int] = Field(None, description="排序号")
+    sort: Optional[int] = Field(None, description="排序号", ge=0)
 
     @field_validator("ext_info")
     @classmethod

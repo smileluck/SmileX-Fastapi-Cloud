@@ -8,7 +8,9 @@
 
 ## 业务需求记忆
 
-暂无。
+详细索引见 [business/README.md](./business/README.md)。近期：
+
+- [2026-07-04 用户/角色管理缺陷修复 + 提交类型约束加固](./business/2026-07-04_user_role_manage_hardening.md) — 角色重名查重、create_user 加载 roles 修复 422、前端 flat-request 错误处理、User/Role 请求类型、Dict is_system 对齐、schema 校验加固
 
 ## 维护说明
 

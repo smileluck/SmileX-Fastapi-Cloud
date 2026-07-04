@@ -40,6 +40,23 @@ declare namespace Api {
     /** all role */
     type AllRole = Pick<Role, 'id' | 'name'>;
 
+    /** role create request (mirrors backend SysRoleCreate) */
+    type RoleCreateRequest = {
+      /** role name */
+      name: string;
+      /** role description */
+      desc?: string;
+      /** role status */
+      status: Common.EnableStatus | null;
+      /** data scope */
+      data_scope?: DataScope;
+      /** menu ids */
+      menu_ids?: number[];
+    };
+
+    /** role update request (mirrors backend SysRoleUpdate, all fields optional) */
+    type RoleUpdateRequest = Partial<RoleCreateRequest>;
+
     /**
      * user gender
      *
@@ -90,20 +107,40 @@ declare namespace Api {
       new_password: string;
     };
 
-    /** user create */
-    type UserCreate = Pick<User, 'username' | 'nickname' | 'phone' | 'email' | 'status'> & {
+    /** user create request (mirrors backend SysUserCreate; payload sent on the wire) */
+    type UserCreateRequest = {
+      /** user name */
+      username: string;
       /** user password */
       password: string;
-      /** user role name collection */
-      userRoles: string[];
+      /** user nick name */
+      nickname: string;
+      /** user phone */
+      phone?: string;
+      /** user email */
+      email?: string;
+      /** user status */
+      status: Common.EnableStatus | null;
+      /** role ids (resolved from userRoles at the call site) */
+      role_ids: number[];
       /** dept id */
       dept_id?: number | null;
     };
 
-    /** user update */
-    type UserUpdate = Pick<User, 'username' | 'nickname' | 'phone' | 'email' | 'status'> & {
-      /** user role name collection */
-      userRoles: string[];
+    /** user update request (mirrors backend SysUserUpdate) */
+    type UserUpdateRequest = {
+      /** user name */
+      username?: string;
+      /** user nick name */
+      nickname?: string;
+      /** user phone */
+      phone?: string;
+      /** user email */
+      email?: string;
+      /** user status */
+      status?: Common.EnableStatus | null;
+      /** role ids (resolved from userRoles at the call site) */
+      role_ids?: number[];
       /** dept id */
       dept_id?: number | null;
     };

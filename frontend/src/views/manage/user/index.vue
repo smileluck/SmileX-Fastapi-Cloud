@@ -173,23 +173,22 @@ async function handleBatchDelete() {
     return;
   }
 
-  try {
-    for (const id of checkedRowKeys.value) {
-      await fetchDeleteUser(Number(id));
+  // flat request 不抛异常，需显式判断 error；任一失败即停止，避免部分失败仍触发刷新
+  for (const id of checkedRowKeys.value) {
+    const { error } = await fetchDeleteUser(Number(id));
+    if (error) {
+      console.error('Batch delete users failed:', error);
+      return;
     }
-    onBatchDeleted();
-  } catch (error) {
-    message.error($t('common.deleteFailed'));
-    console.error('Batch delete users failed:', error);
   }
+  onBatchDeleted();
 }
 
 async function handleDelete(id: number) {
-  try {
-    await fetchDeleteUser(id);
+  const { error } = await fetchDeleteUser(id);
+  if (!error) {
     onDeleted();
-  } catch (error) {
-    message.error($t('common.deleteFailed'));
+  } else {
     console.error('Delete user failed:', error);
   }
 }
