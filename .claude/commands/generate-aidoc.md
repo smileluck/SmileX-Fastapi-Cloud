@@ -22,6 +22,7 @@ description: 分析项目代码库并生成 AGENTS.MD + aiDoc/ 分层约束文�
 | `--scope frontend` | 只重新生成 `frontend-backend/frontend-rules.md`、`frontend-backend/frontend-utils.md`、`examples/frontend/` |
 | `--scope relations` | 只重新生成 `relations/` 下 3 个文件 |
 | `--scope memory` | 只重新生成 `memory/` 下文件 |
+| `--scope core` | 只重新生成 `AGENTS.MD` + `aiDoc/README.md`（加载契约与路由层） |
 | `--dry-run` | 只输出阶段 1 探测结果和生成计划，不写文件 |
 
 **增量更新规则**（`--incremental` 时适用）：
@@ -29,6 +30,7 @@ description: 分析项目代码库并生成 AGENTS.MD + aiDoc/ 分层约束文�
 - 先读取已有 aiDoc 文件，再用 `git diff` 判断自上次更新以来哪些代码目录有变化
 - 只重新生成受影响范围内的文件
 - 用户手动调优过的内容（非 AI 生成标记）应尽量保留
+- 路由表是跨文件元数据：若 `aiDoc/` 下新增/删除文件，即便老文件 last-updated 未变，也必须重生成 `aiDoc/README.md` 的「常用入口」与任务路由表
 
 ---
 
@@ -38,23 +40,13 @@ description: 分析项目代码库并生成 AGENTS.MD + aiDoc/ 分层约束文�
 
 ### 阶段 1：项目探测
 
-#### 1.1 优先使用 graphify
-
-若 `graphify-out/graph.json` 存在：
-- 运行 `graphify query "project architecture and module structure"` 获取整体架构
-- 运行 `graphify query "frontend-backend module mapping"` 获取前后端模块映射
-- 运行 `graphify path "backend" "frontend"` 获取跨栈关系
-- 用 graphify 结果替代部分手工 Glob/Grep 探索，跳过 1.2–1.3 中已被 graphify 覆盖的探测项
-
-若 graphify 不存在，继续下面的手工探测。
-
-#### 1.2 项目结构探测
+#### 1.1 项目结构探测
 
 - 列出根目录下的顶层目录和关键文件
 - 识别是否有前端/后端/全栈目录分离
 - 扫描每个顶层目录的子目录结构（深度 2-3 层即可）
 
-#### 1.3 技术栈识别
+#### 1.2 技术栈识别
 
 读取以下文件（如存在）提取技术栈信息：
 
@@ -88,7 +80,7 @@ description: 分析项目代码库并生成 AGENTS.MD + aiDoc/ 分层约束文�
 
 未覆盖的框架通过依赖名 + 目录结构综合判断。
 
-#### 1.4 代码模式探测
+#### 1.3 代码模式探测
 
 - 后端：读取 2-3 个典型的 endpoint/controller、service、model 文件，识别分层模式
 - 前端：读取 2-3 个典型的页面组件、API 封装、状态管理文件，识别组件模式
@@ -102,7 +94,7 @@ description: 分析项目代码库并生成 AGENTS.MD + aiDoc/ 分层约束文�
 2. 最近修改的模块：更能反映当前代码风格（用 `git log --format="" --name-only` 辅助判断）
 3. 特性丰富的模块：包含分页、认证、关联关系等特性，覆盖面更广
 
-#### 1.5 项目类型判定
+#### 1.4 项目类型判定
 
 根据探测结果，判定项目类型：
 
@@ -151,22 +143,28 @@ description: 分析项目代码库并生成 AGENTS.MD + aiDoc/ 分层约束文�
 
 ## 目的
 
-本文件是本仓库内 AI 协作规则的唯一真源。
+本文件是本仓库内 AI 协作规则的唯一真源，只承载所有 AI 必须始终知道的最小高层规则。细节按任务路由到 `aiDoc/`。
 
-[工具目录].codex/[/].claude/[/].cursor/[/].trae/] 下的规则文件仅作为兼容适配层，不能再次演变成各自独立维护的 project rule 副本。
+## 加载模型
 
-## 读取顺序
+- **L0 自动加载**：根 `CLAUDE.md` 通过 `@AGENTS.md` 在每次会话自动 import 本文件。本文件不展开细节、不列文档清单。
+- **L1 任务路由**：`aiDoc/README.md` 是文档索引 + "任务→必读文档"路由表的唯一真源。接到任务先查路由表，决定本次读哪些子文档。
+- **L2 按需深读**：路由表指向的 `aiDoc/` 具体子文档。
+- **冲突优先级**（仓库内任务）：`AGENTS.MD` > `aiDoc/README.md` > aiDoc 子文档 > 工具适配文件。
 
-1. AGENTS.MD
-2. aiDoc/README.md
-3. 按任务读取 aiDoc/ 子目录
-4. 仅在当前工具确实依赖时，再读取工具目录下的适配文件
+## 各工具加载方式
 
-若内容冲突，以 AGENTS.MD 为准。
+| 工具 | 加载方式 |
+|---|---|
+| Claude Code | 根 `CLAUDE.md @AGENTS.md` 原生 import；`.claude/commands/` 只放项目命令，不生成规则适配文件 |
+| Trae | `.trae/rules/project_rules.md` 薄适配层指向 `AGENTS.MD` |
+| Cursor / Codex / 其他 | 若不支持 `@import`，参照 `.trae` 模式新建薄适配文件，只写入口指针，不复制规则正文 |
+
+任何工具的私有目录都不应保存项目级规则副本。
 
 ## 仓库概览
 
-[根据探测结果列出根目录和关键子目录的职责]
+[根据探测结果列出根目录和关键子目录的职责。工具目录（.claude/.trae 等）不在本节列，其加载方式见上表]
 
 ## 工程规则
 
@@ -186,13 +184,14 @@ description: 分析项目代码库并生成 AGENTS.MD + aiDoc/ 分层约束文�
 [固定文本：long-term/ 稳定偏好，business/ 每次业务需求]
 
 ### 文档维护
-[固定文本：高层在 AGENTS.MD，细节在 aiDoc/]
+[固定文本：高层在 AGENTS.MD，细节在 aiDoc/；任务→必读文档路由表唯一维护于 aiDoc/README.md，不在 AGENTS.MD 列文档清单]
 
 ### 代码读取约束
 [固定文本：不读 node_modules/、.venv/、__pycache__/、vendor/ 等]
 
-## AI 文档索引
-[列出所有 aiDoc/ 文件路径]
+## 文档索引与任务路由
+
+详细索引、常用入口与"任务→必读文档"路由表统一维护在 `aiDoc/README.md`。本文件不再罗列，避免双份维护导致口径漂移。冲突时以本文件为准。
 ```
 
 ---
@@ -211,10 +210,12 @@ aiDoc/ 是本仓库的结构化 AI 文档层，用于把长期有效的项目上
 
 ## 使用方式
 
-1. 先读取 AGENTS.MD
-2. 再查看本索引文件
-3. 按任务只打开相关子目录
-4. 不再把项目级规则塞回工具私有目录
+1. `AGENTS.MD` 已随根 `CLAUDE.md @AGENTS.md` 自动加载（L0），始终生效
+2. 接到任务先查本文件「任务→必读文档」路由表，确定必读（L1）
+3. 不清楚某个文档讲什么时，再翻「常用入口」字典（L1）
+4. 按路由表打开 `aiDoc/` 下具体子文档深读（L2）
+
+不再把项目级规则复制到工具私有目录；Claude Code 走 `@import`，Trae 等走薄适配指针（见 `AGENTS.MD` 的「各工具加载方式」）。
 
 ## 目录说明
 
@@ -226,13 +227,27 @@ aiDoc/ 是本仓库的结构化 AI 文档层，用于把长期有效的项目上
 
 ## 常用入口
 
-[每个文件一行描述]
+[每个文件一行描述：文档路径 + 一句话用途，作为"按文档查字典"的索引]
+
+## 任务→必读文档 路由表
+
+[按任务类型给出必读文档列表，路径相对 aiDoc/。示例行：
+
+| 任务类型 | 必读文档 |
+|---|---|
+| 新建后端模块 / 接口 | modules/module-development.md、modules/backend-layer-rules.md、examples/backend/* |
+| 新建前端页面 / 功能 | frontend-backend/frontend-rules.md、frontend-backend/frontend-utils.md、examples/frontend/* |
+| 前后端契约 / 字段对接 | frontend-backend/boundary.md |
+| 用户提出新业务需求 | memory/business/TEMPLATE.md、memory/project-memory.md（必更新索引） |
+
+根据项目实际存在的 aiDoc 子文档补全所有任务类型。]
 
 ## 维护原则
 
 - 稳定规则放这里，不放到工具私有目录里
 - 临时会话草稿不要入库
 - 项目级规则先写进 AGENTS.MD，细节拆到 aiDoc/
+- 新增/删除 aiDoc/ 子文档时，必须同步更新本文件「常用入口」与任务路由表，否则等于未入库
 ```
 
 ---
@@ -529,36 +544,27 @@ aiDoc/memory/ 是 AI 的记忆层。
 
 ---
 
-### 阶段 3：适配层处理
+### 阶段 3：工具加载适配
 
-#### 3.1 扫描所有工具目录
+不是每个工具目录都要适配文件——先按工具是否支持 `@import` 分流。原则：规则正文只在 `AGENTS.MD` 与 `aiDoc/`，工具目录只承载该工具的原生加载入口与命令。
 
-不仅检查已知目录，还要扫描根目录下所有以 `.` 开头且可能包含规则文件的目录：
+#### 3.1 支持 `@import` 的工具（Claude Code 等）
 
-**已知工具目录**：
-- `.trae/rules/project_rules.md`
-- `.cursor/rules/`
-- `.claude/` 下的 CLAUDE.md 或规则文件
-- `.codex/` 下的规则文件
-- `.github/copilot-instructions.md`
-- `.windsurf/`
-- `.aider/`
+无需生成适配文件。只需确保根 `CLAUDE.md` 含一行 `@AGENTS.md`：
+- `.claude/` 目录只放 `commands/`（项目命令），**不生成**规则适配文件
+- 若根 `CLAUDE.md` 缺失或不含 `@AGENTS.md`，补一行即可
 
-**自动扫描**：
-```bash
-# 列出所有 .开头的目录中可能包含规则/指令的文件
-ls -d .*/  # 检查是否有遗漏的 AI 工具目录
-```
+#### 3.2 不支持 `@import` 的工具（Trae / Cursor / Codex / Copilot 等）
 
-对于任何包含规则/instructions 类文件的 `.` 目录，都应处理为适配层。
+仅对**实际存在**的工具目录生成/更新薄适配文件（不要为不存在的工具硬造目录）。逐个检查已知目录是否存在：`.trae/rules/`、`.cursor/rules/`、`.codex/`、`.github/copilot-instructions.md`、`.windsurf/`、`.aider/`，只对探测到的目录处理。
 
-#### 3.2 改写为薄适配层
+> 禁止用 `ls -d .*/` 扫描后给每个 `.` 目录都写适配文件——那会诱导生成冗余副本，违反"规则正文单一真源"。
 
-如果规则文件内容较长（超过 50 行），将其改写为薄适配层：
+薄适配文件模板（内容只写入口指针，**不含规则正文**）：
 
 ```markdown
 ---
-tool: [trae/cursor/claude/codex/copilot/windsurf/aider]
+tool: [trae/cursor/codex/copilot/windsurf/aider]
 role: compatibility-adapter
 canonical_source: /AGENTS.MD
 structured_context: /aiDoc
@@ -570,18 +576,20 @@ structured_context: /aiDoc
 
 ## 真实规则入口
 
-请按下面顺序读取：
-
 1. /AGENTS.MD
-2. /aiDoc/README.md
-3. /aiDoc/ 中与当前任务相关的文件
+2. /aiDoc/README.md（含"任务→必读文档"路由表，先查表再深读）
+3. 路由表指向的 /aiDoc/ 子文档
 
 ## 适配层约束
 
 - 不要在这里扩写项目级规则
-- 项目级规则变更时，先更新 /AGENTS.MD 与 /aiDoc/
+- 项目级规则变更时，先更新 /AGENTS.MD 与 /aiDoc/，本文件无需改
 - 工具目录只保留薄适配层职责
 ```
+
+#### 3.3 登记到 AGENTS.MD
+
+生成/更新适配文件后，在 `AGENTS.MD` 的「各工具加载方式」表登记该工具的路径与加载方式，保持该表是工具适配状态的唯一索引。
 
 ---
 
@@ -602,7 +610,7 @@ structured_context: /aiDoc
 
 ### 自动验证（必须执行）
 
-1. **索引完整性**：读取生成的 AGENTS.MD，提取 AI 文档索引中列出的所有路径，用 Glob 逐一确认文件存在
+1. **索引完整性**：读取生成的 `aiDoc/README.md`，从「常用入口」与「任务→必读文档」路由表提取所有 aiDoc 路径，用 Glob 逐一确认文件存在（AGENTS.MD 不再列文档索引）
 2. **路径真实性**：用 Grep 搜索所有生成文件中引用的代码路径（如 `app/models/xxx.py`），确认引用的文件存在
 3. **符号一致性**：用 Grep 搜索 boundary.md 中引用的类名/函数名（如 `PageRequest`、`ResponseModel`），确认在代码中确实存在
 4. **示例参考有效性**：提取所有示例文件的"真实参考文件"路径，用 Glob 确认存在
@@ -615,7 +623,7 @@ structured_context: /aiDoc
 ## 验证结果
 
 ### 通过
-- [x] 索引完整性：N/N 文件已索引
+- [x] 索引完整性：N/N 文件已索引（基于 aiDoc/README.md 路由表与常用入口）
 - [x] 路径真实性：N/N 路径有效
 - [x] 符号一致性：N/N 符号已验证
 - [x] 示例参考：N/N 参考文件存在
