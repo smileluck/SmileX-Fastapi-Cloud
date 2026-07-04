@@ -2,32 +2,35 @@
 
 ## 目的
 
-本文件是本仓库内 AI 协作规则的唯一真源。
+本文件是本仓库内 AI 协作规则的唯一真源，只承载所有 AI 必须始终知道的最小高层规则。细节按任务路由到 `aiDoc/`。
 
-`.codex/`、`.claude/`、`.cursor/`、`.trae/` 下的规则文件仅作为兼容适配层，不能再次演变成各自独立维护的 project rule 副本。
+## 加载模型
 
-## 读取顺序
+本仓库的 AI 上下文分三层加载：
 
-按下面顺序加载项目上下文：
+- **L0 自动加载**：根 `CLAUDE.md` 通过 `@AGENTS.md` 在每次会话自动 import 本文件。本文件刻意不展开细节、不列文档清单。
+- **L1 任务路由**：`aiDoc/README.md` 是文档索引 + "任务→必读文档"路由表的唯一真源。接到任务先查路由表，决定本次读哪些子文档。
+- **L2 按需深读**：路由表指向的 `aiDoc/` 具体子文档。
 
-1. `AGENTS.MD`
-2. `aiDoc/README.md`
-3. 按任务读取以下目录中的相关文件：
-   - `aiDoc/relations/`
-   - `aiDoc/modules/`
-   - `aiDoc/frontend-backend/`
-   - `aiDoc/examples/`
-   - `aiDoc/memory/`
-4. 仅在当前工具确实依赖时，再读取工具目录下的适配文件
+**冲突优先级**（仓库内任务）：`AGENTS.MD` > `aiDoc/README.md` > aiDoc 子文档 > 工具适配文件。根 `CLAUDE.md` 中除 `@AGENTS.md` import 外的内容属用户全局偏好；与 `AGENTS.MD` 冲突时，仓库内任务以 `AGENTS.MD` 为准。
 
-若内容冲突，以 `AGENTS.MD` 为准。
+## 各工具加载方式
+
+| 工具 | 加载方式 |
+|---|---|
+| Claude Code | 根 `CLAUDE.md @AGENTS.md` 原生 import；`.claude/commands/` 只放项目命令，不生成规则适配文件 |
+| Trae | `.trae/rules/project_rules.md` 薄适配层指向 `AGENTS.MD` |
+| Cursor / Codex / 其他 | 若不支持 `@import`，参照 `.trae` 模式新建薄适配文件，只写入口指针，不复制规则正文 |
+
+任何工具的私有目录都不应保存项目级规则副本——规则正文只在 `AGENTS.MD` 与 `aiDoc/`。
 
 ## 仓库概览
 
 - `backend/`: Python 3.11+ FastAPI + SQLAlchemy 2.0 后端
 - `frontend/`: Vue 3 + Vite + NaiveUI 前端
-- `aiDoc/`: AI 协作文档层
-- `.trae/`、`.claude/`、`.cursor/`: 工具兼容适配层
+- `aiDoc/`: AI 协作文档层（按任务路由加载，入口见 `aiDoc/README.md`）
+
+各 AI 工具目录（`.claude/`、`.trae/` 等）的加载方式见上文「各工具加载方式」。
 
 ## 工程规则
 
@@ -74,42 +77,15 @@
 - 结构关系放在 `aiDoc/relations/`
 - 示例写法放在 `aiDoc/examples/`
 - 长期记忆与业务记忆放在 `aiDoc/memory/`
-- 若项目级 AI 规则发生变化，先改 `AGENTS.MD`，再按需更新适配层
+- "任务→必读文档"路由表唯一维护于 `aiDoc/README.md`，不在 `AGENTS.MD` 罗列文档清单
+- 若项目级 AI 规则发生变化，先改 `AGENTS.MD`，再按需更新「各工具加载方式」
 
 ### 代码读取约束
 
 - 无论什么情况，都不要直接读取 `node_modules/`、`.venv/`、`__pycache__/` 中的代码
 - 如需了解第三方库行为，优先查看项目源码中的调用方式、锁文件、配置文件、官方文档或包的公开类型/说明文件
 
-### graphify
+## 文档索引与任务路由
 
-本项目的知识图谱位于 `graphify-out/`，包含 god 节点、社区结构和跨文件关系。
-
-- 当用户输入 `/graphify` 时，在执行任何其他操作之前，先调用 Skill 工具并传入 `skill: "graphify"`
-- 对于代码库问题，当 `graphify-out/graph.json` 存在时，首先运行 `graphify query "<question>"`。使用 `graphify path "<A>" "<B>"` 查找关系，使用 `graphify explain "<concept>"` 查找聚焦概念。这些命令返回范围限定的子图，通常比 `GRAPH_REPORT.md` 或原始 `grep` 输出小得多
-- 预期在 hook 或增量更新后，`graphify-out/` 中会出现脏文件；脏图文件不是跳过 graphify 的理由。仅当任务涉及过时或错误的图输出，或用户明确表示不使用时，才跳过 graphify
-- 如果 `graphify-out/wiki/index.md` 存在，则使用它进行广泛导航，而不是原始源代码浏览
-- 仅在进行广泛架构审查，或 `query/path/explain` 无法提供足够上下文时，才阅读 `graphify-out/GRAPH_REPORT.md`
-- 修改代码后，运行 `graphify update .` 以保持图的最新状态（仅 AST，无 API 成本）
-
-## AI 文档索引
-
-- `aiDoc/README.md`
-- `aiDoc/relations/repo-profile.md`
-- `aiDoc/relations/development-workflow.md`
-- `aiDoc/relations/system-map.md`
-- `aiDoc/modules/backend-layer-rules.md`
-- `aiDoc/modules/module-development.md`
-- `aiDoc/modules/mcp-guide.md`
-- `aiDoc/modules/plugin-development.md`
-- `aiDoc/frontend-backend/boundary.md`
-- `aiDoc/frontend-backend/frontend-rules.md`
-- `aiDoc/frontend-backend/frontend-utils.md`
-- `aiDoc/examples/README.md`
-- `aiDoc/examples/backend/`
-- `aiDoc/examples/frontend/`
-- `aiDoc/memory/README.md`
-- `aiDoc/memory/project-memory.md`
-- `aiDoc/memory/long-term/`
-- `aiDoc/memory/business/`
+详细索引、常用入口与"任务→必读文档"路由表，统一维护在 `aiDoc/README.md`。本文件不再罗列，避免双份维护导致口径漂移。冲突时以本文件为准。
 

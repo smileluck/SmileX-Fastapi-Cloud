@@ -14,8 +14,8 @@ structured_context: /aiDoc
 请按下面顺序读取：
 
 1. `/AGENTS.MD`
-2. `/aiDoc/README.md`
-3. `/aiDoc/relations/`、`/aiDoc/modules/`、`/aiDoc/frontend-backend/`、`/aiDoc/examples/`、`/aiDoc/memory/` 中与当前任务相关的文件
+2. `/aiDoc/README.md`：查"任务→必读文档"路由表，确定本次任务必读哪些子文档
+3. 路由表指向的 `/aiDoc/` 子文档
 
 ## 适配层约束
 
