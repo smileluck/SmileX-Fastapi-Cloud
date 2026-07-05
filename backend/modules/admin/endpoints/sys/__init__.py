@@ -16,6 +16,7 @@ from .user import user_router
 from .mcp import mcp_router
 from .route import route_router
 from .operation_log import operation_log_router
+from .openapi_log import openapi_log_router
 from .login_log import login_log_router
 from .export_task import export_router
 from .export_template import export_template_router
@@ -42,6 +43,7 @@ sys_router.include_router(user_router)
 sys_router.include_router(mcp_router)
 sys_router.include_router(route_router)
 sys_router.include_router(operation_log_router)
+sys_router.include_router(openapi_log_router)
 sys_router.include_router(login_log_router)
 sys_router.include_router(export_router)
 sys_router.include_router(export_template_router)

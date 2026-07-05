@@ -229,6 +229,29 @@ declare namespace Api {
       secret_updated_at: string | null;
     };
 
+    /** openapi call log */
+    type OpenapiLog = Common.CommonRecord<{
+      app_id: string;
+      merchant_name?: string | null;
+      method: string;
+      path: string;
+      status_code?: number | null;
+      err_code?: number | null;
+      msg?: string | null;
+      client_ip?: string | null;
+      request_id?: string | null;
+      latency_ms?: number | null;
+    }>;
+
+    /** openapi call log search params */
+    type OpenapiLogSearchParams = CommonType.RecordNullable<
+      Pick<OpenapiLog, 'app_id' | 'path' | 'method' | 'status_code' | 'err_code' | 'client_ip' | 'request_id'> &
+        CommonSearchParams
+    > & { start_time?: string | null; end_time?: string | null };
+
+    /** openapi call log list */
+    type OpenapiLogList = Common.PaginatingQueryRecord<OpenapiLog>;
+
     /**
      * menu type
      *

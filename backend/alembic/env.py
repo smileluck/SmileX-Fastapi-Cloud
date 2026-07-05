@@ -36,6 +36,7 @@ from database.models.sys.association_tables import (
     sys_role_menu_association,
 )
 from database.models.sys.operation_log import SysOperationLog
+from database.models.sys.openapi_log import SysOpenapiLog
 from database.models.sys.export_task import SysExportTask
 from database.models.sys.export_template import SysExportTemplate
 from database.models.sys.ip_blacklist import SysIpBlacklist

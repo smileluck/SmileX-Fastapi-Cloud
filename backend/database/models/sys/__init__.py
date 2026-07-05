@@ -9,6 +9,7 @@ from .merchant import SysMerchant
 from .config import SysConfig
 from .dict import SysDict, SysDictItem
 from .operation_log import SysOperationLog
+from .openapi_log import SysOpenapiLog
 from .login_log import SysLoginLog
 from .ip_blacklist import SysIpBlacklist
 from .file import SysFile
@@ -26,6 +27,7 @@ __all__ = [
     "SysDict",
     "SysDictItem",
     "SysOperationLog",
+    "SysOpenapiLog",
     "SysLoginLog",
     "SysIpBlacklist",
     "SysFile",

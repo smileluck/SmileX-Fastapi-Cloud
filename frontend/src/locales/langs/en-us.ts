@@ -271,7 +271,9 @@ const local: App.I18n.Schema = {
     manage: 'Manage',
     manage_menu: 'Menu Management',
     manage_dept: 'Department Management',
-    manage_merchant: 'Merchant Management',
+    merchant_open: 'Merchant Open',
+    merchant_open_merchant: 'Merchant Management',
+    'merchant_open_openapi-log': 'Open API Call Log',
     manage_role: 'Role Management',
     manage_user: 'User Management',
     manage_dict: 'Dict Management',
@@ -792,6 +794,26 @@ const local: App.I18n.Schema = {
           status: 'Select status',
           emailFormat: 'Invalid email format',
           phoneFormat: 'Invalid phone format'
+        }
+      },
+      openapiLog: {
+        title: 'Open API Call Log',
+        appId: 'AppId',
+        merchantName: 'Merchant',
+        method: 'Method',
+        path: 'Path',
+        status: 'Status',
+        errCode: 'Err Code',
+        clientIp: 'Client IP',
+        latency: 'Latency',
+        createdAt: 'Called At',
+        form: {
+          appId: 'Enter AppId',
+          path: 'Enter path',
+          method: 'Enter HTTP method',
+          errCode: 'Enter err code',
+          clientIp: 'Enter client IP',
+          status: 'Enter status code'
         }
       },
       scheduler: {

@@ -35,12 +35,14 @@ declare module "@elegant-router/types" {
     "manage_config": "/manage/config";
     "manage_dept": "/manage/dept";
     "manage_dict": "/manage/dict";
-    "manage_merchant": "/manage/merchant";
     "manage_file": "/manage/file";
     "manage_ip-blacklist": "/manage/ip-blacklist";
     "manage_menu": "/manage/menu";
     "manage_role": "/manage/role";
     "manage_user": "/manage/user";
+    "merchant-open": "/merchant-open";
+    "merchant-open_merchant": "/merchant-open/merchant";
+    "merchant-open_openapi-log": "/merchant-open/openapi-log";
     "monitor": "/monitor";
     "scheduler": "/scheduler";
     "scheduler_log": "/scheduler/log";
@@ -85,6 +87,7 @@ declare module "@elegant-router/types" {
     | "log"
     | "login"
     | "manage"
+    | "merchant-open"
     | "monitor"
     | "scheduler"
   >;
@@ -118,12 +121,13 @@ declare module "@elegant-router/types" {
     | "manage_config"
     | "manage_dept"
     | "manage_dict"
-    | "manage_merchant"
     | "manage_file"
     | "manage_ip-blacklist"
     | "manage_menu"
     | "manage_role"
     | "manage_user"
+    | "merchant-open_merchant"
+    | "merchant-open_openapi-log"
     | "monitor"
     | "scheduler_log"
     | "scheduler_task"

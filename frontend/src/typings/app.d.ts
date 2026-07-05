@@ -1020,6 +1020,26 @@ declare namespace App {
               phoneFormat: string;
             };
           };
+          openapiLog: {
+            title: string;
+            appId: string;
+            merchantName: string;
+            method: string;
+            path: string;
+            status: string;
+            errCode: string;
+            clientIp: string;
+            latency: string;
+            createdAt: string;
+            form: {
+              appId: string;
+              path: string;
+              method: string;
+              errCode: string;
+              clientIp: string;
+              status: string;
+            };
+          };
           scheduler: {
             title: string;
             taskName: string;

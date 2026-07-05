@@ -16,6 +16,7 @@ from .user_service import UserService
 from .mcp_service import MCPService
 from .route_service import RouteService
 from .operation_log_service import OperationLogService
+from .openapi_log_service import OpenapiLogService
 from .notice_service import NoticeService
 from .monitor_service import MonitorService
 from .file_service import FileService
@@ -33,6 +34,7 @@ __all__ = [
     "MCPService",
     "RouteService",
     "OperationLogService",
+    "OpenapiLogService",
     "NoticeService",
     "MonitorService",
     "FileService",

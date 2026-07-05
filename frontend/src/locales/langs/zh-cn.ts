@@ -266,7 +266,9 @@ const local: App.I18n.Schema = {
     home: '首页',
     manage: '系统管理',
     manage_dept: '部门管理',
-    manage_merchant: '商户管理',
+    merchant_open: '商户开放管理',
+    merchant_open_merchant: '商户管理',
+    'merchant_open_openapi-log': '开放API调用日志',
     manage_menu: '菜单管理',
     manage_role: '角色管理',
     manage_user: '用户管理',
@@ -787,6 +789,26 @@ const local: App.I18n.Schema = {
           status: '请选择状态',
           emailFormat: '邮箱格式不正确',
           phoneFormat: '手机号格式不正确'
+        }
+      },
+      openapiLog: {
+        title: '开放API调用日志',
+        appId: 'AppId',
+        merchantName: '商户名称',
+        method: '方法',
+        path: '请求路径',
+        status: '状态码',
+        errCode: '错误码',
+        clientIp: '客户端IP',
+        latency: '耗时',
+        createdAt: '调用时间',
+        form: {
+          appId: '请输入 AppId',
+          path: '请输入请求路径',
+          method: '请输入 HTTP 方法',
+          errCode: '请输入错误码',
+          clientIp: '请输入客户端 IP',
+          status: '请输入状态码'
         }
       },
       scheduler: {

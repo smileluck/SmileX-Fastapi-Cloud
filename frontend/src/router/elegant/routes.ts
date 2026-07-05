@@ -185,15 +185,6 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
-        name: 'manage_merchant',
-        path: '/manage/merchant',
-        component: 'view.manage_merchant',
-        meta: {
-          title: 'manage_merchant',
-          i18nKey: 'route.manage_merchant'
-        }
-      },
-      {
         name: 'manage_dict',
         path: '/manage/dict',
         component: 'view.manage_dict',
@@ -245,6 +236,35 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'manage_user',
           i18nKey: 'route.manage_user'
+        }
+      }
+    ]
+  },
+  {
+    name: 'merchant-open',
+    path: '/merchant-open',
+    component: 'layout.base',
+    meta: {
+      title: 'merchant-open',
+      i18nKey: 'route.merchant-open'
+    },
+    children: [
+      {
+        name: 'merchant-open_merchant',
+        path: '/merchant-open/merchant',
+        component: 'view.merchant-open_merchant',
+        meta: {
+          title: 'merchant-open_merchant',
+          i18nKey: 'route.merchant-open_merchant'
+        }
+      },
+      {
+        name: 'merchant-open_openapi-log',
+        path: '/merchant-open/openapi-log',
+        component: 'view.merchant-open_openapi-log',
+        meta: {
+          title: 'merchant-open_openapi-log',
+          i18nKey: 'route.merchant-open_openapi-log'
         }
       }
     ]

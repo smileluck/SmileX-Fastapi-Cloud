@@ -77,3 +77,21 @@ METHOD \n PATH \n timestamp \n nonce \n app_id \n sha256(body).hexdigest()
 ## 记录日期
 
 2026-07-05
+
+---
+
+## 迭代（2026-07-05）：商户开放管理目录 + 开放API调用日志
+
+### 新增/变更
+
+- **新增顶级目录菜单 `merchant_open`（商户开放管理）**：把 `merchant_open_merchant`（原 `manage_merchant`）从 `manage` 目录移到该目录下；前端 .vue 文件同步迁到 `views/merchant-open/merchant/`。elegant-router 路由名按 `parent_child` 命名（子级不得含下划线），故 openapi-log 页路由名为 `merchant_open_openapi-log`（连字符），文件在 `views/merchant-open/openapi-log/`
+- **新增 `sys_openapi_log` 表与 `OpenapiLogMiddleware`**：记录每次 `/open/*` 调用（app_id、method、path、status_code、err_code、msg、client_ip、request_id、latency_ms、merchant_name 冗余）。鉴权失败也记录。中间件用 `BackgroundTask` 在响应发出后异步落库，不阻塞响应；通过缓冲 `body_iterator` 重新打包 Response 来可靠读取 err_code/msg（BaseHTTPMiddleware 默认拿到的是流式响应，`.body` 不可读）
+- **后台查询接口**：`/admin/sys/openapi-log/list`、`/{id}`、`/batch`、`/{id}` DELETE，权限码 `sys:openapi-log:list` / `sys:openapi-log:delete`
+- **迁移 `0009_openapi_log_and_dir.py`**：建表 + 建目录菜单 + 移动并重命名 merchant 菜单（name/component/path）+ 播种 openapi-log 菜单与按钮
+
+### 关键约束
+
+- elegant-router 类型系统按命名前缀推导父子（`GetChildRouteKey`），且子级 key 不得再含下划线 → 新建目录必须用 `views/<dir>/` 真实目录，子页面用连字符命名（参考 `log_login-log`）
+- alembic.ini 不得含中文注释（Windows configparser 默认 GBK，会编解码失败）；同目录迁移/重命名需注意菜单 `parent_id` 外键：先插父目录再 UPDATE 子菜单
+- `BaseHTTPMiddleware` 里读响应 body 必须缓冲 `body_iterator` 并重新打包 Response，否则异常处理器返回的响应读不到 err_code
+

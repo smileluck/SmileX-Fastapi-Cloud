@@ -714,3 +714,37 @@ export function fetchResetMerchantSecret(merchantId: number) {
     method: 'put'
   });
 }
+
+/** get openapi call log list */
+export function fetchGetOpenapiLogList(params?: Api.SystemManage.OpenapiLogSearchParams) {
+  return request<Api.SystemManage.OpenapiLogList>({
+    url: '/admin/sys/openapi-log/list',
+    method: 'get',
+    params
+  });
+}
+
+/** get openapi call log detail */
+export function fetchGetOpenapiLog(logId: number) {
+  return request<Api.SystemManage.OpenapiLog>({
+    url: `/admin/sys/openapi-log/${logId}`,
+    method: 'get'
+  });
+}
+
+/** batch delete openapi call logs */
+export function fetchBatchDeleteOpenapiLog(logIds: number[]) {
+  return request<void>({
+    url: '/admin/sys/openapi-log/batch',
+    method: 'delete',
+    data: logIds
+  });
+}
+
+/** delete one openapi call log */
+export function fetchDeleteOpenapiLog(logId: number) {
+  return request<void>({
+    url: `/admin/sys/openapi-log/${logId}`,
+    method: 'delete'
+  });
+}
