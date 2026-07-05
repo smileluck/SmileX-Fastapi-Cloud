@@ -24,7 +24,7 @@ from modules.admin.services.sys import OpenapiLogService
 
 logger = logging.getLogger(__name__)
 
-openapi_log_router = APIRouter(prefix="/openapi-log", tags=["系统管理/开放API调用日志"])
+openapi_log_router = APIRouter(prefix="/openapi-log", tags=["系统管理/调用日志"])
 
 
 @openapi_log_router.get(

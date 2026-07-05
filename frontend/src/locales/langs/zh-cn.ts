@@ -268,7 +268,7 @@ const local: App.I18n.Schema = {
     manage_dept: '部门管理',
     'merchant-open': '商户开放管理',
     'merchant-open_merchant': '商户管理',
-    'merchant-open_openapi-log': '开放API调用日志',
+    'merchant-open_openapi-log': '调用日志',
     manage_menu: '菜单管理',
     manage_role: '角色管理',
     manage_user: '用户管理',
@@ -792,7 +792,7 @@ const local: App.I18n.Schema = {
         }
       },
       openapiLog: {
-        title: '开放API调用日志',
+        title: '调用日志',
         appId: 'AppId',
         merchantName: '商户名称',
         method: '方法',

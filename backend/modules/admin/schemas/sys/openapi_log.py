@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 
 from pydantic import Field, BeforeValidator
 
-from app.models.common.base import BaseEntity
+from app.models.common.base import BaseEntity, OptionalIntField
 from app.models.common.page import PageRequest
 
 
@@ -23,8 +23,8 @@ class OpenapiLogQueryParams(PageRequest):
     app_id: Optional[str] = Field(None, description="AppId，支持模糊查询")
     path: Optional[str] = Field(None, description="请求路径，支持模糊查询")
     method: Optional[str] = Field(None, description="HTTP方法")
-    status_code: Optional[int] = Field(None, description="HTTP状态码")
-    err_code: Optional[int] = Field(None, description="业务错误码")
+    status_code: OptionalIntField = Field(None, description="HTTP状态码")
+    err_code: OptionalIntField = Field(None, description="业务错误码")
     client_ip: Optional[str] = Field(None, description="客户端IP，支持模糊查询")
     request_id: Optional[str] = Field(None, description="请求追踪ID")
     start_time: Optional[str] = Field(None, description="开始时间")

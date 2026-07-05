@@ -273,7 +273,7 @@ const local: App.I18n.Schema = {
     manage_dept: 'Department Management',
     'merchant-open': 'Merchant Open',
     'merchant-open_merchant': 'Merchant Management',
-    'merchant-open_openapi-log': 'Open API Call Log',
+    'merchant-open_openapi-log': 'Call Log',
     manage_role: 'Role Management',
     manage_user: 'User Management',
     manage_dict: 'Dict Management',
@@ -797,7 +797,7 @@ const local: App.I18n.Schema = {
         }
       },
       openapiLog: {
-        title: 'Open API Call Log',
+        title: 'Call Log',
         appId: 'AppId',
         merchantName: 'Merchant',
         method: 'Method',
