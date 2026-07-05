@@ -186,6 +186,49 @@ declare namespace Api {
       status: boolean;
     };
 
+    /** merchant (开放API 授权商户) */
+    type Merchant = Common.CommonRecord<{
+      name: string;
+      code?: string | null;
+      contact_name?: string | null;
+      contact_phone?: string | null;
+      contact_email?: string | null;
+      app_id: string;
+      status: Common.EnableStatus;
+      remark?: string | null;
+      sort: number;
+      secret_updated_at?: string | null;
+    }>;
+
+    /** merchant search params */
+    type MerchantSearchParams = CommonType.RecordNullable<
+      Pick<Merchant, 'name' | 'code' | 'app_id' | 'status'> & CommonSearchParams
+    >;
+
+    /** merchant list */
+    type MerchantList = Common.PaginatingQueryRecord<Merchant>;
+
+    /** merchant create (app_id/app_secret 由系统生成，不接受传入) */
+    type MerchantCreate = Pick<
+      Merchant,
+      'name' | 'code' | 'status' | 'sort' | 'remark' | 'contact_name' | 'contact_phone' | 'contact_email'
+    >;
+
+    /** merchant update */
+    type MerchantUpdate = Partial<MerchantCreate>;
+
+    /** merchant create result (附带一次性明文 app_secret) */
+    type MerchantCreateResult = Merchant & {
+      app_secret: string;
+    };
+
+    /** merchant reset secret result (一次性明文 app_secret) */
+    type MerchantSecretResetResult = {
+      app_id: string;
+      app_secret: string;
+      secret_updated_at: string | null;
+    };
+
     /**
      * menu type
      *

@@ -185,6 +185,15 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
+        name: 'manage_merchant',
+        path: '/manage/merchant',
+        component: 'view.manage_merchant',
+        meta: {
+          title: 'manage_merchant',
+          i18nKey: 'route.manage_merchant'
+        }
+      },
+      {
         name: 'manage_dict',
         path: '/manage/dict',
         component: 'view.manage_dict',

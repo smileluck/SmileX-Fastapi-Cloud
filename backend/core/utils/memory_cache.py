@@ -23,6 +23,7 @@ class CacheNamespace:
     PERMISSION = "permission"      # key: f"{user_id}:{permission_code}", TTL: 60s
     IP_BLACKLIST = "ip_blacklist"  # key: ip, TTL: 10s
     SESSION = "session"            # key: f"{redis_key}:{session_id}", TTL: 5s
+    MERCHANT = "merchant"          # key: app_id, TTL: 30s（开放API 鉴权商户查询缓存）
 
 
 class MemoryCache:

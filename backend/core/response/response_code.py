@@ -84,6 +84,17 @@ class CustomErrorCode(CustomCodeBase):
     # 通知管理 10601-10700
     NOTICE_NOT_FOUND = (10601, "通知不存在")
     NOTICE_ALREADY_PUBLISHED = (10602, "通知已发布，不可编辑")
+    # 开放API / 商户管理 11021-11040
+    OPEN_API_MISSING_HEADER = (11021, "缺少必要的签名请求头")
+    OPEN_API_TIMESTAMP_EXPIRED = (11022, "请求时间戳超出允许范围")
+    OPEN_API_INVALID_NONCE = (11023, "Nonce非法")
+    OPEN_API_NONCE_REPLAY = (11024, "请求不可重放(Nonce已被使用)")
+    OPEN_API_MERCHANT_NOT_FOUND = (11025, "AppId不存在")
+    OPEN_API_MERCHANT_DISABLED = (11026, "商户已禁用")
+    OPEN_API_SIGNATURE_INVALID = (11027, "签名校验失败")
+    MERCHANT_NOT_FOUND = (11028, "商户不存在")
+    MERCHANT_CODE_EXIST = (11029, "商户编码已存在")
+    MERCHANT_APP_ID_CONFLICT = (11030, "AppId冲突，请重试")
 @dataclass
 class CustomResponse:
     """

@@ -657,3 +657,60 @@ export function fetchBatchUpdateDeptStatus(data: Api.SystemManage.DeptBatchUpdat
     data
   });
 }
+
+/** get merchant list */
+export function fetchGetMerchantList(params?: Api.SystemManage.MerchantSearchParams) {
+  return request<Api.SystemManage.MerchantList>({
+    url: '/admin/sys/merchant/list',
+    method: 'get',
+    params
+  });
+}
+
+/** get merchant by id */
+export function fetchGetMerchant(merchantId: number) {
+  return request<Api.SystemManage.Merchant>({
+    url: `/admin/sys/merchant/${merchantId}`,
+    method: 'get'
+  });
+}
+
+/** create merchant (返回一次性明文 app_secret) */
+export function fetchCreateMerchant(merchant: Api.SystemManage.MerchantCreate) {
+  return request<Api.SystemManage.MerchantCreateResult>({
+    url: '/admin/sys/merchant/add',
+    method: 'post',
+    data: {
+      ...merchant,
+      status: enableStatusToBoolean(merchant.status)
+    }
+  });
+}
+
+/** update merchant */
+export function fetchUpdateMerchant(merchantId: number, merchant: Api.SystemManage.MerchantUpdate) {
+  return request<Api.SystemManage.Merchant>({
+    url: `/admin/sys/merchant/${merchantId}`,
+    method: 'put',
+    data: {
+      ...merchant,
+      ...(merchant.status !== undefined ? { status: enableStatusToBoolean(merchant.status) } : {})
+    }
+  });
+}
+
+/** delete merchant */
+export function fetchDeleteMerchant(merchantId: number) {
+  return request<void>({
+    url: `/admin/sys/merchant/${merchantId}`,
+    method: 'delete'
+  });
+}
+
+/** reset merchant secret (返回一次性明文 app_secret) */
+export function fetchResetMerchantSecret(merchantId: number) {
+  return request<Api.SystemManage.MerchantSecretResetResult>({
+    url: `/admin/sys/merchant/${merchantId}/reset-secret`,
+    method: 'put'
+  });
+}

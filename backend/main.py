@@ -17,6 +17,7 @@ from core.redis import RedisPool
 
 from modules.app.router import router as app_app_router
 from modules.admin.router import router as admin_app_router
+from modules.openapi.router import open_router
 from core.registry.setup_registry import setup_app
 from core.websocket import FastAPIConnectionManager
 
@@ -111,6 +112,8 @@ logger.info("配置文件初始化完成")
 # 挂载认证路由
 app.include_router(app_app_router)
 app.include_router(admin_app_router)
+# 开放API（商户 HMAC 签名鉴权）
+app.include_router(open_router)
 
 
 if __name__ == "__main__":

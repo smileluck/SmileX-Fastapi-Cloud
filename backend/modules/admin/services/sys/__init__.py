@@ -7,6 +7,7 @@
 from .config_service import ConfigService
 from .data_scope_service import DataScopeService
 from .dept_service import DeptService
+from .merchant_service import MerchantService
 from .dict_service import DictService
 from .menu_service import MenuService
 from .permission_service import PermissionService
@@ -23,6 +24,7 @@ __all__ = [
     "ConfigService",
     "DataScopeService",
     "DeptService",
+    "MerchantService",
     "DictService",
     "MenuService",
     "PermissionService",

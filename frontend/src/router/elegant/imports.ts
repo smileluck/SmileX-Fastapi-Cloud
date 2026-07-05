@@ -30,6 +30,7 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   manage_config: () => import("@/views/manage/config/index.vue"),
   manage_dept: () => import("@/views/manage/dept/index.vue"),
   manage_dict: () => import("@/views/manage/dict/index.vue"),
+  manage_merchant: () => import("@/views/manage/merchant/index.vue"),
   manage_file: () => import("@/views/manage/file/index.vue"),
   "manage_ip-blacklist": () => import("@/views/manage/ip-blacklist/index.vue"),
   manage_menu: () => import("@/views/manage/menu/index.vue"),

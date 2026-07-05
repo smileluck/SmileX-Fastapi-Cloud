@@ -28,6 +28,7 @@ from database.models.base import Base
 from database.models.sys.user import SysUser
 from database.models.sys.role import SysRole
 from database.models.sys.menu import SysMenu
+from database.models.sys.merchant import SysMerchant
 from database.models.sys.config import SysConfig
 from database.models.sys.dict import SysDict, SysDictItem
 from database.models.sys.association_tables import (

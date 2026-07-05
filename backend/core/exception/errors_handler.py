@@ -10,6 +10,7 @@ from pydantic import ValidationError
 from core.exception.errors import (
     BaseExceptionMixin,
     CustomError,
+    OpenApiError,
     ForbiddenError,
     GatewayError,
     NotFoundError,
@@ -89,6 +90,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
     app.exception_handler(AuthorizationError)(authorization_error_handler)
     app.exception_handler(ConflictError)(conflict_error_handler)
     app.exception_handler(CustomError)(custom_error_handler)
+    app.exception_handler(OpenApiError)(openapi_error_handler)
     # 注册FastAPI内置异常处理器
     app.exception_handler(HTTPException)(http_exception_handler)
     app.exception_handler(RequestValidationError)(validation_exception_handler)
@@ -248,6 +250,33 @@ async def custom_error_handler(request: Request, exc: CustomError) -> ORJSONResp
     )
     return ORJSONResponse(
         status_code=CustomResponseCode.HTTP_500.code, content=response.model_dump()
+    )
+
+
+async def openapi_error_handler(request: Request, exc: OpenApiError) -> ORJSONResponse:
+    """
+    开放API 鉴权异常处理器
+
+    把 err_code 映射到语义正确的 4xx HTTP 状态（鉴权失败默认 401，
+    nonce 非法 400，商户禁用 403），响应结构保持统一。
+    用 warning 级日志（预期的客户端错误），避免污染 5xx 错误率统计。
+    """
+    request_id = get_request_trace_id(request)
+    logger.warning(
+        f"开放API鉴权失败: path={request.url.path}, method={request.method}, "
+        f"http_status={exc.http_status}, err_code={exc.err_code.code}, "
+        f"msg={exc.msg}, request_id={request_id}"
+    )
+    data = exc.data if exc.data is not None else {}
+    response = ResponseModel(
+        code=exc.http_status,
+        err_code=exc.err_code.code,
+        msg=exc.msg or exc.err_code.msg,
+        data=data,
+        request_id=request_id,
+    )
+    return ORJSONResponse(
+        status_code=exc.http_status, content=response.model_dump()
     )
 
 

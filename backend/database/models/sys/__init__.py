@@ -5,6 +5,7 @@ from .menu import SysMenu
 from .role import SysRole, DataScopeEnum
 from .user import SysUser
 from .dept import SysDept
+from .merchant import SysMerchant
 from .config import SysConfig
 from .dict import SysDict, SysDictItem
 from .operation_log import SysOperationLog
@@ -20,6 +21,7 @@ __all__ = [
     "DataScopeEnum",
     "SysUser",
     "SysDept",
+    "SysMerchant",
     "SysConfig",
     "SysDict",
     "SysDictItem",

@@ -985,6 +985,41 @@ declare namespace App {
               deptCode: string;
             };
           };
+          merchant: {
+            title: string;
+            merchantName: string;
+            merchantCode: string;
+            appId: string;
+            appSecret: string;
+            contactName: string;
+            contactPhone: string;
+            contactEmail: string;
+            remark: string;
+            sort: string;
+            status: string;
+            secretUpdatedAt: string;
+            addMerchant: string;
+            editMerchant: string;
+            resetSecret: string;
+            resetSecretConfirm: string;
+            secretResultTitle: string;
+            secretOnceWarning: string;
+            copy: string;
+            copied: string;
+            copyFailed: string;
+            form: {
+              merchantName: string;
+              merchantCode: string;
+              appId: string;
+              contactName: string;
+              contactPhone: string;
+              contactEmail: string;
+              remark: string;
+              status: string;
+              emailFormat: string;
+              phoneFormat: string;
+            };
+          };
           scheduler: {
             title: string;
             taskName: string;

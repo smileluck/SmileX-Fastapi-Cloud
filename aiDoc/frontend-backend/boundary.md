@@ -192,6 +192,54 @@ Endpoint 注入 `current_user` 后调用 `DataScopeService` 算出 scope 与 per
 
 ---
 
+## 开放API（商户 HMAC 签名鉴权）
+
+`/open/*` 路由面向第三方系统，**不走** 后台管理员 JWT 鉴权与操作日志中间件（`OperationLogMiddleware` 只作用于 `/admin/*`），改用商户 `app_id/app_secret` 的 HMAC-SHA256 签名鉴权。后台管理侧（`/admin/sys/merchant/*`）仍是普通 JWT + 权限码管理。
+
+### 签名请求头
+
+| Header | 说明 |
+|---|---|
+| `X-App-Id` | 商户 AppId |
+| `X-Timestamp` | 秒级 Unix 时间戳（允许偏移见 `OPEN_API__TIMESTAMP_TOLERANCE_SECONDS`，默认 300s） |
+| `X-Nonce` | 客户端随机串，8-64 字符，TTL 内（`OPEN_API__NONCE_TTL`，默认 600s）不可复用 |
+| `X-Signature` | HMAC-SHA256 hex 小写 |
+
+### Canonical String（客户端必须严格复现）
+
+6 段以 `\n` 连接，顺序固定，body 为空时第 6 段为空串（末尾保留 `\n`）：
+
+```
+METHOD \n PATH \n timestamp \n nonce \n app_id \n sha256(body).hexdigest()
+```
+
+- `PATH` 用 `request.url.path`，**不含 query string**
+- 完整契约见 `backend/core/security/openapi/signature.py` 模块 docstring
+
+### 商户凭据
+
+- `app_id` 公开标识；`app_secret` 在库中以 Fernet 加密存储（验签需原始值，不能单向哈希），密钥 `OPEN_API__SECRET_ENCRYPT_KEY`
+- 明文 `app_secret` **仅在创建/重置密钥时一次性返回**，前端弹窗强提示保存；此后不可查询，只能重置
+- 后台响应 `SysMerchantResponseData` 继承 `BaseRespEntity`，`status` 已序列化为 `"1"/"2"`，前端列表无需再做 bool 转换
+
+### 错误码（`err_code`，区间 11021-11030）
+
+`/open/*` 鉴权错误经独立的 `OpenApiError` + `openapi_error_handler` 处理，映射到语义正确的 4xx HTTP 状态（响应结构仍是统一 `{code, msg, data, request_id, err_code}`，只是 `code` = HTTP 状态码而非 500）。日志用 `warning` 级，不污染 5xx 错误率统计。
+
+| err_code | HTTP | 含义 |
+|---|---|---|
+| 11021 | 401 | 缺少必要的签名请求头 |
+| 11022 | 401 | 请求时间戳超出允许范围 |
+| 11023 | 400 | Nonce 非法（格式/长度） |
+| 11024 | 401 | 请求不可重放（Nonce 已被使用） |
+| 11025 | 401 | AppId 不存在 |
+| 11026 | 403 | 商户已禁用 |
+| 11027 | 401 | 签名校验失败 |
+
+后台管理侧的 11028（商户不存在）/ 11029（商户编码已存在）/ 11030（AppId 冲突）仍走 `CustomError`（HTTP 500 + body err_code），与 captcha/rate-limit 等现有模块一致，前端按 `err_code` 判断。
+
+---
+
 ## 变更规则
 
 - 破坏性接口变更（字段名/类型/结构改变）必须记录变更说明

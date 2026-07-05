@@ -170,6 +170,22 @@ class PluginModel(BaseModel):
     )
 
 
+class OpenApiModel(BaseModel):
+    """开放API（商户 HMAC 签名鉴权）配置模型"""
+
+    SECRET_ENCRYPT_KEY: str = Field(
+        "",
+        description="app_secret 可逆加密密钥（Fernet base64 urlsafe），生产环境必填",
+    )
+    TIMESTAMP_TOLERANCE_SECONDS: int = Field(
+        300, description="请求时间戳允许偏移秒数"
+    )
+    NONCE_TTL: int = Field(
+        600, description="nonce 防重放缓存秒数，需大于 TIMESTAMP_TOLERANCE_SECONDS"
+    )
+    APP_ID_PREFIX: str = Field("SMX", description="AppId 前缀")
+
+
 class RedisPoolModel(BaseModel):
     """Redis连接池模型"""
 

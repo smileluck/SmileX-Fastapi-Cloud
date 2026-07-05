@@ -23,6 +23,7 @@ from .settings_model import (
     MCPModel,
     RateLimitModel,
     PluginModel,
+    OpenApiModel,
 )
 
 
@@ -64,3 +65,5 @@ class GlobalSetting(BaseSettings):
     RATE_LIMIT: RateLimitModel = RateLimitModel()
     # 插件配置
     PLUGINS: PluginModel = PluginModel()
+    # 开放API（商户 HMAC 签名鉴权）配置
+    OPEN_API: OpenApiModel = OpenApiModel()

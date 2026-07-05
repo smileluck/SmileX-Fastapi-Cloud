@@ -22,3 +22,4 @@
 - [2026-06-25 数据权限（行级可见性）](./2026-06-25_data_scope_permission.md) — 角色配置 data_scope（ALL/DEPT_AND_SUB/DEPT_ONLY/SELF）+ 部门树 + Service 层注入过滤；含用户管理示范
 - [2026-06-27 登录与菜单三件套修复](./2026-06-27_login_misc_fixes.md) — 菜单 iconType 持久化 + 侧边栏本地 icon 渲染；确认黑名单自动拉黑 IP 来源；记住密码本地缓存回填；在线用户列表去重（同 IP+UA 顶掉旧 session）；补全部门管理菜单种子 + 多租户插件支持 sys_dept 隔离
 - [2026-07-04 用户/角色管理缺陷修复 + 提交类型约束加固](./2026-07-04_user_role_manage_hardening.md) — 角色重名查重(create+update)、create_user 加载 roles 修复 422、前端 flat-request 错误处理改 {error} 解构、User/Role 专用请求类型、Dict is_system 对齐、各模块 schema 校验加固
+- [2026-07-05 商户管理 + 开放API HMAC 签名鉴权](./2026-07-05_merchant_openapi_auth.md) — sys_merchant 表（app_secret Fernet 加密）+ 后台 CRUD/重置密钥 + /open/* HMAC-SHA256 签名校验（时间戳窗口 + Redis nonce 防重放）+ /open/demo/ping 示例

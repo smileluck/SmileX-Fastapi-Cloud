@@ -47,6 +47,36 @@ class CustomError(BaseExceptionMixin):
         super().__init__(msg=msg or error.msg, data=data)
 
 
+class OpenApiError(BaseExceptionMixin):
+    """
+    开放API 鉴权异常
+
+    与 CustomError 的区别：把 err_code 映射到语义正确的 4xx HTTP 状态，
+    避免鉴权失败被当作 5xx 服务器错误（污染错误率告警、触发网关/客户端误重试）。
+    响应结构仍保持统一 `{code, msg, data, request_id, err_code}`。
+
+    默认 401；OPEN_API_INVALID_NONCE -> 400；OPEN_API_MERCHANT_DISABLED -> 403。
+    """
+
+    # err_code -> HTTP 状态码（未列出的鉴权失败默认 401）
+    _STATUS_MAP = {
+        CustomErrorCode.OPEN_API_INVALID_NONCE: 400,
+        CustomErrorCode.OPEN_API_MERCHANT_DISABLED: 403,
+    }
+
+    def __init__(
+        self,
+        *,
+        error: CustomErrorCode,
+        msg: str = None,
+        data: Any = None,
+    ):
+        self.err_code = error
+        self.http_status = self._STATUS_MAP.get(error, 401)
+        self.code = self.http_status
+        super().__init__(msg=msg or error.msg, data=data)
+
+
 class RequestError(BaseExceptionMixin):
     """请求异常"""
 
