@@ -50,6 +50,14 @@ from database.models.sys.task_log import SysScheduledTaskLog
 # Set target_metadata to Base.metadata
 target_metadata = Base.metadata
 
+# 让 alembic 使用与运行时一致的环境配置（.env.{ENVIR}），而非 alembic.ini 中硬编码的 sqlalchemy.url。
+# core.config.settings 由 load_config() 按 ENVIR 加载对应 .env.{env} 文件；
+# alembic 迁移走同步驱动，故 build_url(async_mode=False)。
+from core.config import settings as app_settings
+
+_db_url = app_settings.DATABASE.build_url(async_mode=False)
+config.set_main_option("sqlalchemy.url", _db_url)
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
