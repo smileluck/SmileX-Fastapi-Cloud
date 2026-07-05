@@ -54,7 +54,7 @@ def _new_menu_rows() -> list[dict]:
             **base,
             'id': MERCHANT_OPEN_DIR_ID,
             'parent_id': None,
-            'name': 'merchant_open',
+            'name': 'merchant-open',
             'path': '/merchant-open',
             'component': 'layout.base',
             'permission': None,
@@ -69,9 +69,9 @@ def _new_menu_rows() -> list[dict]:
             **base,
             'id': OPENAPI_LOG_MENU_ID,
             'parent_id': MERCHANT_OPEN_DIR_ID,
-            'name': 'merchant_open_openapi-log',
+            'name': 'merchant-open_openapi-log',
             'path': '/merchant-open/openapi-log',
-            'component': 'view.merchant_open_openapi-log',
+            'component': 'view.merchant-open_openapi-log',
             'permission': 'sys:openapi-log:list',
             'meta_icon': 'mdi:chart-line-variant',
             'meta_hidden': False,
@@ -81,8 +81,8 @@ def _new_menu_rows() -> list[dict]:
         },
     ]
     buttons = [
-        ('merchant_open_openapi-log_list', 'sys:openapi-log:list', 1),
-        ('merchant_open_openapi-log_delete', 'sys:openapi-log:delete', 2),
+        ('merchant-open_openapi-log_list', 'sys:openapi-log:list', 1),
+        ('merchant-open_openapi-log_delete', 'sys:openapi-log:delete', 2),
     ]
     for bid, (name, perm, sort) in zip(OPENAPI_LOG_BUTTON_IDS, buttons):
         rows.append({
@@ -194,8 +194,8 @@ def upgrade() -> None:
         {
             "pid": MERCHANT_OPEN_DIR_ID,
             "path": "/merchant-open/merchant",
-            "name": "merchant_open_merchant",
-            "comp": "view.merchant_open_merchant",
+            "name": "merchant-open_merchant",
+            "comp": "view.merchant-open_merchant",
             "mid": MERCHANT_MENU_ID,
         },
     )

@@ -84,7 +84,7 @@ METHOD \n PATH \n timestamp \n nonce \n app_id \n sha256(body).hexdigest()
 
 ### 新增/变更
 
-- **新增顶级目录菜单 `merchant_open`（商户开放管理）**：把 `merchant_open_merchant`（原 `manage_merchant`）从 `manage` 目录移到该目录下；前端 .vue 文件同步迁到 `views/merchant-open/merchant/`。elegant-router 路由名按 `parent_child` 命名（子级不得含下划线），故 openapi-log 页路由名为 `merchant_open_openapi-log`（连字符），文件在 `views/merchant-open/openapi-log/`
+- **新增顶级目录菜单 `merchant-open`（商户开放管理）**：把 `merchant-open_merchant`（原 `manage_merchant`）从 `manage` 目录移到该目录下；前端 .vue 文件同步迁到 `views/merchant-open/merchant/`。elegant-router 由目录名生成路由名时**保留连字符**：目录 `merchant-open/` → 路由前缀 `merchant-open`，子级用下划线分隔（`merchant-open_merchant`、`merchant-open_openapi-log`）。**后端菜单 name 与 component 必须与前端生成的路由名严格一致**（含连字符），否则点击菜单 `router.push({name})` 报 `No match`
 - **新增 `sys_openapi_log` 表与 `OpenapiLogMiddleware`**：记录每次 `/open/*` 调用（app_id、method、path、status_code、err_code、msg、client_ip、request_id、latency_ms、merchant_name 冗余）。鉴权失败也记录。中间件用 `BackgroundTask` 在响应发出后异步落库，不阻塞响应；通过缓冲 `body_iterator` 重新打包 Response 来可靠读取 err_code/msg（BaseHTTPMiddleware 默认拿到的是流式响应，`.body` 不可读）
 - **后台查询接口**：`/admin/sys/openapi-log/list`、`/{id}`、`/batch`、`/{id}` DELETE，权限码 `sys:openapi-log:list` / `sys:openapi-log:delete`
 - **迁移 `0009_openapi_log_and_dir.py`**：建表 + 建目录菜单 + 移动并重命名 merchant 菜单（name/component/path）+ 播种 openapi-log 菜单与按钮
