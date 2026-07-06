@@ -31,6 +31,7 @@ description: 分析项目代码库并生成 AGENTS.MD + aiDoc/ 分层约束文�
 - 只重新生成受影响范围内的文件
 - 用户手动调优过的内容（非 AI 生成标记）应尽量保留
 - 路由表是跨文件元数据：若 `aiDoc/` 下新增/删除文件，即便老文件 last-updated 未变，也必须重生成 `aiDoc/README.md` 的「常用入口」与任务路由表
+- AGENTS.md 调用逻辑同步：「高层速查（任务族→aiDoc 区域）」与「何时重新生成 aiDoc」两节属于调用逻辑层。只要 `aiDoc/` 下区域（modules/、frontend-backend/、examples/、relations/、memory/ 等）有增删，即便 AGENTS.md 自身 last-updated 未变，也必须同步这两节
 
 ---
 
@@ -184,14 +185,40 @@ description: 分析项目代码库并生成 AGENTS.MD + aiDoc/ 分层约束文�
 [固定文本：long-term/ 稳定偏好，business/ 每次业务需求]
 
 ### 文档维护
-[固定文本：高层在 AGENTS.MD，细节在 aiDoc/；任务→必读文档路由表唯一维护于 aiDoc/README.md，不在 AGENTS.MD 列文档清单]
+[固定文本：高层规则在 AGENTS.MD，细节在 aiDoc/；AGENTS.MD 只保留「任务族→aiDoc 区域」的高层速查指针（见「文档索引与任务路由」），「任务→必读文档」详细路由表唯一维护于 aiDoc/README.md，不在 AGENTS.MD 罗列完整清单，避免双份维护导致口径漂移]
 
 ### 代码读取约束
 [固定文本：不读 node_modules/、.venv/、__pycache__/、vendor/ 等]
 
 ## 文档索引与任务路由
 
-详细索引、常用入口与"任务→必读文档"路由表统一维护在 `aiDoc/README.md`。本文件不再罗列，避免双份维护导致口径漂移。冲突时以本文件为准。
+### 高层速查（任务族 → aiDoc 区域）
+
+[固定结构，按粗粒度任务族指向 aiDoc 区域，每族一行，不展开到具体文件。根据项目实际存在的 aiDoc 区域调整。示例：
+
+| 任务族 | 优先查阅区域 |
+|---|---|
+| 后端模块/接口开发 | `aiDoc/modules/`、`aiDoc/examples/backend/` |
+| 前端页面/功能开发 | `aiDoc/frontend-backend/`、`aiDoc/examples/frontend/` |
+| 前后端契约/字段对接 | `aiDoc/frontend-backend/boundary.md` |
+| 仓库结构/技术栈/流程 | `aiDoc/relations/` |
+| 业务需求记录 | `aiDoc/memory/business/` |
+
+只做高层指向；详细到具体文件的「任务→必读文档」路由表见下方。]
+
+### 详细路由
+
+「任务→必读文档」详细路由表、常用入口字典统一维护在 `aiDoc/README.md`。本文件只放高层速查，避免双份维护导致口径漂移。冲突时以本文件为准。
+
+## 何时重新生成 aiDoc（调用 generate-aidoc）
+
+[固定文本：出现以下情况时调用 `.claude/commands/generate-aidoc.md` 重新生成或增量更新文档体系：
+- 架构较大变化：分层调整、新增/删除顶层目录、技术栈替换
+- 新增/删除后端模块或前端页面，导致 `aiDoc/modules/`、`aiDoc/examples/`、`aiDoc/relations/system-map.md` 与代码脱节
+- `aiDoc/` 子文档新增/删除，导致 `aiDoc/README.md` 详细路由表与本文件高层速查失效
+- 路由表或示例与真实代码明显漂移
+
+小改动（单接口、单页面调整）无需整体重生成，用 `--incremental` 或 `--scope <area>` 局部更新即可。生成后必须按命令末尾的验证步骤核验索引与路径一致性。]
 ```
 
 ---
@@ -614,6 +641,7 @@ structured_context: /aiDoc
 2. **路径真实性**：用 Grep 搜索所有生成文件中引用的代码路径（如 `app/models/xxx.py`），确认引用的文件存在
 3. **符号一致性**：用 Grep 搜索 boundary.md 中引用的类名/函数名（如 `PageRequest`、`ResponseModel`），确认在代码中确实存在
 4. **示例参考有效性**：提取所有示例文件的"真实参考文件"路径，用 Glob 确认存在
+5. **AGENTS.md 调用逻辑同步**：确认 AGENTS.md「高层速查」表覆盖的 aiDoc 区域与实际生成的 `aiDoc/` 子目录一致；确认「何时重新生成 aiDoc」小节存在且触发条件完整
 
 ### 报告输出
 
@@ -627,6 +655,7 @@ structured_context: /aiDoc
 - [x] 路径真实性：N/N 路径有效
 - [x] 符号一致性：N/N 符号已验证
 - [x] 示例参考：N/N 参考文件存在
+- [x] AGENTS.md 调用逻辑：高层速查表与 aiDoc/ 区域一致，何时重新生成小节存在
 
 ### 失败（如有）
 - [ ] 路径不存在：xxx
