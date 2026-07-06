@@ -168,6 +168,7 @@ const routeMap: RouteMap = {
   "500": "/500",
   "demo": "/demo",
   "demo_dict": "/demo/dict",
+  "demo_openapi-test": "/demo/openapi-test",
   "demo_upload": "/demo/upload",
   "home": "/home",
   "iframe-page": "/iframe-page/:url",

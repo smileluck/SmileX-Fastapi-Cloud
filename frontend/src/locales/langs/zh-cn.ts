@@ -284,6 +284,7 @@ const local: App.I18n.Schema = {
     demo: '示例',
     demo_upload: '上传演示',
     demo_dict: '字典组件演示',
+    'demo_openapi-test': 'OpenAPI 测试',
     manage_file: '文件管理',
     scheduler: '定时任务',
     scheduler_task: '任务管理',
@@ -384,6 +385,26 @@ const local: App.I18n.Schema = {
       minute: '分钟'
     },
     demo: {
+      openapiTest: {
+        title: 'OpenAPI 签名测试',
+        tip: '填入商户 AppId / AppSecret，浏览器内按后端契约计算 HMAC-SHA256 签名并发送请求，用于验证开放API鉴权链路。',
+        appId: 'AppId',
+        appSecret: 'AppSecret',
+        method: '方法',
+        path: '路径',
+        body: '请求体',
+        url: '请求 URL',
+        send: '签名并发送',
+        needCredential: '请先填写 AppId 与 AppSecret',
+        signatureTitle: '签名明细（学习/排查用）',
+        timestamp: 'X-Timestamp',
+        nonce: 'X-Nonce',
+        signature: 'X-Signature',
+        canonical: 'Canonical String',
+        responseTitle: '响应',
+        status: '状态码',
+        requestId: 'Request-Id'
+      },
       upload: {
         title: '文件上传演示',
         singleUpload: '单文件上传',

@@ -288,6 +288,7 @@ const local: App.I18n.Schema = {
     demo: 'Example',
     demo_upload: 'Upload Demo',
     demo_dict: 'Dict Component Demo',
+    'demo_openapi-test': 'OpenAPI Test',
     manage_file: 'File Management',
     scheduler: 'Scheduler',
     scheduler_task: 'Task Management',
@@ -388,6 +389,26 @@ const local: App.I18n.Schema = {
       minute: 'm'
     },
     demo: {
+      openapiTest: {
+        title: 'OpenAPI Signature Test',
+        tip: 'Fill in merchant AppId / AppSecret. The browser computes the HMAC-SHA256 signature per the backend contract and sends the request, to verify the open API auth chain.',
+        appId: 'AppId',
+        appSecret: 'AppSecret',
+        method: 'Method',
+        path: 'Path',
+        body: 'Body',
+        url: 'Request URL',
+        send: 'Sign & Send',
+        needCredential: 'Please fill AppId and AppSecret first',
+        signatureTitle: 'Signature Details (for learning/debug)',
+        timestamp: 'X-Timestamp',
+        nonce: 'X-Nonce',
+        signature: 'X-Signature',
+        canonical: 'Canonical String',
+        responseTitle: 'Response',
+        status: 'Status',
+        requestId: 'Request-Id'
+      },
       upload: {
         title: 'File Upload Demo',
         singleUpload: 'Single File Upload',

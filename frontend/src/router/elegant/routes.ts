@@ -61,6 +61,15 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
+        name: 'demo_openapi-test',
+        path: '/demo/openapi-test',
+        component: 'view.demo_openapi-test',
+        meta: {
+          title: 'demo_openapi-test',
+          i18nKey: 'route.demo_openapi-test'
+        }
+      },
+      {
         name: 'demo_upload',
         path: '/demo/upload',
         component: 'view.demo_upload',

@@ -22,6 +22,7 @@ declare module "@elegant-router/types" {
     "500": "/500";
     "demo": "/demo";
     "demo_dict": "/demo/dict";
+    "demo_openapi-test": "/demo/openapi-test";
     "demo_upload": "/demo/upload";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
@@ -112,6 +113,7 @@ declare module "@elegant-router/types" {
     | "iframe-page"
     | "login"
     | "demo_dict"
+    | "demo_openapi-test"
     | "demo_upload"
     | "home"
     | "log_login-log"

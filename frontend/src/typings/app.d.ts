@@ -612,6 +612,26 @@ declare namespace App {
         };
 
         demo: {
+          openapiTest: {
+            title: string;
+            tip: string;
+            appId: string;
+            appSecret: string;
+            method: string;
+            path: string;
+            body: string;
+            url: string;
+            send: string;
+            needCredential: string;
+            signatureTitle: string;
+            timestamp: string;
+            nonce: string;
+            signature: string;
+            canonical: string;
+            responseTitle: string;
+            status: string;
+            requestId: string;
+          };
           upload: {
             title: string;
             singleUpload: string;
