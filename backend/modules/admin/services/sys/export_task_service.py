@@ -4,14 +4,13 @@
 """
 异步导出任务服务
 """
-import asyncio
 import json
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import List, Tuple
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models.sys.export_task import SysExportTask
@@ -26,6 +25,11 @@ from modules.admin.schemas.sys.export_task import ExportTaskSubmit
 logger = logging.getLogger(__name__)
 
 EXPORT_DIR = os.path.join(settings.UPLOAD_LOCAL.BASE_DIR, "exports")
+
+# 导出任务超时与保留配置
+EXPORT_PENDING_TIMEOUT_MINUTES = 30
+EXPORT_PROCESSING_TIMEOUT_MINUTES = 30
+EXPORT_RETENTION_DAYS = 7
 
 
 def _ensure_export_dir():
@@ -96,97 +100,106 @@ class ExportTaskService:
         await db.commit()
         await db.refresh(task)
 
-        asyncio.create_task(ExportTaskService._execute_task(task.id))
         return task
 
     @staticmethod
-    async def _execute_task(task_id: int):
-        from database.db_manager import async_db_manager
+    async def process_pending_tasks(db: AsyncSession) -> int:
+        """扫描并执行 pending 任务，返回处理数量"""
+        stmt = (
+            select(SysExportTask)
+            .where(SysExportTask.status == "pending")
+            .order_by(SysExportTask.created_at.asc())
+            .limit(10)
+        )
+        result = await db.execute(stmt)
+        tasks = result.scalars().all()
+
+        processed = 0
+        for task in tasks:
+            try:
+                await ExportTaskService._execute_single_task(db, task.id)
+                processed += 1
+            except Exception as e:
+                logger.error(f"处理导出任务 {task.id} 异常: {e}", exc_info=True)
+        return processed
+
+    @staticmethod
+    async def _execute_single_task(db: AsyncSession, task_id: int):
+        """在已有会话中执行单个导出任务（含行锁抢占）"""
+        result = await db.execute(
+            select(SysExportTask)
+            .where(SysExportTask.id == task_id)
+            .with_for_update()
+        )
+        task = result.scalar_one_or_none()
+        if not task or task.status != "pending":
+            return
+
+        task.status = "processing"
+        task.started_at = datetime.now(timezone.utc)
+        await db.commit()
+        await db.refresh(task)
 
         try:
-            async with async_db_manager.get_session_cr() as db:
-                result = await db.execute(
-                    select(SysExportTask).where(SysExportTask.id == task_id)
-                )
-                task = result.scalar_one_or_none()
-                if not task:
-                    return
+            config = get_export_config(task.module_key)
+            template = None
+            columns = config.columns
 
-                # 更新状态为处理中
-                task.status = "processing"
-                task.started_at = datetime.now(timezone.utc)
-                await db.commit()
+            if task.template_id:
+                template = await db.get(SysExportTemplate, task.template_id)
+                if template:
+                    col_defs = json.loads(template.columns)
+                    columns = [
+                        ExportColumn(
+                            field=c["field"],
+                            header=c["header"],
+                            width=c.get("width", 20),
+                            table=c.get("table"),
+                        )
+                        for c in col_defs
+                    ]
 
-                config = get_export_config(task.module_key)
-                template = None
-                columns = config.columns
+            joins_config = None
+            if template and template.joins_config:
+                joins_config = json.loads(template.joins_config)
 
-                if task.template_id:
-                    template = await db.get(SysExportTemplate, task.template_id)
-                    if template:
-                        col_defs = json.loads(template.columns)
-                        columns = [
-                            ExportColumn(
-                                field=c["field"],
-                                header=c["header"],
-                                width=c.get("width", 20),
-                                table=c.get("table"),
-                            )
-                            for c in col_defs
-                        ]
+            if joins_config:
+                rows = await ExportTaskService._execute_join_query(db, columns, joins_config)
+            else:
+                query_params_dict = json.loads(task.query_params_json)
+                params_cls = config.query_params_class
+                query_params = params_cls(**query_params_dict) if params_cls else query_params_dict
+                query = config.build_query_fn(query_params)
+                result = await db.execute(query)
+                rows = result.unique().scalars().all()
 
-                # 判断是否使用动态 JOIN 查询
-                joins_config = None
-                if template and template.joins_config:
-                    joins_config = json.loads(template.joins_config)
+            excel_bytes = build_excel_bytes(columns, rows, sheet_name=config.name)
 
-                if joins_config:
-                    rows = await ExportTaskService._execute_join_query(db, columns, joins_config)
-                else:
-                    query_params_dict = json.loads(task.query_params_json)
-                    params_cls = config.query_params_class
-                    query_params = params_cls(**query_params_dict) if params_cls else query_params_dict
-                    query = config.build_query_fn(query_params)
-                    result = await db.execute(query)
-                    rows = result.unique().scalars().all()
+            _ensure_export_dir()
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"export_{task.id}_{task.module_key}_{timestamp}.xlsx"
+            file_path = os.path.join(EXPORT_DIR, filename)
 
-                # 生成 Excel
-                excel_bytes = build_excel_bytes(columns, rows, sheet_name=config.name)
+            with open(file_path, "wb") as f:
+                f.write(excel_bytes)
 
-                # 写入文件
-                _ensure_export_dir()
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                filename = f"export_{task.id}_{task.module_key}_{timestamp}.xlsx"
-                file_path = os.path.join(EXPORT_DIR, filename)
+            task.status = "completed"
+            task.total_rows = len(rows)
+            task.file_path = file_path
+            task.file_size = len(excel_bytes)
+            task.finished_at = datetime.now(timezone.utc)
+            await db.commit()
 
-                with open(file_path, "wb") as f:
-                    f.write(excel_bytes)
-
-                # 更新任务状态
-                task.status = "completed"
-                task.total_rows = len(rows)
-                task.file_path = file_path
-                task.file_size = len(excel_bytes)
-                task.finished_at = datetime.now(timezone.utc)
-                await db.commit()
-
-                logger.info(f"导出任务 {task_id} 完成，共 {len(rows)} 行，文件: {filename}")
+            logger.info(f"导出任务 {task_id} 完成，共 {len(rows)} 行，文件: {filename}")
 
         except Exception as e:
             logger.error(f"导出任务 {task_id} 失败: {e}", exc_info=True)
-            try:
-                async with async_db_manager.get_session_cr() as db:
-                    result = await db.execute(
-                        select(SysExportTask).where(SysExportTask.id == task_id)
-                    )
-                    task = result.scalar_one_or_none()
-                    if task:
-                        task.status = "failed"
-                        task.error_message = str(e)
-                        task.finished_at = datetime.now(timezone.utc)
-                        await db.commit()
-            except Exception:
-                logger.error(f"更新导出任务 {task_id} 失败状态异常", exc_info=True)
+            task.status = "failed"
+            task.error_message = str(e)
+            task.finished_at = datetime.now(timezone.utc)
+            await db.commit()
+
+        await ExportTaskService._notify_user(task)
 
     @staticmethod
     async def _execute_join_query(
@@ -294,10 +307,14 @@ class ExportTaskService:
         user_id: int,
         page: int = 1,
         page_size: int = 10,
+        status: str | None = None,
     ) -> Tuple[List[SysExportTask], int]:
         base_query = select(SysExportTask).where(
             SysExportTask.created_by == user_id
         ).order_by(SysExportTask.created_at.desc())
+
+        if status:
+            base_query = base_query.where(SysExportTask.status == status)
 
         count_query = select(func.count()).select_from(base_query.subquery())
         count_result = await db.execute(count_query)
@@ -323,11 +340,73 @@ class ExportTaskService:
         return task.file_path
 
     @staticmethod
-    async def cleanup_old_tasks(db: AsyncSession, days: int = 7) -> int:
-        from sqlalchemy import delete
-        from datetime import timedelta
+    async def timeout_and_cleanup_tasks(db: AsyncSession) -> dict:
+        """标记超时任务为失败并清理过期任务，返回统计信息"""
+        now = datetime.now(timezone.utc)
+        pending_timeout = now - timedelta(minutes=EXPORT_PENDING_TIMEOUT_MINUTES)
+        processing_timeout = now - timedelta(minutes=EXPORT_PROCESSING_TIMEOUT_MINUTES)
+        retention_cutoff = now - timedelta(days=EXPORT_RETENTION_DAYS)
 
-        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        timed_out = 0
+        cleaned = 0
+
+        # pending 超时
+        result = await db.execute(
+            select(SysExportTask).where(
+                SysExportTask.status == "pending",
+                SysExportTask.created_at < pending_timeout,
+            )
+        )
+        for task in result.scalars().all():
+            task.status = "failed"
+            task.error_message = "任务排队超时，已失效"
+            task.finished_at = now
+            timed_out += 1
+
+        # processing 超时
+        result = await db.execute(
+            select(SysExportTask).where(
+                SysExportTask.status == "processing",
+                SysExportTask.started_at < processing_timeout,
+            )
+        )
+        for task in result.scalars().all():
+            if task.file_path and os.path.exists(task.file_path):
+                os.remove(task.file_path)
+            task.status = "failed"
+            task.error_message = "任务执行超时，已失效"
+            task.finished_at = now
+            timed_out += 1
+
+        await db.commit()
+
+        # 清理过期 completed/failed
+        stmt = select(SysExportTask).where(
+            SysExportTask.created_at < retention_cutoff,
+            SysExportTask.status.in_(["completed", "failed"]),
+        )
+        result = await db.execute(stmt)
+        old_tasks = result.scalars().all()
+
+        for task in old_tasks:
+            if task.file_path and os.path.exists(task.file_path):
+                os.remove(task.file_path)
+            cleaned += 1
+
+        if old_tasks:
+            delete_stmt = delete(SysExportTask).where(
+                SysExportTask.id.in_([t.id for t in old_tasks])
+            )
+            await db.execute(delete_stmt)
+            await db.commit()
+
+        return {"timed_out": timed_out, "cleaned": cleaned}
+
+    @staticmethod
+    async def cleanup_old_tasks(db: AsyncSession, days: int = 7) -> int:
+        """手动清理过期导出任务（保留兼容旧接口）"""
+        now = datetime.now(timezone.utc)
+        cutoff = now - timedelta(days=days)
         stmt = select(SysExportTask).where(
             SysExportTask.created_at < cutoff,
             SysExportTask.status.in_(["completed", "failed"]),
@@ -341,9 +420,33 @@ class ExportTaskService:
                 os.remove(task.file_path)
             cleaned += 1
 
-        delete_stmt = delete(SysExportTask).where(
-            SysExportTask.id.in_([t.id for t in old_tasks])
-        )
-        await db.execute(delete_stmt)
-        await db.commit()
+        if old_tasks:
+            delete_stmt = delete(SysExportTask).where(
+                SysExportTask.id.in_([t.id for t in old_tasks])
+            )
+            await db.execute(delete_stmt)
+            await db.commit()
         return cleaned
+
+    @staticmethod
+    async def _notify_user(task: SysExportTask) -> None:
+        """通过 WebSocket 通知任务创建者状态变更"""
+        try:
+            from core.websocket import get_connection_manager
+
+            manager = get_connection_manager()
+            if not manager:
+                return
+
+            await manager.send_to_user(
+                task.created_by,
+                {
+                    "type": "export_task",
+                    "task_id": task.id,
+                    "status": task.status,
+                    "task_name": task.task_name,
+                    "error_message": task.error_message,
+                },
+            )
+        except Exception:
+            logger.exception(f"推送导出任务 {task.id} 状态失败")

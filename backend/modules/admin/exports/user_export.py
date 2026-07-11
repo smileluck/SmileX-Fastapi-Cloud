@@ -7,7 +7,7 @@ from modules.admin.services.sys import UserService
 from modules.admin.schemas.sys.user import SysUserQueryParams
 
 _user_columns = [
-    ExportColumn("id", "ID", width=20),
+    ExportColumn("id", "ID", width=20, number_format="0"),
     ExportColumn("username", "用户名", width=20),
     ExportColumn("nickname", "昵称", width=20),
     ExportColumn("email", "邮箱", width=25),

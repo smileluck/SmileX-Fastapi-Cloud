@@ -5,7 +5,7 @@ from typing import Optional, List, Annotated
 from pydantic import Field, ConfigDict, BeforeValidator
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from app.models.common.base import BaseRespEntity, BaseEntity, BoolField
+from app.models.common.base import BaseRespEntity, BaseEntity, BaseReqEntity, BoolField
 from app.models.common.page import PageRequest
 from database.models.sys.role import DataScopeEnum
 
@@ -27,28 +27,28 @@ class SysRoleQueryParams(PageRequest):
     is_system: BoolField = Field(None, description="是否为系统内置角色")
 
 
-class SysRoleCreate(BaseEntity):
+class SysRoleCreate(BaseReqEntity):
     """
     系统角色创建请求模型
     用于创建新角色时的请求数据
     """
 
-    name: str = Field(..., description="角色名称", min_length=1, max_length=100)
-    desc: Optional[str] = Field(None, description="角色描述")
+    name: str = Field(..., description="角色名称", min_length=1, max_length=20)
+    desc: Optional[str] = Field(None, description="角色描述", max_length=200)
     status: bool = Field(True, description="角色状态：1-启用，2-禁用")
     sort: int = Field(0, description="排序号", ge=0)
     data_scope: DataScopeEnum = Field(DataScopeEnum.SELF, description="数据范围：ALL/DEPT_AND_SUB/DEPT_ONLY/SELF")
     menu_ids: List[int] = Field([], description="菜单ID列表")
 
 
-class SysRoleUpdate(BaseEntity):
+class SysRoleUpdate(BaseReqEntity):
     """
     系统角色更新请求模型
     用于更新角色信息时的请求数据
     """
 
-    name: Optional[str] = Field(None, description="角色名称", max_length=100)
-    desc: Optional[str] = Field(None, description="角色描述")
+    name: Optional[str] = Field(None, description="角色名称", max_length=20)
+    desc: Optional[str] = Field(None, description="角色描述", max_length=200)
     status: BoolField = Field(None, description="角色状态：True-启用，False-禁用")
     sort: Optional[int] = Field(None, description="排序号", ge=0)
     data_scope: Optional[DataScopeEnum] = Field(None, description="数据范围：ALL/DEPT_AND_SUB/DEPT_ONLY/SELF")
@@ -109,7 +109,7 @@ class SysRoleResponseData(BaseRespEntity):
     menu_ids: List[int] = Field([], description="菜单ID列表")
 
 
-class SysRoleBatchUpdateStatus(BaseEntity):
+class SysRoleBatchUpdateStatus(BaseReqEntity):
     """
     系统角色批量更新状态请求模型
     用于批量启用或禁用角色
@@ -119,7 +119,7 @@ class SysRoleBatchUpdateStatus(BaseEntity):
     status: bool = Field(..., description="要设置的状态：True-启用，False-禁用")
 
 
-class SysRoleAssignMenu(BaseEntity):
+class SysRoleAssignMenu(BaseReqEntity):
     """
     系统角色分配菜单权限请求模型
     用于为角色分配菜单权限

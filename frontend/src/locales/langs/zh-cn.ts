@@ -264,6 +264,7 @@ const local: App.I18n.Schema = {
     500: '服务器错误',
     'iframe-page': '外链页面',
     home: '首页',
+    'export-record': '导出记录',
     manage: '系统管理',
     manage_dept: '部门管理',
     'merchant-open': '商户开放管理',
@@ -452,7 +453,9 @@ const local: App.I18n.Schema = {
           roleName: '请输入角色名称',
           roleCode: '请输入角色编码',
           roleStatus: '请选择角色状态',
-          roleDesc: '请输入角色描述'
+          roleDesc: '请输入角色描述',
+          nameMaxLength: '角色名称长度不能超过20个字符',
+          descMaxLength: '角色描述长度不能超过200个字符'
         },
         addRole: '新增角色',
         editRole: '编辑角色',
@@ -1053,8 +1056,33 @@ const local: App.I18n.Schema = {
       unFixed: '取消固定'
     }
   },
+  exportTask: {
+    title: '导出记录',
+    tooltip: '导出记录',
+    taskName: '任务名称',
+    moduleKey: '模块',
+    status: {
+      title: '状态',
+      pending: '排队中',
+      processing: '生成中',
+      completed: '已完成',
+      failed: '失败'
+    },
+    totalRows: '导出条数',
+    fileSize: '文件大小',
+    errorMessage: '失败原因',
+    createdAt: '创建时间',
+    finishedAt: '完成时间',
+    noRecords: '暂无导出记录',
+    viewAll: '查看全部',
+    asyncExport: '异步导出',
+    submitSuccess: '导出任务已提交',
+    submitFailed: '导出任务提交失败',
+    downloadFailed: '导出文件下载失败'
+  },
   notification: {
     title: '通知中心',
+    tooltip: '通知中心',
     markAllAsRead: '全部已读',
     noNotifications: '暂无通知',
     markAllReadSuccess: '已全部标记为已读',

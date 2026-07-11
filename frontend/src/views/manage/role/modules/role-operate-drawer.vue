@@ -32,7 +32,7 @@ const visible = defineModel<boolean>('visible', {
 });
 
 const { formRef, validate, restoreValidation } = useNaiveForm();
-const { defaultRequiredRule } = useFormRules();
+const { defaultRequiredRule, createMaxLengthRule } = useFormRules();
 
 const title = computed(() => {
   const titles: Record<NaiveUI.TableOperateType, string> = {
@@ -62,12 +62,13 @@ const dataScopeOptions: { label: string; value: Api.SystemManage.DataScope }[] =
   { label: $t('page.manage.role.dataScopes.SELF'), value: 'SELF' }
 ];
 
-type RuleKey = Exclude<keyof Model, 'desc'>;
+type RuleKey = keyof Model;
 
-const rules: Record<RuleKey, App.Global.FormRule> = {
-  name: defaultRequiredRule,
+const rules: Record<RuleKey, App.Global.FormRule | App.Global.FormRule[]> = {
+  name: [defaultRequiredRule, createMaxLengthRule(20, $t('page.manage.role.form.nameMaxLength'))],
   status: defaultRequiredRule,
-  data_scope: defaultRequiredRule
+  data_scope: defaultRequiredRule,
+  desc: createMaxLengthRule(200, $t('page.manage.role.form.descMaxLength'))
 };
 
 const roleId = computed(() => props.rowData?.id || -1);

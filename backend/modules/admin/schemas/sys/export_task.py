@@ -4,17 +4,18 @@
 from typing import Optional
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import Field
+from app.models.common.base import BaseReqEntity, BaseRespEntity, OptionalIntField
 
 
-class ExportTaskSubmit(BaseModel):
+class ExportTaskSubmit(BaseReqEntity):
     """提交异步导出任务"""
     module_key: str | None = Field(None, description="模块标识（与 template_id 二选一）")
-    template_id: int | None = Field(None, description="导出模板ID（与 module_key 二选一）")
+    template_id: OptionalIntField = Field(None, description="导出模板ID（与 module_key 二选一）")
     query_params: dict = Field(default_factory=dict, description="查询参数，同列表接口筛选条件")
 
 
-class ExportTaskResponse(BaseModel):
+class ExportTaskResponse(BaseRespEntity):
     """导出任务响应"""
     id: int
     task_name: str

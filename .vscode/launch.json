@@ -19,9 +19,9 @@
         "--port",
         "8000"
       ],
-      "python": "${workspaceFolder}/backend/.venv/Scripts/python.exe"
+      "python": "${workspaceFolder}/backend/.venv/bin/python"
     },
-    
+
     // 前端Vue启动配置
     {
       "name": "前端 - Vue",
@@ -29,10 +29,9 @@
       "request": "launch",
       "url": "http://localhost:9527",
       "webRoot": "${workspaceFolder}/frontend",
-      "sourceMaps": true,
-      "preLaunchTask": "npm: dev"
+      "sourceMaps": true
     },
-    
+
     // 前端TypeScript调试
     {
       "name": "前端 - TS Debugger",

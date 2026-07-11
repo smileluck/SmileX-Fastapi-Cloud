@@ -5,7 +5,8 @@ import {
   fetchBatchDeleteOperationLog,
   fetchClearOperationLog,
   fetchDeleteOperationLog,
-  fetchGetOperationLogList
+  fetchGetOperationLogList,
+  fetchSubmitExportTask
 } from '@/service/api';
 import { useAppStore } from '@/store/modules/app';
 import { defaultTransform, useNaivePaginatedTable, useTableOperate } from '@/hooks/common/table';
@@ -208,6 +209,23 @@ async function handleClear() {
     message.error($t('common.deleteFailed'));
   }
 }
+
+async function handleAsyncExport() {
+  const queryParams = { ...searchParams };
+  delete (queryParams as any).page;
+  delete (queryParams as any).page_size;
+
+  const { error } = await fetchSubmitExportTask({
+    module_key: 'operation_log',
+    query_params: queryParams
+  });
+
+  if (!error) {
+    message.success($t('exportTask.submitSuccess'));
+  } else {
+    message.error($t('exportTask.submitFailed'));
+  }
+}
 </script>
 
 <template>
@@ -225,6 +243,9 @@ async function handleClear() {
           @refresh="getData"
         >
           <template #prefix>
+            <NButton type="primary" ghost size="small" :disabled="loading" @click="handleAsyncExport">
+              {{ $t('exportTask.asyncExport') }}
+            </NButton>
             <NPopconfirm v-if="hasAuth('sys:oplog:delete')" @positive-click="handleClear">
               {{ $t('page.log.operationLog.clearConfirm') }}
               <template #trigger>

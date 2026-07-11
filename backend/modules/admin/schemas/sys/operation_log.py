@@ -5,21 +5,21 @@ from datetime import datetime
 
 from pydantic import Field
 
-from app.models.common.base import BaseEntity
+from app.models.common.base import BaseReqEntity, BaseRespEntity, OptionalIntField
 
 
-class OperationLogQueryParams(BaseEntity):
+class OperationLogQueryParams(BaseReqEntity):
     """操作日志查询参数"""
 
     module: str | None = Field(None, description="操作模块")
     action: str | None = Field(None, description="操作类型")
-    user_id: int | None = Field(None, description="操作人ID")
+    user_id: OptionalIntField = Field(None, description="操作人ID")
     username: str | None = Field(None, description="操作人用户名")
     start_time: str | None = Field(None, description="开始时间")
     end_time: str | None = Field(None, description="结束时间")
 
 
-class OperationLogResponse(BaseEntity):
+class OperationLogResponse(BaseRespEntity):
     """操作日志列表响应"""
 
     id: int
@@ -36,7 +36,7 @@ class OperationLogResponse(BaseEntity):
     created_at: datetime | None
 
 
-class OperationLogDetailResponse(BaseEntity):
+class OperationLogDetailResponse(BaseRespEntity):
     """操作日志详情响应（含请求参数和响应结果）"""
 
     id: int

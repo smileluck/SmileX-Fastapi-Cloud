@@ -75,6 +75,13 @@ class UserManager(BaseUserManager):
                 error=CustomErrorCode.USER_LOGIN_FAILED,
             )
 
+        # 校验用户是否被禁用
+        if not user.status:
+            raise CustomError(
+                msg="用户已被禁用",
+                error=CustomErrorCode.USER_DISABLED,
+            )
+
         # 自动选择租户
         tenant_id = 0
         tenant_list = []
@@ -173,6 +180,8 @@ class UserManager(BaseUserManager):
             user = await self.session.execute(select(SysUser).where(SysUser.id == user_id))
             user = user.scalars().first()
             if user is None:
+                raise TokenError()
+            if not user.status:
                 raise TokenError()
             self.session.expunge(user)
             _cache.set(CacheNamespace.USER, str(user_id), user, ttl=30)

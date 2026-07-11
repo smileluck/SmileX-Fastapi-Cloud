@@ -54,6 +54,7 @@ class OperationLogService:
         if conditions:
             base_query = base_query.where(and_(*conditions))
 
+        base_query = base_query.where(SysOperationLog.deleted_at.is_(None))
         base_query = base_query.order_by(SysOperationLog.created_at.desc())
         return base_query
 

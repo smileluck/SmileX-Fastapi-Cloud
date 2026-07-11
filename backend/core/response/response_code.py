@@ -41,6 +41,7 @@ class CustomErrorCode(CustomCodeBase):
     USER_PHONE_FORMAT_ERROR = (10010, "手机号格式错误")
     USER_SMS_SEND_ERROR = (10011, "短信发送失败")
     USER_SMS_SEND_TOO_FAST = (10012, "短信发送过于频繁")
+    USER_DISABLED = (10013, "用户已被禁用")
     # 设备管理 10101-10200
     DEVICE_NOT_FOUND = (10101, "设备不存在")
     DEVICE_BIND_ERROR = (10102, "设备绑定错误")

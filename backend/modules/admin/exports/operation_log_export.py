@@ -7,8 +7,8 @@ from modules.admin.services.sys.operation_log_service import OperationLogService
 from modules.admin.schemas.sys.operation_log import OperationLogQueryParams
 
 _operation_log_columns = [
-    ExportColumn("id", "ID", width=20),
-    ExportColumn("user_id", "用户ID", width=15),
+    ExportColumn("id", "ID", width=20, number_format="0"),
+    ExportColumn("user_id", "用户ID", width=15, number_format="0"),
     ExportColumn("username", "用户名", width=20),
     ExportColumn("module", "模块", width=15),
     ExportColumn("action", "操作", width=15),
@@ -16,8 +16,8 @@ _operation_log_columns = [
     ExportColumn("method", "HTTP方法", width=10),
     ExportColumn("path", "请求路径", width=30),
     ExportColumn("ip", "IP地址", width=18),
-    ExportColumn("response_code", "响应码", width=10),
-    ExportColumn("elapsed_ms", "耗时(ms)", width=10),
+    ExportColumn("response_code", "响应码", width=10, number_format="0"),
+    ExportColumn("elapsed_ms", "耗时(ms)", width=10, number_format="0.00"),
     ExportColumn("created_at", "操作时间", width=22,
                  transform=lambda v: v.strftime("%Y-%m-%d %H:%M:%S") if v else ""),
 ]

@@ -35,6 +35,8 @@ export function useWebSocketNotification() {
         // 触发全局事件，供通知中心监听
         if (data.type === 'notification') {
           window.dispatchEvent(new CustomEvent('ws:notification', { detail: data.data }));
+        } else if (data.type === 'export_task') {
+          window.dispatchEvent(new CustomEvent('ws:export_task', { detail: data.data }));
         }
       } catch (e) {
         console.warn('[WebSocket] 消息解析失败:', event.data);
