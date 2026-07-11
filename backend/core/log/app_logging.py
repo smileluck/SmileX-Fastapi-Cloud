@@ -40,7 +40,7 @@ def setup_logging():
             encoding="utf8",
             defaults={
                 "env": env,
-                "log_dir": str(log_dir),
+                "log_dir": log_dir.as_posix(),
             },
         )
         logging.info(f"日志系统初始化完成，当前环境: {env}")
