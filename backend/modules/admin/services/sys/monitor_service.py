@@ -17,6 +17,14 @@ from database.models.sys.operation_log import SysOperationLog
 
 logger = logging.getLogger(__name__)
 
+# 预热 psutil CPU 使用率基线，避免首次调用返回 0.0
+# psutil.cpu_percent(interval=None) 需要前一次采样作为基准，首次调用无基准会返回 0
+try:
+    psutil.cpu_percent(interval=None)
+    psutil.cpu_percent(interval=None, percpu=True)
+except Exception as exc:  # pragma: no cover
+    logger.warning("CPU 使用率基线预热失败: %s", exc)
+
 
 class MonitorService:
     """系统监控服务类"""

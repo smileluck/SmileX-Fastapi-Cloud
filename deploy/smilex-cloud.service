@@ -11,14 +11,13 @@ WorkingDirectory=/opt/smilex-cloud/backend
 EnvironmentFile=/opt/smilex-cloud/backend/.env.prod
 Environment=PATH=/opt/smilex-cloud/backend/.venv/bin:/usr/local/bin:/usr/bin:/bin
 ExecStart=/opt/smilex-cloud/backend/.venv/bin/gunicorn main:app \
+    -c /opt/smilex-cloud/backend/gunicorn.conf.py \
     -w 4 \
     -k uvicorn.workers.UvicornWorker \
     -b 0.0.0.0:8000 \
     --timeout 120 \
     --max-requests 5000 \
     --max-requests-jitter 500 \
-    --access-logfile /var/log/smilex_cloud/access.log \
-    --error-logfile /var/log/smilex_cloud/error.log \
     --log-level info
 
 ExecReload=/bin/kill -s HUP $MAINPID
