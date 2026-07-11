@@ -137,8 +137,7 @@ cmd_setup() {
         -e "s|--timeout 120|--timeout ${GUNICORN_TIMEOUT}|g" \
         -e "s|--max-requests 5000|--max-requests ${GUNICORN_MAX_REQUESTS}|g" \
         -e "s|--max-requests-jitter 500|--max-requests-jitter ${GUNICORN_MAX_REQUESTS_JITTER}|g" \
-        -e "s|/var/log/smilex_cloud/access.log|${ACCESS_LOG}|g" \
-        -e "s|/var/log/smilex_cloud/error.log|${ERROR_LOG}|g" \
+        -e "s|-c /opt/smilex-cloud/backend/gunicorn.conf.py|-c ${GUNICORN_CONFIG}|g" \
         "${SCRIPT_DIR}/smilex-cloud.service" \
         > /etc/systemd/system/"${APP_NAME}.service"
 
