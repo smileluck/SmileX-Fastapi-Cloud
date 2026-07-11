@@ -32,6 +32,28 @@ from core.utils.track_id import get_request_trace_id
 
 logger = getLogger(__name__)
 
+# Pydantic V2 常见错误类型到中文提示的映射
+PYDANTIC_ERROR_MSG_MAP = {
+    "int_parsing": "请输入有效的整数",
+    "int_type": "请输入有效的整数",
+    "missing": "缺少必填参数",
+    "string_too_long": "内容长度超过限制",
+    "string_too_short": "内容长度不足",
+    "value_error": None,  # 使用原始 msg
+}
+
+
+def _translate_pydantic_msg(error: dict) -> str:
+    """把 Pydantic 默认英文错误翻译为中文；无法识别时返回原始 msg"""
+    error_type = error.get("type")
+    mapped = PYDANTIC_ERROR_MSG_MAP.get(error_type)
+    if mapped is not None:
+        return mapped
+    # 兜底：优先使用 ctx.error 里的自定义中文错误
+    if "ctx" in error and "error" in error["ctx"]:
+        return str(error["ctx"]["error"])
+    return error.get("msg", "请求参数验证失败")
+
 
 def setup_exception_global_handlers(app: FastAPI) -> None:
     # 注册404路由未找到处理器
@@ -316,15 +338,7 @@ async def validation_exception_handler(
     # 格式化验证错误信息
     errors = []
     for error in exc.errors():
-        # field = ".".join(str(loc) for loc in error.get("loc", []))
-        # message = error.get("msg", "验证错误")
-        if "ctx" in error and "error" in error["ctx"]:
-            msg = str(error["ctx"]["error"])
-            errors.append(f"{msg}")
-        elif "msg" in error:
-            errors.append(f"{error['msg']}")
-        else:
-            errors.append(f"验证错误")
+        errors.append(_translate_pydantic_msg(error))
         break
     # 记录日志
     logger.warning(
@@ -335,7 +349,6 @@ async def validation_exception_handler(
     response = ResponseModel(
         code=StandardResponseCode.HTTP_422,
         msg=errors[0] or "请求参数验证失败",
-        # data={"errors": errors},
         request_id=request_id,
     )
     return ORJSONResponse(

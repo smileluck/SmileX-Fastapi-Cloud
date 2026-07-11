@@ -268,6 +268,7 @@ const local: App.I18n.Schema = {
     500: 'Server Error',
     'iframe-page': 'Iframe',
     home: 'Home',
+    'export-record': 'Export Records',
     manage: 'Manage',
     manage_menu: 'Menu Management',
     manage_dept: 'Department Management',
@@ -464,7 +465,9 @@ const local: App.I18n.Schema = {
           roleName: 'Please enter role name',
           roleCode: 'Please enter role code',
           roleStatus: 'Please select role status',
-          roleDesc: 'Please enter role description'
+          roleDesc: 'Please enter role description',
+          nameMaxLength: 'Role name cannot exceed 20 characters',
+          descMaxLength: 'Role description cannot exceed 200 characters'
         },
         addRole: 'Add Role',
         editRole: 'Edit Role'
@@ -1058,8 +1061,33 @@ const local: App.I18n.Schema = {
       unFixed: 'Unfixed'
     }
   },
+  exportTask: {
+    title: 'Export Records',
+    tooltip: 'Export Records',
+    taskName: 'Task Name',
+    moduleKey: 'Module',
+    status: {
+      title: 'Status',
+      pending: 'Pending',
+      processing: 'Processing',
+      completed: 'Completed',
+      failed: 'Failed'
+    },
+    totalRows: 'Total Rows',
+    fileSize: 'File Size',
+    errorMessage: 'Error Message',
+    createdAt: 'Created At',
+    finishedAt: 'Finished At',
+    noRecords: 'No export records',
+    viewAll: 'View All',
+    asyncExport: 'Async Export',
+    submitSuccess: 'Export task submitted',
+    submitFailed: 'Failed to submit export task',
+    downloadFailed: 'Failed to download export file'
+  },
   notification: {
     title: 'Notification Center',
+    tooltip: 'Notification Center',
     markAllAsRead: 'Mark all as read',
     noNotifications: 'No notifications',
     markAllReadSuccess: 'Marked all as read',

@@ -8,8 +8,9 @@
 import asyncio
 import json
 import logging
+import re
 import time
-from typing import Callable
+from typing import Callable, Tuple
 
 import jwt
 from starlette.background import BackgroundTask
@@ -24,20 +25,36 @@ logger = logging.getLogger(__name__)
 
 MAX_RESPONSE_RESULT_LENGTH = 2000
 
-WHITELIST_PREFIXES = (
+# 前缀白名单：静态高频轮询接口
+WHITELIST_PREFIXES: Tuple[str, ...] = (
     "/admin/auth",
     "/admin/sys/operation-log",
     "/admin/sys/login-log",
     "/admin/sys/monitor",
+    "/admin/sys/export/task/list",
     "/docs",
     "/redoc",
     "/openapi.json",
 )
 
+# 后缀白名单：预留用于带动态路径参数的高频轮询接口，避免前缀匹配误伤同前缀的增删改接口
+# 当前只有列表接口在轮询，故为空；需要时可加入如 "/download" 等固定后缀
+WHITELIST_SUFFIXES: Tuple[str, ...] = ()
+
+# 正则白名单：预留用于纯动态路径参数的高频轮询接口
+# 当前只有列表接口在轮询，故为空
+WHITELIST_PATTERNS: Tuple[re.Pattern, ...] = ()
+
 
 def _is_whitelisted(path: str) -> bool:
     for prefix in WHITELIST_PREFIXES:
         if path.startswith(prefix):
+            return True
+    for suffix in WHITELIST_SUFFIXES:
+        if path.endswith(suffix):
+            return True
+    for pattern in WHITELIST_PATTERNS:
+        if pattern.match(path):
             return True
     return False
 

@@ -106,6 +106,17 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'export-record',
+    path: '/export-record',
+    component: 'layout.base$view.export-record',
+    meta: {
+      title: 'export-record',
+      i18nKey: 'route.export-record',
+      hideInMenu: true,
+      keepAlive: true
+    }
+  },
+  {
     name: 'log',
     path: '/log',
     component: 'layout.base',

@@ -69,12 +69,22 @@ export function useFormRules() {
     return confirmPwdRule;
   }
 
+  /** create a rule for max length */
+  function createMaxLengthRule(max: number, message: string): App.Global.FormRule {
+    return {
+      max,
+      message,
+      trigger: 'input'
+    };
+  }
+
   return {
     patternRules,
     formRules,
     defaultRequiredRule,
     createRequiredRule,
-    createConfirmPwdRule
+    createConfirmPwdRule,
+    createMaxLengthRule
   };
 }
 

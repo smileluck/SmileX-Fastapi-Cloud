@@ -51,13 +51,21 @@ async def create_export_task(
 async def get_export_task_list(
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=50),
+    status: str | None = Query(None, description="任务状态筛选"),
     db: AsyncSession = Depends(get_session),
     user: SysUser = Depends(current_user),
 ):
-    tasks, total = await ExportTaskService.get_task_list(db, user.id, page, page_size)
+    tasks, total = await ExportTaskService.get_task_list(db, user.id, page, page_size, status)
     items = [ExportTaskResponse.from_orm_with_format(t) for t in tasks]
+    total_pages = (total + page_size - 1) // page_size
     return response_base.success(
-        data={"items": items, "total": total, "page": page, "page_size": page_size},
+        data={
+            "records": items,
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": total_pages,
+        },
     )
 
 

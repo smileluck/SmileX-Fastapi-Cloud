@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { NBadge, NButton, NPopover, NList, NListItem, NEmpty, NDivider, NModal, NSpace } from 'naive-ui';
+import { NBadge, NButton, NPopover, NList, NListItem, NEmpty, NDivider, NModal, NSpace, NTooltip } from 'naive-ui';
 import { useAuthStore } from '@/store/modules/auth';
 import { fetchGetMyNoticeList, fetchGetUnreadCount, fetchMarkAllAsRead, fetchMarkAsRead } from '@/service/api';
 import { $t } from '@/locales';
@@ -103,11 +103,16 @@ function onShowChange(show: boolean) {
     @update:show="onShowChange"
   >
     <template #trigger>
-      <div class="relative cursor-pointer px-8px hover:bg-[#f6f6f6] dark:hover:bg-[#333] rounded-full transition-colors">
-        <NBadge :value="unreadCount" :max="99" :show="unreadCount > 0">
-          <SvgIcon icon="material-symbols:notifications-outline" class="text-20px" />
-        </NBadge>
-      </div>
+      <NTooltip>
+        <template #trigger>
+          <div class="relative cursor-pointer px-8px hover:bg-[#f6f6f6] dark:hover:bg-[#333] rounded-full transition-colors">
+            <NBadge :value="unreadCount" :max="99" :show="unreadCount > 0">
+              <SvgIcon icon="material-symbols:notifications-outline" class="text-20px" />
+            </NBadge>
+          </div>
+        </template>
+        {{ $t('notification.tooltip') }}
+      </NTooltip>
     </template>
     <template #header>
       <div class="flex items-center justify-between px-12px py-8px">

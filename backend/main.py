@@ -19,7 +19,7 @@ from modules.app.router import router as app_app_router
 from modules.admin.router import router as admin_app_router
 from modules.openapi.router import open_router
 from core.registry.setup_registry import setup_app
-from core.websocket import FastAPIConnectionManager
+from core.websocket import FastAPIConnectionManager, set_connection_manager
 
 logger = getLogger(__name__)
 
@@ -37,7 +37,9 @@ async def lifespan(app: FastAPI):
     logger.info("Redis 连接池初始化完成")
     # 初始化 WebSocket 连接管理器
     logger.info("初始化 WebSocket 连接管理器")
-    app.state.connection_manager = FastAPIConnectionManager()
+    connection_manager = FastAPIConnectionManager()
+    app.state.connection_manager = connection_manager
+    set_connection_manager(connection_manager)
     logger.info("WebSocket 连接管理器初始化完成")
     # 预热 IP 黑名单到 Redis
     try:
@@ -52,6 +54,7 @@ async def lifespan(app: FastAPI):
         import modules.scheduler.tasks.builtin  # noqa: F401
         import modules.scheduler.tasks.rate_limit_config  # noqa: F401
         import modules.scheduler.tasks.generic  # noqa: F401
+        import modules.scheduler.tasks.export_task  # noqa: F401
 
         manager = SchedulerManager.get_instance()
         manager.start()

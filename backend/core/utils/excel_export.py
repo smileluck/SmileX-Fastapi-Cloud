@@ -24,6 +24,7 @@ class ExportColumn:
     width: int = 20
     table: str | None = None
     transform: Callable[[Any], Any] | None = None
+    number_format: str | None = None
 
 
 def _get_value(row: Any, col: ExportColumn) -> Any:
@@ -49,8 +50,9 @@ def build_excel_bytes(
     - ORM 对象：通过 getattr(col.field) 取值
     - dict（跨表 JOIN 结果）：通过 dict[col.table.col.field] 或 dict[col.field] 取值
     """
-    wb = Workbook(write_only=True)
-    ws = wb.create_sheet(title=sheet_name)
+    wb = Workbook()
+    ws = wb.active
+    ws.title = sheet_name
 
     # 写表头
     ws.append([col.header for col in columns])
@@ -59,9 +61,13 @@ def build_excel_bytes(
     for idx, col in enumerate(columns, 1):
         ws.column_dimensions[get_column_letter(idx)].width = col.width
 
-    # 写数据行
-    for row in rows:
-        ws.append([_get_value(row, col) for col in columns])
+    # 写数据行，并应用数值格式
+    for row_idx, row in enumerate(rows, 2):
+        for col_idx, col in enumerate(columns, 1):
+            value = _get_value(row, col)
+            cell = ws.cell(row=row_idx, column=col_idx, value=value)
+            if col.number_format:
+                cell.number_format = col.number_format
 
     buf = io.BytesIO()
     wb.save(buf)

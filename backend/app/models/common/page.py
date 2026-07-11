@@ -1,29 +1,56 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, BeforeValidator
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import (
     Session,
 )
 from sqlalchemy import select, and_, or_, ColumnElement, Select
 from dataclasses import dataclass
-from typing import TypeVar, List, Optional, Tuple, Callable, Type, Any, Union, Dict
+from typing import TypeVar, List, Optional, Tuple, Callable, Type, Any, Union, Dict, Annotated
 from pydantic import Field, BaseModel
 from sqlalchemy.sql import func
 from core.response import ResponsePageModel, response_base, ResponsePageDataModel
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi import Query
 from database.models.base import Base
+from app.models.common.base import BaseReqEntity, EMPTY_VALUES
 
 T = TypeVar("SchemaT")
 
 
-class PageRequest(BaseModel):
+def _parse_page(v):
+    if isinstance(v, str):
+        v = v.strip()
+    if v in EMPTY_VALUES:
+        return 1
+    try:
+        return int(v)
+    except (TypeError, ValueError):
+        raise ValueError("页码必须是有效整数")
+
+
+def _parse_page_size(v):
+    if isinstance(v, str):
+        v = v.strip()
+    if v in EMPTY_VALUES:
+        return 10
+    try:
+        return int(v)
+    except (TypeError, ValueError):
+        raise ValueError("每页条数必须是有效整数")
+
+
+class PageRequest(BaseReqEntity):
     """分页请求的基类模型"""
 
-    page: int = Field(1, description="当前页码，默认第 1 页", gt=0)
-    page_size: int = Field(100, description="每页条数，默认 100 条", gt=0, le=200)
+    page: Annotated[int, BeforeValidator(_parse_page)] = Field(
+        1, description="当前页码，默认第 1 页", gt=0
+    )
+    page_size: Annotated[int, BeforeValidator(_parse_page_size)] = Field(
+        100, description="每页条数，默认 100 条", gt=0, le=200
+    )
 
     @field_validator("page")
     def page_must_be_positive(cls, v):
@@ -61,7 +88,8 @@ async def get_paginated_results(
     # 分页
     offset = (page_params.page - 1) * page_params.page_size
     data_query = query.offset(offset).limit(page_params.page_size)
-    count_query = base_query.with_only_columns(func.count()).order_by(None)
+    # 使用子查询统计总数，避免 with_only_columns 在复杂查询下 count 异常
+    count_query = select(func.count()).select_from(base_query.subquery())
 
     # 顺序执行：AsyncSession 不支持同一连接上的并发操作
     data_result = await db.execute(data_query)
