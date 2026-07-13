@@ -32,6 +32,13 @@ WHITELIST_PREFIXES: Tuple[str, ...] = (
     "/admin/sys/login-log",
     "/admin/sys/monitor",
     "/admin/sys/export/task/list",
+    # 动态路由/权限：每次鉴权初始化与路由探测都会调用（getPermissions / isRouteExist），
+    # 属高频基础设施读取，非用户操作，不计入操作日志（route 模块仅有 GET）
+    "/admin/sys/route",
+    # 通知中心：未读数与「我的通知」列表为高频状态读取（弹窗打开 / WS 事件触发），
+    # 不计入；通知的发布 / 编辑 / 删除 / 标记已读等写操作仍正常记录
+    "/admin/sys/notice/my/unread-count",
+    "/admin/sys/notice/my/list",
     "/docs",
     "/redoc",
     "/openapi.json",

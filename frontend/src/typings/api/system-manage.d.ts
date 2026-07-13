@@ -77,8 +77,6 @@ declare namespace Api {
       email: string;
       /** is super user */
       is_superuser: boolean;
-      /** user role name collection */
-      userRoles: string[];
       /** dept id */
       dept_id?: number | null;
       /** last login time */
@@ -88,7 +86,7 @@ declare namespace Api {
     }>;
 
     /** raw user response from backend (before transform) */
-    type RawUser = Omit<User, 'userRoles'> & {
+    type RawUser = User & {
       roles?: { id: number; name: string }[];
     };
 
@@ -121,7 +119,7 @@ declare namespace Api {
       email?: string;
       /** user status */
       status: Common.EnableStatus | null;
-      /** role ids (resolved from userRoles at the call site) */
+      /** role ids */
       role_ids: number[];
       /** dept id */
       dept_id?: number | null;
@@ -139,7 +137,7 @@ declare namespace Api {
       email?: string;
       /** user status */
       status?: Common.EnableStatus | null;
-      /** role ids (resolved from userRoles at the call site) */
+      /** role ids */
       role_ids?: number[];
       /** dept id */
       dept_id?: number | null;

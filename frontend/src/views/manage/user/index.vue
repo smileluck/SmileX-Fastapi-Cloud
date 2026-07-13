@@ -37,8 +37,7 @@ const { columns, columnChecks, data, loading, getData, getDataByPage, mobilePagi
     const result = defaultTransform(response);
     result.data = result.data.map((user: Api.SystemManage.RawUser) => ({
       ...user,
-      status: booleanToEnableStatus(user.status),
-      userRoles: user.roles ? user.roles.map(r => r.name) : []
+      status: booleanToEnableStatus(user.status)
     }));
     return result;
   },

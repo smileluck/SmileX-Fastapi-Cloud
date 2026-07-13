@@ -30,3 +30,4 @@
 - [2026-07-13 开放API测试页 crypto.subtle 报错修复](./2026-07-13_openapi_test_crypto_subtle_fallback.md) — HTTP/局域网下 crypto.subtle 为 undefined 导致 importKey 崩溃；新增 hmac-sha256 util（原生优先 + 纯 JS 回退，已用标准向量验证）
 - [2026-07-13 启动时打印日志文件落地位置](./2026-07-13_print_log_location_on_startup.md) — setup_logging() 在 fileConfig 后动态读取 root logger 的文件 handler，打印日志目录/文件/归档子目录
 - [2026-07-13 i18n Schema 补全 + 类型清理](./2026-07-13_i18n_schema_and_type_cleanup.md) — app.d.ts 补 exportTask/notification.tooltip/role.form.maxLength；修 dict Ref 导入、export blob 直传、角色选择 value 改 name（潜在 Bug）、number[] 转换、bordered 布尔；typecheck 38→0
+- [2026-07-13 操作日志白名单补充高频轮询接口](./2026-07-13_operation_log_whitelist_polling.md) — 据近 3h 日志 Top，白名单追加 /admin/sys/route、notice/my/unread-count、notice/my/list；写操作与业务列表保留
