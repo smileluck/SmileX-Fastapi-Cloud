@@ -24,6 +24,7 @@ declare module "@elegant-router/types" {
     "demo_dict": "/demo/dict";
     "demo_openapi-test": "/demo/openapi-test";
     "demo_upload": "/demo/upload";
+    "export-record": "/export-record";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
     "log": "/log";
@@ -83,6 +84,7 @@ declare module "@elegant-router/types" {
     | "404"
     | "500"
     | "demo"
+    | "export-record"
     | "home"
     | "iframe-page"
     | "log"
@@ -115,6 +117,7 @@ declare module "@elegant-router/types" {
     | "demo_dict"
     | "demo_openapi-test"
     | "demo_upload"
+    | "export-record"
     | "home"
     | "log_login-log"
     | "log_online-user"

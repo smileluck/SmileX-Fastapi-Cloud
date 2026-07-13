@@ -19,9 +19,8 @@
         "--port",
         "8000"
       ],
-      "python": "${workspaceFolder}/backend/.venv/bin/python"
+      "python": "${workspaceFolder}/backend/.venv/Scripts/python"
     },
-
     // 前端Vue启动配置
     {
       "name": "前端 - Vue",
@@ -31,14 +30,16 @@
       "webRoot": "${workspaceFolder}/frontend",
       "sourceMaps": true
     },
-
     // 前端TypeScript调试
     {
       "name": "前端 - TS Debugger",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "tsx",
-      "skipFiles": ["<node_internals>/**", "${workspaceFolder}/frontend/node_modules/**"],
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/frontend/node_modules/**"
+      ],
       "program": "${file}",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
