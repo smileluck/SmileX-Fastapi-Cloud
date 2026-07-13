@@ -33,13 +33,6 @@ const visible = defineModel<boolean>('visible', {
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { defaultRequiredRule } = useFormRules();
 
-// 保存所有角色信息，用于编码和ID的映射
-interface RoleInfo {
-  id: number;
-  name: string;
-  code: string;
-}
-const allRoles = ref<RoleInfo[]>([]);
 const deptOptions = ref<Api.SystemManage.DeptTree[]>([]);
 
 const title = computed(() => {
@@ -50,10 +43,11 @@ const title = computed(() => {
   return titles[props.operateType];
 });
 
-type Model = Pick<Api.SystemManage.User, 'username' | 'nickname' | 'phone' | 'email' | 'userRoles' | 'status'> & {
+type Model = Pick<Api.SystemManage.User, 'username' | 'nickname' | 'phone' | 'email' | 'status'> & {
   password: string;
   confirmPassword: string;
   dept_id: number | null;
+  roleIds: number[];
 };
 
 const model = ref(createDefaultModel());
@@ -66,7 +60,7 @@ function createDefaultModel(): Model {
     email: '',
     password: '',
     confirmPassword: '',
-    userRoles: [],
+    roleIds: [],
     status: '1',
     dept_id: null
   };
@@ -147,29 +141,18 @@ const rules: Record<RuleKey, App.Global.FormRule | App.Global.FormRule[]> = {
   ]
 };
 
-/** the enabled role options */
-const roleOptions = ref<CommonType.Option<string>[]>([]);
-
-/** 将角色名称数组转换为角色ID数组 */
-function roleNamesToIds(names: string[]): number[] {
-  return names
-    .map(name => allRoles.value.find(r => r.name === name)?.id)
-    .filter((id): id is number => id !== undefined);
-}
+/** the enabled role options（value 为角色ID，唯一，避免重名角色互相串选） */
+const roleOptions = ref<CommonType.Option<number>[]>([]);
 
 async function getRoleOptions() {
   const { error, data } = await fetchGetAllRoles();
 
   if (!error) {
-    // 保存完整的角色信息
-    allRoles.value = data as RoleInfo[];
-
-    const options = data.map(item => ({
+    // value 使用角色ID（数据库主键，唯一），避免重名角色在下拉中互相串选
+    roleOptions.value = data.map(item => ({
       label: item.name,
-      value: item.name
+      value: item.id
     }));
-
-    roleOptions.value = options;
   }
 }
 
@@ -185,6 +168,9 @@ function handleInitModel() {
 
   if (props.operateType === 'edit' && props.rowData) {
     Object.assign(model.value, jsonClone(props.rowData));
+    // 用角色ID回填（rowData.roles 由列表转换时从 RawUser 透传而来）
+    const rawRow = props.rowData as Api.SystemManage.RawUser;
+    model.value.roleIds = rawRow.roles ? rawRow.roles.map(r => r.id) : [];
   }
 }
 
@@ -194,9 +180,6 @@ function closeDrawer() {
 
 async function handleSubmit() {
   await validate();
-
-  // 将角色名称转换为角色ID
-  const roleIds = roleNamesToIds(model.value.userRoles);
 
   let error: unknown = null;
 
@@ -209,7 +192,7 @@ async function handleSubmit() {
       email: model.value.email,
       password: model.value.password,
       status: model.value.status,
-      role_ids: roleIds,
+      role_ids: model.value.roleIds,
       dept_id: model.value.dept_id
     });
     error = result.error;
@@ -221,7 +204,7 @@ async function handleSubmit() {
       phone: model.value.phone,
       email: model.value.email,
       status: model.value.status,
-      role_ids: roleIds,
+      role_ids: model.value.roleIds,
       dept_id: model.value.dept_id
     });
     error = result.error;
@@ -284,9 +267,9 @@ watch(visible, () => {
             <NRadio v-for="item in enableStatusOptions" :key="item.value" :value="item.value" :label="item.label" />
           </NRadioGroup>
         </NFormItem>
-        <NFormItem :label="$t('page.manage.user.userRole')" path="userRoles">
+        <NFormItem :label="$t('page.manage.user.userRole')" path="roleIds">
           <NSelect
-            v-model:value="model.userRoles"
+            v-model:value="model.roleIds"
             multiple
             :options="roleOptions"
             :placeholder="$t('page.manage.user.form.userRole')"
