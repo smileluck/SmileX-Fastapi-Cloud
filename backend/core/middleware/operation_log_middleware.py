@@ -122,6 +122,64 @@ def _read_response_body_fast(response: Response) -> str | None:
     return None
 
 
+def _infer_module(path: str) -> str:
+    """从请求路径推导业务模块名。
+
+    业务路由统一挂在 /admin/sys/<module>/... 或 /admin/app/<module>/...，
+    剥掉 admin 前缀和区域前缀(sys/app)后，取下一段作为模块名。
+    """
+    parts = [p for p in path.split("/") if p]
+    # parts[0] == "admin", parts[1] in {"sys","app"}, parts[2] == module
+    if len(parts) >= 3 and parts[0] == "admin" and parts[1] in {"sys", "app"}:
+        return parts[2]
+    if len(parts) >= 2:
+        return parts[1]
+    return "unknown"
+
+
+def _infer_action(method: str, path: str) -> str:
+    """根据 HTTP 方法和路径后缀推导语义操作类型。
+
+    仅对未标注 @log_operation 的端点生效；已标注的端点其 module/action
+    会由装饰器写入 request.state，中间件优先采用。
+    """
+    m = method.upper()
+    parts = [p for p in path.split("/") if p]
+    last = parts[-1] if parts else ""
+    # admin/sys/<module>/<tail...>
+    tail = parts[3:] if len(parts) > 3 else []
+    has_batch = "batch" in tail
+
+    if m == "GET":
+        if last == "export":
+            return "export"
+        if last in {"list", "all", "tree", "list-tree", "assign-tree", "pages"}:
+            return "list"
+        # /{id}、/code/{code}、/value/{key} 等
+        return "detail"
+    if m == "POST":
+        if last == "add" or tail[-2:] == ["item", "add"]:
+            return "create"
+        if last == "publish":
+            return "publish"
+        if last in {"menus", "roles"}:  # /{id}/menus、/{id}/roles
+            return "assign"
+        if last in {"start", "stop", "status", "test", "routes"}:  # mcp 控制
+            return "other"
+        return "create"
+    if m == "PUT":
+        if last == "password":
+            return "change_password"
+        if has_batch:
+            return "batch_update"
+        return "update"
+    if m == "DELETE":
+        if has_batch:
+            return "batch_delete"
+        return "delete"
+    return m.lower()
+
+
 async def _write_operation_log(
     user_id: int | None,
     username: str | None,
@@ -132,6 +190,9 @@ async def _write_operation_log(
     response_code: int | None,
     response_result: str | None,
     elapsed_ms: float | None,
+    module: str,
+    action: str,
+    description: str | None,
 ):
     """异步写入操作日志到数据库，在响应发送后由 BackgroundTask 触发"""
     try:
@@ -142,9 +203,9 @@ async def _write_operation_log(
             log_entry = SysOperationLog(
                 user_id=user_id or 0,
                 username=username or "anonymous",
-                module=path.split("/")[2] if len(path.split("/")) > 2 else "unknown",
-                action=method.lower(),
-                description=f"{method} {path}",
+                module=module,
+                action=action,
+                description=description,
                 method=method,
                 path=path,
                 ip=ip,
@@ -180,6 +241,16 @@ class OperationLogMiddleware(BaseHTTPMiddleware):
 
         response_result = _read_response_body_fast(response)
 
+        # 优先读取 @log_operation 装饰器标记的语义分类，无则按 path/method 推导
+        module = getattr(request.state, "oplog_module", None) or _infer_module(path)
+        action = getattr(request.state, "oplog_action", None) or _infer_action(
+            request.method, path
+        )
+        description = (
+            getattr(request.state, "oplog_description", None)
+            or f"{request.method} {path}"
+        )
+
         # 用 BackgroundTask 附加到响应，在响应发送后才写 DB
         response.background = BackgroundTask(
             _write_operation_log,
@@ -192,6 +263,9 @@ class OperationLogMiddleware(BaseHTTPMiddleware):
             response_code=response.status_code,
             response_result=response_result,
             elapsed_ms=elapsed_ms,
+            module=module,
+            action=action,
+            description=description,
         )
 
         return response
