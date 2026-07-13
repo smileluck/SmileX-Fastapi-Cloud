@@ -267,7 +267,7 @@ async function handleDelete(taskId: number) {
 }
 
 async function handleBatchDelete() {
-  const { error } = await fetchBatchDeleteScheduledTask(checkedRowKeys.value as number[]);
+  const { error } = await fetchBatchDeleteScheduledTask(checkedRowKeys.value.map(Number));
   if (!error) {
     onBatchDeleted();
   }

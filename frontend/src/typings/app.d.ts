@@ -686,6 +686,8 @@ declare namespace App {
               roleCode: string;
               roleStatus: string;
               roleDesc: string;
+              nameMaxLength: string;
+              descMaxLength: string;
             };
             addRole: string;
             editRole: string;
@@ -1257,6 +1259,7 @@ declare namespace App {
       };
       notification: {
         title: string;
+        tooltip: string;
         markAllAsRead: string;
         noNotifications: string;
         markAllReadSuccess: string;
@@ -1266,6 +1269,30 @@ declare namespace App {
           high: string;
           urgent: string;
         };
+      };
+      exportTask: {
+        title: string;
+        tooltip: string;
+        taskName: string;
+        moduleKey: string;
+        status: {
+          title: string;
+          pending: string;
+          processing: string;
+          completed: string;
+          failed: string;
+        };
+        totalRows: string;
+        fileSize: string;
+        errorMessage: string;
+        createdAt: string;
+        finishedAt: string;
+        noRecords: string;
+        viewAll: string;
+        asyncExport: string;
+        submitSuccess: string;
+        submitFailed: string;
+        downloadFailed: string;
       };
     };
 

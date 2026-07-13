@@ -150,7 +150,7 @@ onUnmounted(() => {
             </div>
             <div class="text-12px text-gray flex items-center gap-8px">
               <span v-if="task.created_at">{{ task.created_at }}</span>
-              <NTag v-if="task.status === 'failed' && task.error_message" type="error" size="small" bordered="false">
+              <NTag v-if="task.status === 'failed' && task.error_message" type="error" size="small" :bordered="false">
                 {{ task.error_message }}
               </NTag>
             </div>

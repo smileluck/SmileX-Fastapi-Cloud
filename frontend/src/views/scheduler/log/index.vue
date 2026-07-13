@@ -152,7 +152,7 @@ onMounted(() => {
 });
 
 async function handleBatchDelete() {
-  const { error } = await fetchBatchDeleteTaskLog(checkedRowKeys.value as number[]);
+  const { error } = await fetchBatchDeleteTaskLog(checkedRowKeys.value.map(Number));
   if (!error) {
     onBatchDeleted();
   }
