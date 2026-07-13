@@ -2,6 +2,7 @@
 import { computed, reactive, ref } from 'vue';
 import { useMessage } from 'naive-ui';
 import { getServiceBaseURL } from '@/utils/service';
+import { hmacSha256Hex, sha256Hex } from '@/utils/hmac-sha256';
 import { $t } from '@/locales';
 
 defineOptions({ name: 'OpenapiTest' });
@@ -44,25 +45,6 @@ const response = reactive({
 });
 
 const fullUrl = computed(() => `${baseURL}${form.path}`);
-
-function bufToHex(buf: ArrayBuffer): string {
-  return Array.from(new Uint8Array(buf))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
-async function sha256Hex(text: string): Promise<string> {
-  const data = new TextEncoder().encode(text);
-  const digest = await crypto.subtle.digest('SHA-256', data);
-  return bufToHex(digest);
-}
-
-async function hmacSha256Hex(secret: string, message: string): Promise<string> {
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(message));
-  return bufToHex(sig);
-}
 
 function genNonce(): string {
   const bytes = new Uint8Array(16);
