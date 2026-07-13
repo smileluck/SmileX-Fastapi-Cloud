@@ -81,7 +81,11 @@ class SysMerchantResponseData(BaseRespEntity):
 class SysMerchantWithSecret(SysMerchantResponseData):
     """创建商户后的响应：附带一次性明文 app_secret（仅此一次返回）"""
 
-    app_secret: str = Field(..., description="明文 app_secret（仅创建/重置时返回一次，请立即妥善保存）")
+    # SysMerchant ORM 仅有 app_secret_encrypted，无 app_secret 属性，
+    # model_validate(merchant) 时该字段取默认值；端点随后立即赋真实明文（见 create_merchant 端点），
+    # 故响应恒为真实值。不能用“先 validate base 再 model_dump 重建”的写法——
+    # BaseRespEntity 会把 status 序列化为 "1"/"2"，重新校验 bool 时 "2" 会被 Pydantic 拒绝。
+    app_secret: str = Field(default="", description="明文 app_secret（仅创建/重置时返回一次，请立即妥善保存）")
 
 
 class SysMerchantSecretResetResponse(BaseEntity):

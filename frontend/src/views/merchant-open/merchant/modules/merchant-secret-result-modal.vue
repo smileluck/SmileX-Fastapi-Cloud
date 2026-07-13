@@ -30,13 +30,43 @@ const showDialog = computed({
   set: (val: boolean) => emit('update:visible', val)
 });
 
-async function copy(text: string) {
+function copy(text: string) {
   if (!text) return;
-  try {
-    await navigator.clipboard.writeText(text);
+  // execCommand 必须在用户手势(click)的同步调用栈内执行；任何 await 都会跨微任务，
+  // 破坏 user activation，导致 Chrome 返回 true 却不写入剪贴板（这正是之前“提示成功但粘不出来”的根因）
+  if (copyViaExecCommand(text)) {
     window.$message?.success($t('page.manage.merchant.copied'));
+    return;
+  }
+  // 兜底：安全上下文下用异步 Clipboard API
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => window.$message?.success($t('page.manage.merchant.copied')))
+      .catch(() => window.$message?.error($t('page.manage.merchant.copyFailed')));
+    return;
+  }
+  window.$message?.error($t('page.manage.merchant.copyFailed'));
+}
+
+/** execCommand 同步复制：用移出视口的隐藏 textarea，返回是否成功 */
+function copyViaExecCommand(text: string): boolean {
+  try {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'absolute';
+    textarea.style.top = '0';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    textarea.setSelectionRange(0, text.length); // iOS Safari 下 select() 不生效，需手动设选区
+    const success = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return success;
   } catch {
-    window.$message?.error($t('page.manage.merchant.copyFailed'));
+    return false;
   }
 }
 
