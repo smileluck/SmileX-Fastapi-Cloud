@@ -24,7 +24,9 @@ export function setupElegantRouter() {
     onRouteMetaGen(routeName) {
       const key = routeName as RouteKey;
 
-      const constantRoutes: RouteKey[] = ['login', '403', '404', '500'];
+      // export-record 作为常量路由：动态路由模式下后端菜单不返回 hideInMenu 路由，
+      // 头部「查看全部」需直接跳转，故纳入 constant 列表保证始终注册
+      const constantRoutes: RouteKey[] = ['login', '403', '404', '500', 'export-record'];
 
       const meta: Partial<RouteMeta> = {
         title: key,

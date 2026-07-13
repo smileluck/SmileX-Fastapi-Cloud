@@ -25,3 +25,4 @@
 - [2026-07-11 本地 .log 日志按日期目录滚动](./2026-07-11_rolling_logs_by_date.md) — Python 应用日志与 Gunicorn access/error 日志统一按 `YYYY-MM-DD/` 目录滚动，完善 deploy/deploy.sh 与 systemd 服务
 - [2026-07-05 商户管理 + 开放API HMAC 签名鉴权](./2026-07-05_merchant_openapi_auth.md) — sys_merchant 表（app_secret Fernet 加密）+ 后台 CRUD/重置密钥 + /open/* HMAC-SHA256 签名校验（时间戳窗口 + Redis nonce 防重放）+ /open/demo/ping 示例 +（迭代）商户开放管理目录 + sys_openapi_log 调用日志中间件
 - [2026-07-07 异步导出、全局校验、角色表单与登录禁用优化](./2026-07-07_export_validation_login_disable.md) — 头部导出记录入口 + 操作日志异步导出 + APScheduler 每分钟执行/超时清理、WebSocket+轮询状态同步、BaseReqEntity 全局 trim + BaseRespEntity 类型安全、PageRequest int 防御 + 中文错误、角色 name/desc 长度前后端校验、禁用用户登录拦截、操作日志 total 修复 + 导出轮询白名单
+- [2026-07-13 导出记录弹窗状态标识优化 + 查看全部路由修复](./2026-07-13_export_record_ui_and_constant_route.md) — 弹窗状态由图标改为 NTag（绿成功/红失败/黄生成中/灰排队）+ 下载按钮补 i18n 文本；export-record 路由纳入 constant 列表（dynamic 模式下后端菜单不返回 hideInMenu 路由）

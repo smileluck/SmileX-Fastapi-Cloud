@@ -89,7 +89,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'export-record',
       i18nKey: 'route.export-record',
       hideInMenu: true,
-      keepAlive: true
+      keepAlive: true,
+      constant: true
     }
   },
   {

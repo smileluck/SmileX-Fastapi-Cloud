@@ -121,7 +121,7 @@ const {
         if (row.status !== 'completed') return null;
         return (
           <NButton type="primary" text size="small" onClick={() => handleDownload(row.id, row.task_name)}>
-            {$t('common.download')}
+            {$t('common.actions.download')}
           </NButton>
         );
       }

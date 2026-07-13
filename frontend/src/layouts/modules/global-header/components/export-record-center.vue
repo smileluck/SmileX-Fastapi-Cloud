@@ -19,11 +19,11 @@ const loading = ref(false);
 const recentTasks = ref<Api.ExportTask.ExportTask[]>([]);
 const pollingTimer = ref<ReturnType<typeof setInterval> | null>(null);
 
-const statusMap: Record<Api.ExportTask.ExportTaskStatus, { label: string; type: NaiveUI.ThemeColor; icon: string }> = {
-  pending: { label: $t('exportTask.status.pending'), type: 'default', icon: 'material-symbols:pending-outline' },
-  processing: { label: $t('exportTask.status.processing'), type: 'warning', icon: 'material-symbols:sync-outline' },
-  completed: { label: $t('exportTask.status.completed'), type: 'success', icon: 'material-symbols:check-circle-outline' },
-  failed: { label: $t('exportTask.status.failed'), type: 'error', icon: 'material-symbols:error-outline' }
+const statusMap: Record<Api.ExportTask.ExportTaskStatus, { label: string; type: NaiveUI.ThemeColor }> = {
+  pending: { label: $t('exportTask.status.pending'), type: 'default' },
+  processing: { label: $t('exportTask.status.processing'), type: 'warning' },
+  completed: { label: $t('exportTask.status.completed'), type: 'success' },
+  failed: { label: $t('exportTask.status.failed'), type: 'error' }
 };
 
 const hasRunningTask = computed(() =>
@@ -142,25 +142,11 @@ onUnmounted(() => {
         <NListItem v-for="task in recentTasks" :key="task.id">
           <div class="flex flex-col gap-6px w-full">
             <div class="flex items-center gap-8px">
-              <NTooltip>
-                <template #trigger>
-                  <SvgIcon
-                    :icon="statusMap[task.status].icon"
-                    class="text-18px flex-shrink-0"
-                    :class="`text-${statusMap[task.status].type}`"
-                  />
-                </template>
-                {{ statusMap[task.status].label }}
-              </NTooltip>
+              <NTag :type="statusMap[task.status].type" size="small">{{ statusMap[task.status].label }}</NTag>
               <span class="font-medium truncate flex-1" :title="task.task_name">{{ task.task_name }}</span>
-              <NTooltip v-if="task.status === 'completed'">
-                <template #trigger>
-                  <NButton text size="tiny" @click="handleDownload(task, $event)">
-                    <SvgIcon icon="material-symbols:download" class="text-18px" />
-                  </NButton>
-                </template>
-                {{ $t('common.download') }}
-              </NTooltip>
+              <NButton v-if="task.status === 'completed'" text size="small" type="primary" @click="handleDownload(task, $event)">
+                {{ $t('common.actions.download') }}
+              </NButton>
             </div>
             <div class="text-12px text-gray flex items-center gap-8px">
               <span v-if="task.created_at">{{ task.created_at }}</span>
@@ -176,7 +162,4 @@ onUnmounted(() => {
   </NPopover>
 </template>
 
-<style scoped>.text-success { color: var(--n-success-color); }
-.text-warning { color: var(--n-warning-color); }
-.text-error { color: var(--n-error-color); }
-.text-default { color: var(--n-text-color-3); }</style>
+<style scoped></style>
