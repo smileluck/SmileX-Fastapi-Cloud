@@ -44,6 +44,20 @@ def setup_logging():
             },
         )
         logging.info(f"日志系统初始化完成，当前环境: {env}")
+        # 打印日志落地位置，便于启动时定位日志文件
+        log_files = sorted(
+            {
+                getattr(h, "baseFilename", None)
+                for h in logging.getLogger().handlers
+                if getattr(h, "baseFilename", None)
+            }
+        )
+        if log_files:
+            logging.info("日志目录: %s", log_dir)
+            logging.info("日志文件: %s", ", ".join(log_files))
+            logging.info("历史日志按日期归档于: %s 子目录", log_dir / "YYYY-MM-DD")
+        else:
+            logging.info("日志仅输出到控制台（未配置文件 handler）")
     except Exception as e:
         logging.basicConfig(level=logging.DEBUG if env == "dev" else logging.INFO)
         logging.error(f"日志配置加载失败: {str(e)}，已启用基础配置")

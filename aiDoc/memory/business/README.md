@@ -28,3 +28,4 @@
 - [2026-07-13 导出记录弹窗状态标识优化 + 查看全部路由修复](./2026-07-13_export_record_ui_and_constant_route.md) — 弹窗状态由图标改为 NTag（绿成功/红失败/黄生成中/灰排队）+ 下载按钮补 i18n 文本；export-record 路由纳入 constant 列表（dynamic 模式下后端菜单不返回 hideInMenu 路由）
 - [2026-07-13 新建商户「数据校验错误」修复](./2026-07-13_merchant_create_validation_fix.md) — SysMerchantWithSecret.app_secret 原必填，model_validate(ORM) 缺字段抛 ValidationError；改 default=""，端点既有逻辑随后赋真实明文
 - [2026-07-13 开放API测试页 crypto.subtle 报错修复](./2026-07-13_openapi_test_crypto_subtle_fallback.md) — HTTP/局域网下 crypto.subtle 为 undefined 导致 importKey 崩溃；新增 hmac-sha256 util（原生优先 + 纯 JS 回退，已用标准向量验证）
+- [2026-07-13 启动时打印日志文件落地位置](./2026-07-13_print_log_location_on_startup.md) — setup_logging() 在 fileConfig 后动态读取 root logger 的文件 handler，打印日志目录/文件/归档子目录
