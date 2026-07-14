@@ -10,6 +10,8 @@
 
 详细索引见 [business/README.md](./business/README.md)。近期：
 
+- [2026-07-14 密码复杂度策略：6-20 位且至少含字母+数字](./business/2026-07-14_password_complexity_policy.md) — 收紧 REG_PWD 用于写入侧，登录改仅非空；后端加 validator（修 new_password max 100→20）
+- [2026-07-14 用户编辑保存角色不生效修复](./business/2026-07-14_user_list_roles_for_edit.md) — 列表响应 SysUserListResponse 缺 roles，编辑抽屉无法回填 → 保存提交 role_ids:[] 清空角色；补 roles 字段（selectinload 已有，零额外查询）
 - [2026-07-13 新建商户「数据校验错误」修复](./business/2026-07-13_merchant_create_validation_fix.md) — SysMerchantWithSecret.app_secret 必填导致 model_validate(ORM) 抛 ValidationError；改 default=""
 - [2026-07-13 开放API测试页 crypto.subtle 报错修复](./business/2026-07-13_openapi_test_crypto_subtle_fallback.md) — HTTP/局域网下 crypto.subtle 为 undefined；新增 hmac-sha256 util（原生优先 + 纯 JS 回退）
 - [2026-07-13 启动时打印日志文件落地位置](./business/2026-07-13_print_log_location_on_startup.md) — setup_logging() 动态读取文件 handler，打印日志目录/文件/归档子目录

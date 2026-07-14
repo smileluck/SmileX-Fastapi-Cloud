@@ -7,9 +7,10 @@ export const REG_PHONE =
 /**
  * Password reg
  *
- * 6-18 characters, including letters, numbers, and underscores
+ * 6-20 characters, must contain both letters and numbers (underscores allowed)
+ * 注意：此为「写入」密码策略（新建/修改/注册/重置）；登录不应使用，以免拦截旧密码/全数字密码
  */
-export const REG_PWD = /^\w{6,18}$/;
+export const REG_PWD = /^(?=.*[A-Za-z])(?=.*\d)\w{6,20}$/;
 
 /** Email reg */
 export const REG_EMAIL = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;

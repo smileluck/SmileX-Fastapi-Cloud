@@ -58,11 +58,12 @@ watch(rememberMe, val => {
 
 const rules = computed<Record<keyof FormModel, App.Global.FormRule[]>>(() => {
   // inside computed to make locale reactive, if not apply i18n, you can define it without computed
-  const { formRules } = useFormRules();
+  const { formRules, defaultRequiredRule } = useFormRules();
 
   return {
     userName: formRules.userName,
-    password: formRules.pwd
+    // 登录不校验密码格式（避免拦截旧密码 / 全数字种子密码），仅校验非空；格式校验交给写入侧
+    password: [defaultRequiredRule]
   };
 });
 

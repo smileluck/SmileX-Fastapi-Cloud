@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { jsonClone } from '@sa/utils';
 import { enableStatusOptions, userGenderOptions } from '@/constants/business';
-import { REG_EMAIL, REG_PHONE } from '@/constants/reg';
+import { REG_EMAIL, REG_PHONE, REG_PWD } from '@/constants/reg';
 import { fetchCreateUser, fetchGetAllRoles, fetchGetDeptTreeSelect, fetchUpdateUser } from '@/service/api';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
@@ -89,10 +89,9 @@ const rules: Record<RuleKey, App.Global.FormRule | App.Global.FormRule[]> = {
       trigger: ['input', 'blur']
     },
     {
-      min: 6,
-      max: 20,
-      trigger: ['input', 'blur'],
-      message: $t('page.manage.user.form.passwordLength')
+      pattern: REG_PWD,
+      message: $t('form.pwd.invalid'),
+      trigger: ['input', 'blur']
     }
   ],
   confirmPassword: [
@@ -102,10 +101,9 @@ const rules: Record<RuleKey, App.Global.FormRule | App.Global.FormRule[]> = {
       trigger: ['input', 'blur']
     },
     {
-      min: 6,
-      max: 20,
-      trigger: ['input', 'blur'],
-      message: $t('page.manage.user.form.passwordLength')
+      pattern: REG_PWD,
+      message: $t('form.pwd.invalid'),
+      trigger: ['input', 'blur']
     },
     {
       validator: (rule, value) => {

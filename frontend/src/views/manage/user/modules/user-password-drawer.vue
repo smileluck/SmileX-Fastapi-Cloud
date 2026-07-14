@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { fetchChangeUserPassword } from '@/service/api/system-manage';
+import { REG_PWD } from '@/constants/reg';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
 
@@ -40,8 +41,8 @@ const rules: Record<keyof Model, App.Global.FormRule[]> = {
   newPassword: [
     defaultRequiredRule,
     {
-      min: 6,
-      message: $t('page.manage.user.form.passwordMinLength'),
+      pattern: REG_PWD,
+      message: $t('form.pwd.invalid'),
       trigger: 'blur'
     }
   ],

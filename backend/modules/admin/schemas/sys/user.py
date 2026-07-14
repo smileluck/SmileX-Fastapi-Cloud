@@ -8,6 +8,16 @@ import re
 from app.models.common.base import BaseRespEntity, BaseEntity, BoolField
 from app.models.common.page import PageRequest
 
+# 密码复杂度策略：6-20 位，且至少包含字母和数字（与前端 REG_PWD 保持一致）
+PASSWORD_PATTERN = re.compile(r"^(?=.*[A-Za-z])(?=.*\d)\w{6,20}$")
+
+
+def validate_password_complexity(value: str) -> str:
+    """校验密码复杂度：6-20 位，且必须同时包含字母和数字"""
+    if not PASSWORD_PATTERN.match(value or ""):
+        raise ValueError("密码需6-20位，且至少包含字母和数字")
+    return value
+
 
 class SysUserQueryParams(PageRequest):
     """
@@ -80,6 +90,12 @@ class SysUserCreate(BaseEntity):
                 raise ValueError("手机号格式不正确")
         return v
 
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, v):
+        """验证密码复杂度：6-20 位，且必须同时包含字母和数字"""
+        return validate_password_complexity(v)
+
 
 class SysUserUpdate(BaseEntity):
     """
@@ -130,7 +146,13 @@ class SysUserPasswordUpdate(BaseEntity):
     """
 
     old_password: Optional[str] = Field(None, description="旧密码")
-    new_password: str = Field(..., description="新密码", min_length=6, max_length=100)
+    new_password: str = Field(..., description="新密码", min_length=6, max_length=20)
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_password(cls, v):
+        """验证新密码复杂度：6-20 位，且必须同时包含字母和数字"""
+        return validate_password_complexity(v)
 
 
 class SysUserSimpleResponse(BaseRespEntity):
