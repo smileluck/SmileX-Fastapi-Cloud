@@ -8,6 +8,7 @@ import { enableStatusRecord, menuTypeRecord } from '@/constants/business';
 import { fetchDeleteMenu, fetchGetAllPages, fetchGetMenuListTree } from '@/service/api';
 import { useAppStore } from '@/store/modules/app';
 import { useAuth } from '@/hooks/business/auth';
+import { tableCellText } from '@/hooks/common/table';
 import { $t } from '@/locales';
 import { formatButtonLabel } from '@/utils/menu-button';
 import SvgIcon from '@/components/custom/svg-icon.vue';
@@ -99,13 +100,15 @@ const columns = [
     key: 'routeName',
     title: $t('page.manage.menu.routeName'),
     align: 'center' as const,
-    minWidth: 120
+    minWidth: 120,
+    render: (row: Api.SystemManage.Menu) => tableCellText(row.routeName)
   },
   {
     key: 'routePath',
     title: $t('page.manage.menu.routePath'),
     align: 'center' as const,
-    minWidth: 120
+    minWidth: 120,
+    render: (row: Api.SystemManage.Menu) => tableCellText(row.routePath)
   },
   {
     key: 'status',
