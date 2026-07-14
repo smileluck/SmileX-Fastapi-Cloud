@@ -34,3 +34,4 @@
 - [2026-07-13 表格空字段统一显示为 "-"](./2026-07-13_table_empty_cell_placeholder.md) — 在共享 table hook 的 getColumns 注入默认 render（tableCellText），16 表自动生效；menu 内联表 routeName/routePath 手工补
 - [2026-07-14 用户编辑保存角色不生效修复](./2026-07-14_user_list_roles_for_edit.md) — 列表响应 `SysUserListResponse` 缺 `roles`，编辑抽屉无法回填 → 保存提交 `role_ids:[]` 清空角色；补 `roles` 字段（selectinload 已有，零额外查询）
 - [2026-07-14 密码复杂度策略：6-20 位且至少含字母+数字](./2026-07-14_password_complexity_policy.md) — 收紧 REG_PWD 用于写入侧（新建/修改/注册/重置），登录改仅非空避免拦截旧密码；后端 SysUserCreate/SysUserPasswordUpdate 加 validator（修 new_password max 100→20）
+- [2026-07-14 调度器时区修复 + create_superuser naive 时间](./2026-07-14_scheduler_timezone_fix.md) — APScheduler/CronTrigger.from_crontab 默认按服务器本地时区，UTC 服务器 cron 偏移 8h；三处显式固定 Asia/Shanghai；create_superuser 改 aware

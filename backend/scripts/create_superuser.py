@@ -5,7 +5,7 @@
 创建默认超级管理用户脚本
 用于在数据库初始化后创建默认的超级管理员账号
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 import sys
@@ -58,7 +58,7 @@ def create_superuser():
                 email="admin@example.com",
                 phone="13800138000",
                 avatar="",
-                last_login_at=datetime.now(),
+                last_login_at=datetime.now(timezone.utc),
                 last_login_ip="127.0.0.1",
                 roles=[],
                 status=True,

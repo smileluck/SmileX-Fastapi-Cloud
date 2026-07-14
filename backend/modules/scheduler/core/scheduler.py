@@ -11,6 +11,7 @@ import json
 import logging
 import traceback
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -22,6 +23,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from modules.scheduler.core.registry import get_task_definition, get_task_definition_by_path
 from database.models.sys.scheduled_task import SysScheduledTask
 from database.models.sys.task_log import SysScheduledTaskLog
+from database.utils.timezone import DEFAULT_TIMEZONE
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +34,10 @@ class SchedulerManager:
     _instance = None
 
     def __init__(self):
+        # 固定调度器时区为应用时区（DEFAULT_TIMEZONE=Asia/Shanghai）。否则 cron 表达式会按
+        # 服务器本地时区解释，部署到 UTC 服务器时整体偏移 8 小时。
         self._scheduler = AsyncIOScheduler(
+            timezone=ZoneInfo(DEFAULT_TIMEZONE),
             job_defaults={
                 "coalesce": True,
                 "max_instances": 1,
@@ -119,7 +124,7 @@ class SchedulerManager:
     def preview_cron(cron_expression: str, count: int = 5) -> list[str]:
         """预览 cron 表达式接下来 N 次执行时间"""
         try:
-            trigger = CronTrigger.from_crontab(cron_expression)
+            trigger = CronTrigger.from_crontab(cron_expression, timezone=ZoneInfo(DEFAULT_TIMEZONE))
             now = datetime.now(timezone.utc)
             times = []
             prev = None
@@ -156,7 +161,7 @@ class SchedulerManager:
         """根据 trigger_type 构建对应的 APScheduler trigger"""
         try:
             if task.trigger_type == "cron":
-                return CronTrigger.from_crontab(task.cron_expression)
+                return CronTrigger.from_crontab(task.cron_expression, timezone=ZoneInfo(DEFAULT_TIMEZONE))
             if task.trigger_type == "interval":
                 params = json.loads(task.trigger_params or "{}")
                 return IntervalTrigger(**params)
