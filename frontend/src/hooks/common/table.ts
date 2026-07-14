@@ -310,7 +310,7 @@ function getColumns<Column extends NaiveUI.TableColumn<any>>(cols: Column[], che
     .filter(item => item.checked)
     .map(check => {
       return {
-        ...columnMap.get(check.key),
+        ...withEmptyPlaceholder(columnMap.get(check.key)),
         fixed: check.fixed
       } as Column;
     });
@@ -320,4 +320,32 @@ function getColumns<Column extends NaiveUI.TableColumn<any>>(cols: Column[], che
 
 export function isTableColumnHasKey<T>(column: NaiveUI.TableColumn<T>): column is NaiveUI.TableColumnWithKey<T> {
   return Boolean((column as NaiveUI.TableColumnWithKey<T>).key);
+}
+
+/** 表格空值占位符 */
+const EMPTY_CELL_PLACEHOLDER = '-';
+
+/**
+ * 将单元格值格式化为展示文本：null / undefined / 空字符串 → "-"，
+ * 0、false 等合法 falsy 值原样保留。自定义 render 可调用以保持一致的空值占位。
+ */
+export function tableCellText(value: unknown): string {
+  if (value === null || value === undefined || value === '') return EMPTY_CELL_PLACEHOLDER;
+  return String(value);
+}
+
+/**
+ * 为「未自定义 render 的普通数据列」注入默认 render：空值显示 "-"。
+ * 选择列 / 展开列 / 已有自定义 render 的列保持不变（由其自行决定空值展示）。
+ */
+function withEmptyPlaceholder(col: NaiveUI.TableColumn<any> | undefined): NaiveUI.TableColumn<any> | undefined {
+  if (!col) return col;
+  // 结构化探测：column 可能是 data column / selection / expand 等不同变体，用 any 统一读取
+  const c = col as any;
+  // 仅对：有 key（普通数据列）、无 type（非 selection/expand）、无自定义 render 的列注入
+  if (c.key && !c.type && typeof c.render !== 'function') {
+    const key: string = c.key;
+    return { ...c, render: (row: any) => tableCellText(row?.[key]) };
+  }
+  return col;
 }
