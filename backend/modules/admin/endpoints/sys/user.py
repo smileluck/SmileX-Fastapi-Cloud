@@ -66,7 +66,7 @@ async def get_user_list(
     scope = await DataScopeService.get_effective_scope(db, user)
     permitted_dept_ids = await DataScopeService.get_permitted_dept_ids(db, user, scope)
 
-    # 构建查询对象（不加载关联角色）
+    # 构建查询对象（build_user_list_query 已 selectinload 角色，供列表响应回填）
     query = UserService.build_user_list_query(
         query_params,
         data_scope=scope,

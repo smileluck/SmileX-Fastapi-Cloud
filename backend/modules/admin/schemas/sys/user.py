@@ -162,7 +162,7 @@ class SysRoleSimpleResponseForUser(BaseRespEntity):
 class SysUserListResponse(BaseRespEntity):
     """
     系统用户列表响应模型
-    用于用户列表展示，不包含关联角色数据
+    用于用户列表展示，含关联角色（编辑抽屉需按角色ID回填；roles 已由列表查询 selectinload，零额外开销）
     """
 
     model_config = ConfigDict(from_attributes=True)
@@ -180,6 +180,7 @@ class SysUserListResponse(BaseRespEntity):
     last_login_ip: Optional[str] = Field(None, description="最后登录IP")
     created_at: datetime = Field(..., description="创建时间")
     updated_at: Optional[datetime] = Field(None, description="更新时间")
+    roles: List[SysRoleSimpleResponseForUser] = Field([], description="角色列表")
 
 
 class SysUserResponseData(BaseRespEntity):
