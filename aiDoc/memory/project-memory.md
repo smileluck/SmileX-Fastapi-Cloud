@@ -10,6 +10,7 @@
 
 详细索引见 [business/README.md](./business/README.md)。近期：
 
+- [2026-07-15 关于我们页面（前端常驻路由 + 构建时 Git 历史）](./business/2026-07-15_about_page.md) — 左右布局：左项目介绍，右 NTimeline 展示 Git 提交；about 经 `onRouteMetaGen` 标 constant 进侧边栏固定菜单（不走动态菜单）；Git 历史由自研 vite 插件构建时采集、经 virtual module 暴露，无 git 空态；纯前端不动后端
 - [2026-07-14 密码复杂度策略：6-20 位且至少含字母+数字](./business/2026-07-14_password_complexity_policy.md) — 收紧 REG_PWD 用于写入侧，登录改仅非空；后端加 validator（修 new_password max 100→20）
 - [2026-07-14 调度器时区修复 + create_superuser naive 时间](./business/2026-07-14_scheduler_timezone_fix.md) — APScheduler/cron 默认按服务器本地时区，UTC 服务器偏移 8h；三处显式固定 Asia/Shanghai
 - [2026-07-14 用户编辑保存角色不生效修复](./business/2026-07-14_user_list_roles_for_edit.md) — 列表响应 SysUserListResponse 缺 roles，编辑抽屉无法回填 → 保存提交 role_ids:[] 清空角色；补 roles 字段（selectinload 已有，零额外查询）

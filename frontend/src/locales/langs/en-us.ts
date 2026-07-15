@@ -286,6 +286,7 @@ const local: App.I18n.Schema = {
     'log_online-user': 'Online Users',
     'log_operation-log': 'Operation Log',
     monitor: 'Monitor Dashboard',
+    about: 'About',
     demo: 'Example',
     demo_upload: 'Upload Demo',
     demo_dict: 'Dict Component Demo',
@@ -388,6 +389,23 @@ const local: App.I18n.Schema = {
       day: 'd',
       hour: 'h',
       minute: 'm'
+    },
+    about: {
+      title: 'About SmileX',
+      subtitle: 'A full-stack cloud service platform built on FastAPI and Vue 3',
+      intro:
+        'SmileX-Fastapi-Cloud is an out-of-the-box full-stack cloud service platform. The frontend is built with Vue 3 + Vite + NaiveUI + UnoCSS, and the backend with FastAPI + SQLAlchemy 2.0 + PostgreSQL + Redis. It ships with authentication, RBAC, system config, scheduled tasks, monitoring, and a layered AI collaboration doc system.',
+      techStackTitle: 'Tech Stack',
+      featuresTitle: 'Key Features',
+      feat1: 'Unified response & pagination system with standardized API contracts',
+      feat2: 'Comprehensive RBAC with row-level data permissions',
+      feat3: 'Snowflake ID primary keys + soft delete + full audit fields',
+      feat4: 'Optional MCP tool platform for direct AI client invocation',
+      feat5: 'Automatic Status / datetime bridging between frontend and backend',
+      feat6: 'Built-in AGENTS.MD + aiDoc layered AI collaboration docs',
+      gitHistory: 'Git Commit History',
+      gitUnavailable: 'No Git history available in the current environment',
+      commitsCount: '{count} commits'
     },
     demo: {
       openapiTest: {

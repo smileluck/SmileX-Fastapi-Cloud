@@ -610,6 +610,22 @@ declare namespace App {
           hour: string;
           minute: string;
         };
+        about: {
+          title: string;
+          subtitle: string;
+          intro: string;
+          techStackTitle: string;
+          featuresTitle: string;
+          feat1: string;
+          feat2: string;
+          feat3: string;
+          feat4: string;
+          feat5: string;
+          feat6: string;
+          gitHistory: string;
+          gitUnavailable: string;
+          commitsCount: string;
+        };
 
         demo: {
           openapiTest: {

@@ -20,6 +20,7 @@ declare module "@elegant-router/types" {
     "403": "/403";
     "404": "/404";
     "500": "/500";
+    "about": "/about";
     "demo": "/demo";
     "demo_dict": "/demo/dict";
     "demo_openapi-test": "/demo/openapi-test";
@@ -83,6 +84,7 @@ declare module "@elegant-router/types" {
     | "403"
     | "404"
     | "500"
+    | "about"
     | "demo"
     | "export-record"
     | "home"
@@ -114,6 +116,7 @@ declare module "@elegant-router/types" {
     | "500"
     | "iframe-page"
     | "login"
+    | "about"
     | "demo_dict"
     | "demo_openapi-test"
     | "demo_upload"

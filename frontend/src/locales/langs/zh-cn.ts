@@ -282,6 +282,7 @@ const local: App.I18n.Schema = {
     'log_online-user': '在线用户',
     'log_operation-log': '操作日志',
     monitor: '监控仪表盘',
+    about: '关于我们',
     demo: '示例',
     demo_upload: '上传演示',
     demo_dict: '字典组件演示',
@@ -384,6 +385,23 @@ const local: App.I18n.Schema = {
       day: '天',
       hour: '小时',
       minute: '分钟'
+    },
+    about: {
+      title: '关于 SmileX',
+      subtitle: '基于 FastAPI 与 Vue 3 的全栈云服务管理平台',
+      intro:
+        'SmileX-Fastapi-Cloud 是一套开箱即用的全栈云服务管理平台。前端基于 Vue 3 + Vite + NaiveUI + UnoCSS，后端基于 FastAPI + SQLAlchemy 2.0 + PostgreSQL + Redis，内置用户认证、RBAC 权限、系统配置、定时任务、监控等完整能力，并配套分层 AI 协作文档体系。',
+      techStackTitle: '技术栈',
+      featuresTitle: '核心特性',
+      feat1: '统一响应与分页体系，标准化 API 契约',
+      feat2: '完善的 RBAC 权限控制与行级数据权限',
+      feat3: '雪花 ID 主键 + 软删除 + 完整审计字段',
+      feat4: '可选 MCP 工具平台，支持 AI 客户端直连调用',
+      feat5: '前后端 Status / 时间字段自动桥接',
+      feat6: '内置 AGENTS.MD + aiDoc 分层 AI 协作文档',
+      gitHistory: 'Git 提交历史',
+      gitUnavailable: '当前环境未提供 Git 提交历史',
+      commitsCount: '共 {count} 条提交'
     },
     demo: {
       openapiTest: {
