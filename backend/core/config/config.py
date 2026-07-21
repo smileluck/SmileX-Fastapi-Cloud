@@ -118,7 +118,12 @@ def load_config() -> BaseSettings:
     # return GlobalSetting(_env_file=env_file, _env_file_encoding="utf-8")
     # else:
     # 若无 .env 文件，直接实例化（仅从系统环境变量加载）
-    return GlobalSetting(_env_file=f".env.{current_env}", _env_file_encoding="utf-8")
+    # 先加载公共 .env，再用环境专属 .env.{env} 覆盖（后者优先级更高）
+    # pydantic-settings 对元组内的文件按顺序读取，靠后的文件覆盖靠前的
+    return GlobalSetting(
+        _env_file=(".env", f".env.{current_env}"),
+        _env_file_encoding="utf-8",
+    )
 # ------------------------------
 # 单例配置对象：全局唯一，项目中直接导入使用
 # ------------------------------
