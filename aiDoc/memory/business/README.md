@@ -36,3 +36,4 @@
 - [2026-07-14 密码复杂度策略：6-20 位且至少含字母+数字](./2026-07-14_password_complexity_policy.md) — 收紧 REG_PWD 用于写入侧（新建/修改/注册/重置），登录改仅非空避免拦截旧密码；后端 SysUserCreate/SysUserPasswordUpdate 加 validator（修 new_password max 100→20）
 - [2026-07-14 调度器时区修复 + create_superuser naive 时间](./2026-07-14_scheduler_timezone_fix.md) — APScheduler/CronTrigger.from_crontab 默认按服务器本地时区，UTC 服务器 cron 偏移 8h；三处显式固定 Asia/Shanghai；create_superuser 改 aware
 - [2026-07-15 关于我们页面（前端常驻路由 + 构建时 Git 历史）](./2026-07-15_about_page.md) — 左右布局「关于」页：左项目介绍（定位/技术栈/特性），右 NTimeline 展示 Git 提交；about 经 `onRouteMetaGen` 标 constant 进侧边栏固定菜单（不走动态菜单）；Git 历史由自研 vite 插件 buildStart 采集、经 virtual module 暴露，无 git 空态；纯前端不动后端
+- [2026-05-27 运维 P0 修复：健康探针 + 启动硬终止](./2026-05-27_ops_p0_health_probe.md) — 新增无鉴权 `/admin/sys/health`（liveness）与 `/ready`（readiness，检查 DB+Redis）；`deploy.env` 健康检查从 `/openapi.json` 改为 `/ready`（修复生产环境 openapi 被禁用导致健康检查恒 404）；`main.py` lifespan 调度器同步失败改为硬阻止启动，IP 黑名单预热失败加结构化降级日志，种子数据降 WARNING；探针路径加入操作日志白名单
