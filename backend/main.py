@@ -41,36 +41,39 @@ async def lifespan(app: FastAPI):
     app.state.connection_manager = connection_manager
     set_connection_manager(connection_manager)
     logger.info("WebSocket 连接管理器初始化完成")
-    # 预热 IP 黑名单到 Redis
+    # 预热 IP 黑名单到 Redis（非致命：预热失败会自动从 DB 回源，限流仍可用）
     try:
         from modules.admin.services.sys.rate_limit_service import RateLimitService
         count = await RateLimitService.warmup_blacklist()
         logger.info("IP 黑名单预热数量: %s", count)
     except Exception as exc:
-        logger.error("IP 黑名单预热异常: %s", exc)
-    # 启动定时任务调度器
-    try:
-        from modules.scheduler.core.scheduler import SchedulerManager
-        import modules.scheduler.tasks.builtin  # noqa: F401
-        import modules.scheduler.tasks.rate_limit_config  # noqa: F401
-        import modules.scheduler.tasks.generic  # noqa: F401
-        import modules.scheduler.tasks.export_task  # noqa: F401
+        # 保留 try/except + ERROR 日志 + 结构化字段，便于告警系统识别「启动降级」事件
+        logger.error(
+            "IP 黑名单预热异常，限流功能降级运行: %s",
+            exc,
+            extra={"event": "startup_degraded", "component": "ip_blacklist"},
+        )
+    # 启动定时任务调度器（核心业务：异步导出/限流配置同步/内置任务，失败必须阻止启动）
+    from modules.scheduler.core.scheduler import SchedulerManager
+    import modules.scheduler.tasks.builtin  # noqa: F401
+    import modules.scheduler.tasks.rate_limit_config  # noqa: F401
+    import modules.scheduler.tasks.generic  # noqa: F401
+    import modules.scheduler.tasks.export_task  # noqa: F401
 
-        manager = SchedulerManager.get_instance()
-        manager.start()
-        app.state.scheduler_manager = manager
-        async for db_sync in get_session():
-            await manager.sync_jobs_from_db(db_sync)
-        logger.info("定时任务同步完成")
-    except Exception as exc:
-        logger.error("定时任务同步异常: %s", exc)
-    # 种子数据：菜单 + 同步装饰器注册的任务
+    manager = SchedulerManager.get_instance()
+    manager.start()
+    app.state.scheduler_manager = manager
+    async for db_sync in get_session():
+        await manager.sync_jobs_from_db(db_sync)
+    logger.info("定时任务同步完成")
+    # 种子数据：菜单 + 同步装饰器注册的任务（非致命：缺失只影响菜单可见性）
     try:
         from modules.scheduler.seed import seed_scheduler
         async for db_seed in get_session():
             await seed_scheduler(db_seed)
     except Exception as exc:
-        logger.error("定时任务种子数据异常: %s", exc)
+        # 降级为 WARNING：不影响核心功能，ERROR 会污染 5xx 错误率统计
+        logger.warning("定时任务种子数据加载失败，部分预置任务可能缺失: %s", exc)
     yield
     # 停止定时任务调度器
     try:
