@@ -2,19 +2,21 @@
 # -*- coding: utf-8 -*-
 
 """
-健康检查与就绪探针端点。
+健康检查与就绪探针端点（顶级路由）。
 
 设计说明：
-    本端点刻意不使用 ResponseModel 包装、不挂鉴权依赖。
-    原因：探针是基础设施语义（供 K8s/nginx/部署脚本探测），
-    需绕过鉴权与业务中间件链路，与业务响应结构解耦。
-    详见 docs/superpowers/specs/2026-05-27-ops-p0-fix-design.md 第 3.3 节。
+    本端点刻意不使用 ResponseModel 包装、不挂鉴权依赖，并挂在顶级路径（非 /admin、非 /open）。
+    原因：
+      1. 探针是基础设施语义（供 K8s/nginx/部署脚本探测），需绕过鉴权与业务中间件链路。
+      2. 顶级路径天然不受 OperationLogMiddleware（仅作用 /admin/*）与 OpenapiLogMiddleware
+         （仅作用 /open/*，强制 HMAC 签名）约束，无需在白名单中维护，最干净。
+      3. 与业务响应结构解耦。
+    详见 docs/superpowers/specs/2026-05-27-ops-p0-fix-design.md 第 3.2/3.3 节。
 
 路径设计：
-    router 不使用 prefix，两个端点各自声明完整相对路径，
-    注册到 sys_router（prefix=/sys）后为：
-      - GET /admin/sys/health  存活探针（liveness）
-      - GET /admin/sys/ready   就绪探针（readiness）
+    router 直接在 main.py 顶层注册（无 prefix），最终对外路径为：
+      - GET /health  存活探针（liveness）
+      - GET /ready   就绪探针（readiness）
     与 spec 3.2 节接口契约对齐。
 """
 import logging
@@ -29,8 +31,8 @@ from core.redis import get_redis_client
 
 logger = logging.getLogger(__name__)
 
-# 不使用 prefix，两个端点各自声明完整相对路径，注册到 sys_router 后为
-# /admin/sys/health 与 /admin/sys/ready，与 spec 3.2 节接口契约对齐
+# 顶级路由：不挂到 sys_router，直接在 main.py 顶层注册
+# 最终对外路径为 /health 与 /ready（脱离 /admin /open 业务前缀）
 health_router = APIRouter(tags=["基础设施/健康探针"])
 
 

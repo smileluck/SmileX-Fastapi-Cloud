@@ -31,10 +31,6 @@ WHITELIST_PREFIXES: Tuple[str, ...] = (
     "/admin/sys/operation-log",
     "/admin/sys/login-log",
     "/admin/sys/monitor",
-    # 健康/就绪探针：高频探测（K8s/nginx/部署脚本每秒数次），基础设施语义，
-    # 不计入操作日志；若不加入白名单会污染审计日志表并产生无意义 DB 写入
-    "/admin/sys/health",
-    "/admin/sys/ready",
     "/admin/sys/export/task/list",
     # 动态路由/权限：每次鉴权初始化与路由探测都会调用（getPermissions / isRouteExist），
     # 属高频基础设施读取，非用户操作，不计入操作日志（route 模块仅有 GET）
