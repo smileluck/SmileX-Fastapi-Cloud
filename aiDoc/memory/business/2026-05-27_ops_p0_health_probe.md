@@ -14,14 +14,24 @@
 
 ## 修复方案
 
-### 缺陷 1 + 2：新增健康探针端点
+### 缺陷 1 + 2：新增健康探针端点（B 方案：顶级路由）
 
-新增 `backend/modules/admin/endpoints/sys/health.py`，提供两个无鉴权端点（不使用 `ResponseModel` 包装，与业务响应结构解耦）：
+新增 `backend/modules/admin/endpoints/sys/health.py`，采用**顶级路由**方案（不挂 `/admin` 或 `/open` 任何业务前缀），在 `main.py` 顶层 `app.include_router(health_router)` 注册。提供两个无鉴权端点（不使用 `ResponseModel` 包装，与业务响应结构解耦）：
 
-- `GET /admin/sys/health`（liveness）：固定返回 200 `{"status":"up"}`，仅判断进程存活
-- `GET /admin/sys/ready`（readiness）：检查 DB（`SELECT 1`）+ Redis（`PING`），任一失败返回 503，全部成功返回 200；不暴露错误详情，仅给 `ok`/`fail` 状态
+- `GET /health`（liveness）：固定返回 200 `{"status":"up"}`，仅判断进程存活
+- `GET /ready`（readiness）：检查 DB（`SELECT 1`）+ Redis（`PING`），任一失败返回 503，全部成功返回 200；不暴露错误详情，仅给 `ok`/`fail` 状态
 
-`deploy/deploy.env` 的 `HEALTH_CHECK_URL` 从 `/openapi.json` 改为 `/admin/sys/ready`，并补充注释说明原 bug 原因。
+`deploy/deploy.env` 的 `HEALTH_CHECK_URL` 从 `/openapi.json` 改为 `/ready`，并补充注释说明原 bug 原因与顶级路径优势。
+
+#### 为什么选顶级路由（B 方案）而非 /admin/sys/* 或 /open/*
+
+| 方案 | 路径 | 鉴权 | 日志中间件 | 评价 |
+|------|------|------|-----------|------|
+| A（挂 /admin/sys/*） | `/admin/sys/health` + `/ready` | 无 | 受 `OperationLogMiddleware` 约束，需额外维护白名单 | 可行但耦合多 |
+| B（顶级路由）✓ | `/health` + `/ready` | 无 | 天然不受任何业务中间件约束 | **最干净** |
+| C（挂 /open/*） | `/open/health` + `/ready` | **HMAC 签名** | 强制写 `sys_openapi_log` 商户审计表 | **不可行**（探针无法携带签名头，恒 401） |
+
+关键澄清：项目里的 `/open/*`（开放接口）**不是无鉴权接口**，而是面向第三方商户的 HMAC 签名鉴权接口（`OpenapiLogMiddleware` + `current_merchant` 依赖）。把探针放 `/open` 会导致健康检查恒 401。`/admin/*` 则受 `OperationLogMiddleware` 约束（该中间件第 240 行 `if not path.startswith("/admin/")` 才放行），高频探针会污染审计日志。顶级路径最干净。
 
 ### 缺陷 3：启动步骤按致命性分级
 
@@ -35,18 +45,16 @@
 
 shutdown 阶段（yield 之后）的 try/except 保留不变，避免停止失败影响其他资源清理。
 
-### 配套：操作日志白名单
+### 配套：无需操作日志白名单（B 方案优势）
 
-探针路径 `/admin/sys/health` 与 `/admin/sys/ready` 以 `/admin/` 开头会被 `OperationLogMiddleware` 捕获（该中间件不区分 GET/POST）。高频探测会污染审计日志表并产生无意义 DB 写入，故在 `WHITELIST_PREFIXES` 中加入两条。
+采用顶级路由后，探针路径 `/health` `/ready` **不以 `/admin/` 开头**，天然不受 `OperationLogMiddleware` 约束。也不以 `/open/` 开头，不受 `OpenapiLogMiddleware` 约束。**无需在 `WHITELIST_PREFIXES` 中维护任何条目**——这是 B 方案相比挂到 `/admin/sys/` 下的核心优势，少一处需要维护的耦合点。
 
 ## 涉及范围
 
 ### 后端
 
-- `backend/modules/admin/endpoints/sys/health.py`：新增，liveness + readiness 探针
-- `backend/modules/admin/endpoints/sys/__init__.py`：注册 `health_router`
-- `backend/core/middleware/operation_log_middleware.py`：`WHITELIST_PREFIXES` 加 `/admin/sys/health` 与 `/admin/sys/ready`
-- `backend/main.py`：lifespan 启动步骤按致命性分级
+- `backend/modules/admin/endpoints/sys/health.py`：新增，liveness + readiness 探针（顶级路由）
+- `backend/main.py`：顶层注册 `health_router` + lifespan 启动步骤按致命性分级
 
 ### 前端
 
@@ -54,7 +62,7 @@ shutdown 阶段（yield 之后）的 try/except 保留不变，避免停止失�
 
 ### 部署
 
-- `deploy/deploy.env`：`HEALTH_CHECK_URL` 从 `/openapi.json` 改为 `/admin/sys/ready`
+- `deploy/deploy.env`：`HEALTH_CHECK_URL` 从 `/openapi.json` 改为 `/ready`
 
 ## 约束与备注
 
@@ -62,16 +70,15 @@ shutdown 阶段（yield 之后）的 try/except 保留不变，避免停止失�
 - 探针响应不暴露错误详情（避免泄漏内部拓扑），详细错误记录到日志。
 - 选择 `/ready` 而非 `/health` 作为部署脚本的健康检查目标：部署语义是「能否接入流量」，属 readiness 职责。
 - 不引入 `/healthz` `/readyz` K8s 惯用别名（当前部署基于 systemd，YAGNI）。
+- 探针如需 IP 白名单（仅允许负载均衡器探测），应在 nginx/网关层实现，不在应用层处理。
 
 ## 相关文件
 
 - `backend/modules/admin/endpoints/sys/health.py`（新增）
-- `backend/modules/admin/endpoints/sys/__init__.py`
-- `backend/core/middleware/operation_log_middleware.py`
 - `backend/main.py`
 - `deploy/deploy.env`
 - `docs/superpowers/specs/2026-05-27-ops-p0-fix-design.md`（设计规范）
-- `docs/superpowers/plans/2026-05-27-ops-p0-fix-plan.md`（实现计划）
+- `docs/superpowers/plans/2026-05-27-ops-p0-fix-plan.md`（实现计划，B 方案）
 
 ## 记录日期
 

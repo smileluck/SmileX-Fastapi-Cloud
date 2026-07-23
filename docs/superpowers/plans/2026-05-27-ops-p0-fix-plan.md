@@ -1,8 +1,8 @@
-# 运维 P0 修复 — 实现计划
+# 运维 P0 修复 — 实现计划（B 方案：顶级路由）
 
 > 关联 spec：[2026-05-27-ops-p0-fix-design.md](../specs/2026-05-27-ops-p0-fix-design.md)
 > 创建日期：2026-05-27
-> 状态：待实现
+> 修订：2026-05-27，从初版（挂 `/admin/sys/*`）改为 B 方案（顶级路由），减少 `sys/__init__.py` 与 `operation_log_middleware.py` 两处耦合。
 
 ---
 
@@ -10,15 +10,16 @@
 
 | # | 任务 | 依赖 | 验收 |
 |---|------|------|------|
-| 1 | 新建 `health.py` 端点 | 无 | `/admin/sys/health` 返回 200；`/admin/sys/ready` 检查 DB+Redis |
-| 2 | 注册 `health_router` | #1 | `/admin/sys/health`、`/admin/sys/ready` 路由可访问 |
-| 3 | 操作日志白名单加探针路径 | 无 | 探针请求不产生操作日志记录 |
-| 4 | `main.py` lifespan 启动分级 | 无 | 调度器同步失败阻止启动；IP 黑名单失败加结构化日志；种子数据降级 WARNING |
-| 5 | 修改 `deploy.env` HEALTH_CHECK_URL | #1, #2 | 健康检查指向 `/admin/sys/ready` |
-| 6 | 补 aiDoc 业务记忆 | #1-#5 | 新增业务记忆文件 + 更新索引 |
-| 7 | 手工验证清单 | #1-#5 | 8 项验证全部通过 |
+| 1 | 新建 `health.py` 端点（顶级路由，无 prefix） | 无 | `health_router` 含 `/health`、`/ready` 两个路由 |
+| 2 | `main.py` 顶层注册 `health_router` | #1 | `/health`、`/ready` 路由可访问 |
+| 3 | `main.py` lifespan 启动分级 | 无 | 调度器同步失败阻止启动；IP 黑名单失败加结构化日志；种子数据降级 WARNING |
+| 4 | 修改 `deploy.env` HEALTH_CHECK_URL | #1, #2 | 健康检查指向 `/ready` |
+| 5 | 补 aiDoc 业务记忆 | #1-#4 | 新增业务记忆文件 + 更新索引 |
+| 6 | 手工验证清单 | #1-#4 | 8 项验证全部通过 |
 
-**执行顺序**：1 → 2 → 3 → 4 → 5 → 6 → 7。任务 1、3、4、5 之间无强依赖，但建议按此顺序以便逐步验证。
+**执行顺序**：1 → 2 → 3 → 4 → 5 → 6。
+
+> 与初版（7 任务）相比，B 方案省去了「sys/__init__.py 注册」与「操作日志白名单」两个任务，因为顶级路径天然不受这两个机制约束。
 
 ---
 
@@ -27,6 +28,7 @@
 **文件**：`backend/modules/admin/endpoints/sys/health.py`（新增）
 
 **要点**：
+- 顶级路由（`APIRouter(tags=[...])`，无 prefix）
 - 无 `Depends(current_user)`、无 `require_permission`
 - 不声明 `response_model`（探针例外，docstring 注明原因）
 - DB 检查用 `SELECT 1`，Redis 检查用 `client.ping()`
@@ -35,12 +37,12 @@
 
 **路径设计**（与 spec 3.2 节完全对齐）：
 
-spec 定义两个平级路径 `/admin/sys/health` 和 `/admin/sys/ready`。实现采用不带 prefix 的 router + 两个独立端点路径，注册到 `sys_router`（prefix=/sys）下，最终路径精确匹配 spec：
+`health_router` 不带 prefix，在 `main.py` 顶层 `app.include_router(health_router)` 注册，最终对外路径：
 
-- `GET /admin/sys/health` — liveness
-- `GET /admin/sys/ready` — readiness
+- `GET /health` — liveness
+- `GET /ready` — readiness
 
-操作日志白名单需同时覆盖两个路径，但二者共享 `/admin/sys/` 前缀且 `/admin/sys/health` 不是其他接口的前缀，故单独列两个条目更清晰（见任务 3）。
+顶级路径天然不受 `OperationLogMiddleware`（仅作用 `/admin/*`）和 `OpenapiLogMiddleware`（仅作用 `/open/*`）约束，无需维护任何白名单。
 
 **实现代码骨架**：
 
@@ -49,12 +51,15 @@ spec 定义两个平级路径 `/admin/sys/health` 和 `/admin/sys/ready`。实�
 # -*- coding: utf-8 -*-
 
 """
-健康检查与就绪探针端点。
+健康检查与就绪探针端点（顶级路由）。
 
-注意：本端点刻意不使用 ResponseModel 包装、不挂鉴权依赖。
-原因：探针是基础设施语义（供 K8s/nginx/部署脚本探测），
-需绕过鉴权与业务中间件链路，与业务响应结构解耦。
-详见 docs/superpowers/specs/2026-05-27-ops-p0-fix-design.md 第 3.3 节。
+设计说明：
+    本端点刻意不使用 ResponseModel 包装、不挂鉴权依赖，并挂在顶级路径（非 /admin、非 /open）。
+    原因：
+      1. 探针是基础设施语义（供 K8s/nginx/部署脚本探测），需绕过鉴权与业务中间件链路。
+      2. 顶级路径天然不受 OperationLogMiddleware（仅作用 /admin/*）与 OpenapiLogMiddleware
+         （仅作用 /open/*，强制 HMAC 签名）约束，无需在白名单中维护，最干净。
+      3. 与业务响应结构解耦。
 """
 import logging
 
@@ -68,8 +73,8 @@ from core.redis import get_redis_client
 
 logger = logging.getLogger(__name__)
 
-# 不使用 prefix，两个端点各自声明完整相对路径，注册到 sys_router 后为
-# /admin/sys/health 与 /admin/sys/ready，与 spec 3.2 节接口契约对齐
+# 顶级路由：不挂到 sys_router，直接在 main.py 顶层注册
+# 最终对外路径为 /health 与 /ready（脱离 /admin /open 业务前缀）
 health_router = APIRouter(tags=["基础设施/健康探针"])
 
 
@@ -93,20 +98,13 @@ async def _check_redis(redis_client) -> bool:
         return False
 
 
-@health_router.get(
-    "/health",
-    summary="存活探针 (liveness)",
-    status_code=status.HTTP_200_OK,
-)
+@health_router.get("/health", summary="存活探针 (liveness)", status_code=status.HTTP_200_OK)
 async def health():
     """存活探针：仅判断进程是否存活，不检查外部依赖。"""
     return {"status": "up"}
 
 
-@health_router.get(
-    "/ready",
-    summary="就绪探针 (readiness)",
-)
+@health_router.get("/ready", summary="就绪探针 (readiness)")
 async def ready(
     db: AsyncSession = Depends(get_session),
     redis_client=Depends(get_redis_client),
@@ -123,50 +121,38 @@ async def ready(
 ```
 
 **验收**：
-- `GET /admin/sys/health` → 200 `{"status":"up"}`
-- `GET /admin/sys/ready` → 200 或 503
+- `GET /health` → 200 `{"status":"up"}`
+- `GET /ready` → 200 或 503
 - 无需 Authorization header
 
 ---
 
-## 任务 2：注册 `health_router`
-
-**文件**：`backend/modules/admin/endpoints/sys/__init__.py`（修改）
-
-**改动**：
-1. 在 import 区加入 `from .health import health_router`
-2. 在 `sys_router.include_router(...)` 区块加入 `sys_router.include_router(health_router)`
-
-**改动位置**：参考现有 [sys/__init__.py](../../../backend/modules/admin/endpoints/sys/__init__.py)，在 `from .monitor import monitor_router` 附近加入 health 的 import 与注册。
-
-**验收**：启动应用后 `/admin/sys/health` 与 `/admin/sys/health/ready` 可访问（401/200/503 任一非 404 即说明路由已注册）。
-
----
-
-## 任务 3：操作日志白名单加健康探针路径
-
-**文件**：`backend/core/middleware/operation_log_middleware.py`（修改）
-
-**改动**：在 `WHITELIST_PREFIXES`（第 29 行附近）的 `/admin/sys/monitor` 后加入两个条目（覆盖 `/health` 和 `/ready` 两个端点）：
-
-```python
-"/admin/sys/health",   # 存活探针，高频探测，基础设施语义
-"/admin/sys/ready",    # 就绪探针，高频探测，基础设施语义
-```
-
-> 注：不能用单一 `/admin/sys/health` 前缀覆盖 `/ready`，因为两者是平级路径（见任务 1 路径设计）。需分别列出。
-
-**验收**：访问 `/admin/sys/health` 与 `/admin/sys/ready` 各 10 次后，`sys_operation_log` 表不产生对应记录。
-
----
-
-## 任务 4：`main.py` lifespan 启动分级
+## 任务 2：`main.py` 顶层注册 `health_router`
 
 **文件**：`backend/main.py`（修改）
 
-**改动 4a — IP 黑名单预热加结构化日志**（第 44-50 行）：
+**改动 2a** — import 区（与现有 router import 同区）：
 
-保留 try/except，但 `logger.error` 调用增加 `extra` 字段：
+```python
+from modules.admin.endpoints.sys.health import health_router
+```
+
+**改动 2b** — 顶层注册区（在 `app.include_router(open_router)` 后）：
+
+```python
+# 健康/就绪探针：顶级路由，无鉴权，不受任何业务中间件约束
+app.include_router(health_router)
+```
+
+**验收**：启动应用后 `/health` 与 `/ready` 可访问（200/503 任一非 404 即说明路由已注册）。
+
+---
+
+## 任务 3：`main.py` lifespan 启动分级
+
+**文件**：`backend/main.py`（修改）
+
+**改动 3a — IP 黑名单预热加结构化日志**（保留 try/except，加 `extra` 字段）：
 
 ```python
 try:
@@ -181,9 +167,7 @@ except Exception as exc:
     )
 ```
 
-**改动 4b — 调度器同步改为硬阻止启动**（第 51-66 行）：
-
-移除 try/except，让异常自然抛出：
+**改动 3b — 调度器同步改为硬阻止启动**（移除 try/except）：
 
 ```python
 # 启动定时任务调度器（核心业务，失败必须阻止启动）
@@ -201,7 +185,7 @@ async for db_sync in get_session():
 logger.info("定时任务同步完成")
 ```
 
-**改动 4c — 种子数据降级 WARNING**（第 67-73 行）：
+**改动 3c — 种子数据降级 WARNING**（保留 try/except，降级日志）：
 
 ```python
 try:
@@ -212,8 +196,7 @@ except Exception as exc:
     logger.warning("定时任务种子数据加载失败，部分预置任务可能缺失: %s", exc)
 ```
 
-**改动 4d — 保留 shutdown 阶段的 try/except**（第 75-80 行不变）：
-调度器停止仍用 try/except，避免 shutdown 失败影响其他资源清理。
+**改动 3d — shutdown 阶段 try/except 保留不变**（yield 之后，避免停止失败影响资源清理）。
 
 **验收**：
 - 正常启动：日志显示「定时任务同步完成」
@@ -222,79 +205,83 @@ except Exception as exc:
 
 ---
 
-## 任务 5：修改 `deploy.env` HEALTH_CHECK_URL
+## 任务 4：修改 `deploy.env` HEALTH_CHECK_URL
 
 **文件**：`deploy/deploy.env`（修改）
 
-**改动**（第 38 行）：
+**改动**：
 
 ```diff
 - HEALTH_CHECK_URL="http://127.0.0.1:${GUNICORN_PORT}/openapi.json"
-+ HEALTH_CHECK_URL="http://127.0.0.1:${GUNICORN_PORT}/admin/sys/ready"
++ HEALTH_CHECK_URL="http://127.0.0.1:${GUNICORN_PORT}/ready"
 ```
 
-**验收**：检查文件内容，确认 URL 指向 `/admin/sys/ready`。
+并补充注释说明顶级路径优势。
+
+**验收**：检查文件内容，确认 URL 指向 `/ready`。
 
 ---
 
-## 任务 6：补 aiDoc 业务记忆
+## 任务 5：补 aiDoc 业务记忆
 
 按 AGENTS.MD 规则，用户提出业务需求时必须新增 `memory/business/` 记录。
 
-**文件 6a**：`aiDoc/memory/business/2026-05-27_ops_p0_health_probe.md`（新增）
+**文件 5a**：`aiDoc/memory/business/2026-05-27_ops_p0_health_probe.md`（新增）
 
-按 [TEMPLATE.md](../../../aiDoc/memory/business/TEMPLATE.md) 格式，记录：
+记录：
 - 需求描述：修复生产部署健康检查假性失败 + 新增无鉴权探针 + 启动失败分级处理
-- 涉及范围：后端 health.py、main.py、operation_log_middleware.py、deploy.env
+- 路径方案：**B 方案 — 顶级路由 `/health` `/ready`**（不挂 `/admin` 或 `/open`，原因：`/open` 强制 HMAC 签名会导致探针恒 401；`/admin` 需额外维护操作日志白名单；顶级路径最干净）
+- 涉及范围：后端 health.py、main.py、deploy.env
 - 相关文件：列出本次改动文件
 - 记录日期：2026-05-27
 
-**文件 6b**：`aiDoc/memory/business/README.md`（修改）
+**文件 5b**：`aiDoc/memory/business/README.md`（修改）
 
 在需求索引末尾加入：
 
 ```markdown
-- [2026-05-27 运维 P0 修复：健康探针 + 启动硬终止](./2026-05-27_ops_p0_health_probe.md) — 新增无鉴权 /admin/sys/health 与 /ready 探针；deploy.env 健康检查从 /openapi.json 改为 /ready（修复生产假性失败）；main.py lifespan 调度器同步失败改为硬阻止启动；IP 黑名单预热失败加结构化降级日志；探针路径加入操作日志白名单
+- [2026-05-27 运维 P0 修复：健康探针 + 启动硬终止](./2026-05-27_ops_p0_health_probe.md) — 新增无鉴权顶级探针 `/health`（liveness）与 `/ready`（readiness，检查 DB+Redis）；`deploy.env` 健康检查从 `/openapi.json` 改为 `/ready`（修复生产环境 openapi 被禁用导致健康检查恒 404）；`main.py` lifespan 调度器同步失败改为硬阻止启动，IP 黑名单预热失败加结构化降级日志，种子数据降 WARNING；采用顶级路由方案，无需维护操作日志白名单
 ```
 
-**文件 6c**：`aiDoc/memory/project-memory.md`（修改）
+**文件 5c**：`aiDoc/memory/project-memory.md`（修改）
 
-在「业务需求记忆 / 详细索引见 business/README.md。近期：」列表顶部加入本次条目（保持倒序或按 README 一致风格）。
+在近期条目顶部加入本次条目。
 
 **验收**：三个文件均更新，无占位符。
 
 ---
 
-## 任务 7：手工验证清单
+## 任务 6：手工验证清单
 
-完成 #1-#5 后，启动应用并逐项验证：
+完成 #1-#4 后，启动应用并逐项验证：
 
 | # | 验证项 | 预期结果 |
 |---|--------|----------|
-| 1 | `curl http://localhost:8000/admin/sys/health` | 200 `{"status":"up"}` |
-| 2 | `curl http://localhost:8000/admin/sys/ready` | 200 `{"status":"ready","checks":{"db":"ok","redis":"ok"}}` |
-| 3 | 停 Redis 后访问 `/admin/sys/ready` | 503，`checks.redis="fail"` |
-| 4 | 停 DB 后访问 `/admin/sys/ready` | 503，`checks.db="fail"` |
+| 1 | `curl http://localhost:8000/health` | 200 `{"status":"up"}` |
+| 2 | `curl http://localhost:8000/ready` | 200 `{"status":"ready","checks":{"db":"ok","redis":"ok"}}` |
+| 3 | 停 Redis 后访问 `/ready` | 503，`checks.redis="fail"` |
+| 4 | 停 DB 后访问 `/ready` | 503，`checks.db="fail"` |
 | 5 | `/health` 与 `/ready` 无 Authorization header | 不返回 401 |
 | 6 | 临时让 `sync_jobs_from_db` 抛异常，启动应用 | 启动失败，uvicorn 退出非零 |
 | 7 | 临时让 IP 黑名单 `warmup_blacklist` 抛异常，启动应用 | 应用启动，日志含 `event=startup_degraded` |
-| 8 | 连续访问 `/admin/sys/health` 与 `/admin/sys/ready` 各 10 次后查 `sys_operation_log` | 无对应记录（白名单生效） |
+| 8 | 连续访问 `/health` 与 `/ready` 各 10 次后查 `sys_operation_log` 与 `sys_openapi_log` | 两表均无对应记录（顶级路径天然豁免，无需白名单） |
 
 **prod 配置额外验证**：
-- 设 `ENVIR=prod`，运行 `deploy/deploy.sh deploy` 的健康检查步骤，确认指向 `/admin/sys/ready` 且通过。
+- 设 `ENVIR=prod`，运行 `deploy/deploy.sh deploy` 的健康检查步骤，确认指向 `/ready` 且通过。
 
 ---
 
 ## 完成定义（Definition of Done）
 
-- [ ] 任务 1-6 全部代码改动完成
-- [ ] 任务 7 全部 8 项验证通过
-- [ ] 所有改动提交 git（建议拆为 1-2 个 commit：业务代码 + 文档）
+- [ ] 任务 1-5 全部代码改动完成
+- [ ] 任务 6 全部 8 项验证通过
+- [ ] 所有改动提交 git
 - [ ] aiDoc 业务记忆已补全（遵循 AGENTS.MD）
 
 ---
 
 ## 风险与回滚
 
-- **回滚**：本计划所有改动均为增量或局部修改，回滚直接 `git revert` 对应 commit。
-- **最大风险**：任务 4 调度器同步硬阻止启动，若 DB 中存在脏任务数据可能导致无法启动。缓解：异常会记录完整堆栈，运维可据日志定位修复。
+- **回滚**：所有改动均为增量或局部修改，回滚直接 `git revert` 对应 commit。
+- **最大风险**：任务 3 调度器同步硬阻止启动，若 DB 中存在脏任务数据可能导致无法启动。缓解：异常会记录完整堆栈，运维可据日志定位修复。
+- **B 方案特性**：顶级路由 `/health` `/ready` 不暴露任何内部信息，但如需对探针做 IP 白名单（仅允许负载均衡器探测），应在 nginx/网关层实现，不在应用层处理。

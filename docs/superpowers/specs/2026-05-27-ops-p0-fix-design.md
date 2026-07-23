@@ -66,15 +66,21 @@
 | `GET /health` | liveness（存活） | 不检查任何外部依赖 | HTTP 200 | 永远 200（进程能响应即存活） |
 | `GET /ready` | readiness（就绪） | DB 连接（`SELECT 1`）+ Redis 连接（`PING`） | HTTP 200 | HTTP 503 |
 
-路由前缀与现有 `monitor.py` 一致，挂在 `/admin/sys/health` 下，但 **不挂任何依赖**：
+**路由位置**：采用顶级路由（B 方案），在 `main.py` 顶层注册，不挂到 `/admin` 或 `/open` 任何业务前缀下。原因：
+
+- `/admin/*` 受 `OperationLogMiddleware` 约束，高频探针会污染审计日志表（需额外维护白名单）。
+- `/open/*` 强制 HMAC 签名鉴权（`OpenapiLogMiddleware` + `current_merchant` 依赖），探针无法携带签名头 → 恒 401，且会写 `sys_openapi_log` 商户审计表。
+- 顶级路径 `/health` `/ready` 天然不受任何业务中间件约束，最干净，无需维护白名单。
+
+不挂任何依赖：
 
 - 无 `Depends(current_user)`
 - 无 `Depends(require_permission(...))`
-- **必须加入操作日志中间件白名单**（见 3.7 节）
+- 无需加入操作日志白名单（顶级路径已天然豁免）
 
 ### 3.2 接口契约
 
-#### `GET /admin/sys/health`
+#### `GET /health`
 
 ```json
 {
@@ -84,7 +90,7 @@
 
 固定返回，HTTP 200。无任何依赖检查。用于「进程是否需要重启」判断。
 
-#### `GET /admin/sys/ready`
+#### `GET /ready`
 
 成功（全部检查通过）：
 
@@ -132,7 +138,7 @@ HTTP 503。
 
 ```diff
 - HEALTH_CHECK_URL="http://127.0.0.1:${GUNICORN_PORT}/openapi.json"
-+ HEALTH_CHECK_URL="http://127.0.0.1:${GUNICORN_PORT}/admin/sys/ready"
++ HEALTH_CHECK_URL="http://127.0.0.1:${GUNICORN_PORT}/ready"
 ```
 
 选择 `/ready` 而非 `/health` 的原因：`deploy.sh` 的健康检查语义是「服务是否能接入流量」，这正是 readiness 的职责。`/health`（liveness）只判断进程存活，无法发现 DB/Redis 故障。
@@ -177,28 +183,13 @@ except Exception as exc:
 - lifespan 完成后，DB/Redis 就绪 → `/ready` 返回 200。
 - lifespan 抛异常（调度器同步失败）→ 进程退出，不会有半就绪状态对外服务。
 
-### 3.7 操作日志中间件白名单（必须）
+### 3.7 操作日志中间件（无需改动）
 
-探针路径 `/admin/sys/health` 以 `/admin/` 开头，会被 `OperationLogMiddleware`（`backend/core/middleware/operation_log_middleware.py`）捕获。该中间件**不区分 GET/POST**，对所有未命中白名单的 `/admin/` 请求都会记录操作日志（`user_id=0, username="anonymous"`）。
+采用顶级路由 B 方案后，探针路径为 `/health` `/ready`，**不以 `/admin/` 开头**，因此天然不受 `OperationLogMiddleware` 约束（该中间件第 240 行 `if not path.startswith("/admin/")` 直接放行）。
 
-探针通常被 K8s/nginx/部署脚本高频探测（每秒数次），若不加入白名单会：
+同样也不以 `/open/` 开头，不受 `OpenapiLogMiddleware` 约束（该中间件第 110 行 `if not path.startswith("/open/")` 直接放行）。
 
-- 污染操作日志表，淹没真实用户操作记录
-- 每次探测触发一次 DB 写入（`_write_operation_log` 的 BackgroundTask），增加无意义负载
-
-因此必须在 `WHITELIST_PREFIXES`（`operation_log_middleware.py` 第 29 行）中加入 `/admin/sys/health`：
-
-```python
-WHITELIST_PREFIXES: Tuple[str, ...] = (
-    "/admin/auth",
-    # ...
-    "/admin/sys/monitor",
-    "/admin/sys/health",   # 新增：健康/就绪探针，基础设施语义，不计入操作日志
-    # ...
-)
-```
-
-`/health` 和 `/ready` 共享前缀 `/admin/sys/health`，一条白名单规则即可覆盖两个端点。
+**结论**：无需在 `WHITELIST_PREFIXES` 中维护任何条目，这是 B 方案相比挂到 `/admin/sys/` 下的核心优势——少一处需要维护的耦合点。
 
 ---
 
@@ -207,13 +198,13 @@ WHITELIST_PREFIXES: Tuple[str, ...] = (
 | 单元 | 职责 | 依赖 |
 |------|------|------|
 | `backend/modules/admin/endpoints/sys/health.py`（新增） | 定义 `/health` 和 `/ready` 端点 | DB session（`get_session`）、Redis client（`get_redis_client`） |
-| `backend/modules/admin/endpoints/sys/__init__.py`（修改） | 注册 `health_router` | 无 |
-| `backend/core/middleware/operation_log_middleware.py`（修改） | `WHITELIST_PREFIXES` 加入 `/admin/sys/health` | 无 |
-| `backend/main.py`（修改） | lifespan 启动步骤分级 | 无 |
+| `backend/main.py`（修改） | 顶层注册 `health_router` + lifespan 启动步骤分级 | 无 |
 | `deploy/deploy.env`（修改） | 健康检查 URL | 无 |
 | `aiDoc/memory/business/2026-05-27_ops_p0_health_probe.md`（新增） | 业务需求记忆 | 无 |
 | `aiDoc/memory/business/README.md`（修改） | 更新业务需求索引 | 无 |
 | `aiDoc/memory/project-memory.md`（修改） | 更新顶层索引近期条目 | 无 |
+
+> 说明：相比初版方案（挂 `/admin/sys/health`），B 方案减少了对 `sys/__init__.py` 和 `operation_log_middleware.py` 的改动耦合——但仍需修改 `sys/__init__.py`（移除误注册）和 `operation_log_middleware.py`（移除误加的白名单），这是从初版方案迁移到 B 方案的清理工作。
 
 ---
 
@@ -224,7 +215,7 @@ WHITELIST_PREFIXES: Tuple[str, ...] = (
 ```
 K8s/nginx/deploy.sh
    │
-   │  GET /admin/sys/ready
+   │  GET /ready
    ▼
 [FastAPI 路由层]  ── 无鉴权依赖 ──▶  health.py:ready()
    │
@@ -277,14 +268,14 @@ uvicorn 启动
 
 ### 7.1 手工验证清单（实现后必须执行）
 
-1. 启动应用（开发环境），`curl http://localhost:8000/admin/sys/health` → 200 `{"status":"up"}`
-2. `curl http://localhost:8000/admin/sys/ready` → 200 `{"status":"ready","checks":{"db":"ok","redis":"ok"}}`
-3. 停掉 Redis，`curl http://localhost:8000/admin/sys/ready` → 503 `{"status":"not_ready","checks":{"db":"ok","redis":"fail"}}`
-4. 停掉 DB，`curl http://localhost:8000/admin/sys/ready` → 503，`checks.db="fail"`
+1. 启动应用（开发环境），`curl http://localhost:8000/health` → 200 `{"status":"up"}`
+2. `curl http://localhost:8000/ready` → 200 `{"status":"ready","checks":{"db":"ok","redis":"ok"}}`
+3. 停掉 Redis，`curl http://localhost:8000/ready` → 503 `{"status":"not_ready","checks":{"db":"ok","redis":"fail"}}`
+4. 停掉 DB，`curl http://localhost:8000/ready` → 503，`checks.db="fail"`
 5. 确认 `/health` 和 `/ready` 不需要 Authorization header
 6. 模拟调度器同步失败（临时让 `sync_jobs_from_db` 抛异常），确认应用启动失败、uvicorn 退出非零
 7. 模拟 IP 黑名单预热失败，确认应用仍启动、日志含 `event=startup_degraded`
-8. 在 prod 配置下（`ENVIR=prod`）运行 `deploy/deploy.sh deploy` 的健康检查步骤，确认指向 `/admin/sys/ready` 且通过
+8. 在 prod 配置下（`ENVIR=prod`）运行 `deploy/deploy.sh deploy` 的健康检查步骤，确认指向 `/ready` 且通过
 
 ### 7.2 单元测试占位
 
@@ -294,13 +285,14 @@ uvicorn 启动
 
 ## 8. 实现顺序（供 writing-plans 展开）
 
-1. 新建 `health.py`：定义 `_check_db()`、`_check_redis()` 内部函数 + `health()`、`ready()` 端点
-2. 在 `sys/__init__.py` 注册 `health_router`
-3. 在 `operation_log_middleware.py` 的 `WHITELIST_PREFIXES` 加入 `/admin/sys/health`
-4. 修改 `main.py` lifespan：调度器同步移除 try/except，IP 黑名单加结构化日志，种子数据降级为 WARNING
-5. 修改 `deploy/deploy.env` 的 `HEALTH_CHECK_URL`
-6. 按 AGENTS.MD 规则新增 `aiDoc/memory/business/2026-05-27_ops_p0_health_probe.md`，更新 `business/README.md` 与 `project-memory.md`
-7. 执行第 7.1 节手工验证清单
+1. 新建 `health.py`：定义 `_check_db()`、`_check_redis()` 内部函数 + `health()`、`ready()` 端点（顶级路由，无 prefix）
+2. 在 `main.py` 顶层注册 `health_router`（`app.include_router(health_router)`）
+3. 修改 `main.py` lifespan：调度器同步移除 try/except，IP 黑名单加结构化日志，种子数据降级为 WARNING
+4. 修改 `deploy/deploy.env` 的 `HEALTH_CHECK_URL` 为 `/ready`
+5. 按 AGENTS.MD 规则新增 `aiDoc/memory/business/2026-05-27_ops_p0_health_probe.md`，更新 `business/README.md` 与 `project-memory.md`
+6. 执行第 7.1 节手工验证清单
+
+> 说明：相比初版方案，B 方案省去了 `sys/__init__.py` 与 `operation_log_middleware.py` 的改动（顶级路径无需注册到 sys_router、无需维护操作日志白名单）。
 
 ---
 
@@ -324,6 +316,7 @@ uvicorn 启动
 | 探针是否使用 `ResponseModel` | **否** | 探针是基础设施语义，需绕过鉴权/中间件链路，与业务响应结构解耦。 |
 | `deploy.sh` 健康检查用 `/health` 还是 `/ready` | `/ready` | 部署语义是「能否接入流量」，属 readiness 职责，需检测 DB/Redis 就绪。 |
 | `/ready` 暴露错误详情 | **否** | 避免泄漏内部拓扑，详情记日志。 |
+| 路由位置：`/admin/sys/*` vs `/open/*` vs 顶级 | **顶级路由**（B 方案） | `/open/*` 强制 HMAC 签名（探针无法携带，恒 401）；`/admin/sys/*` 需额外维护操作日志白名单；顶级路径 `/health` `/ready` 天然不受任何业务中间件约束，最干净。用户在审查时确认（曾误以为应放「开放接口」，澄清 `/open` 实为商户 HMAC 接口后改选 B）。 |
 
 ---
 
