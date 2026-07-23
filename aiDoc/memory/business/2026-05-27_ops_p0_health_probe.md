@@ -63,6 +63,11 @@ shutdown 阶段（yield 之后）的 try/except 保留不变，避免停止失�
 ### 部署
 
 - `deploy/deploy.env`：`HEALTH_CHECK_URL` 从 `/openapi.json` 改为 `/ready`
+- `deploy/nginx.conf`：`/health` location 的 `proxy_pass` 从 `/openapi.json` 改为 `/health`，新增 `/ready` location（修复第二处 `/openapi.json` 遗漏——外部 SLB 走 nginx 时探针也会恒 404）
+
+> 审查发现的遗漏：`deploy.env` 改完后，复查部署链路发现 `nginx.conf` 也有一处 `proxy_pass /openapi.json` 引用未修。两者影响范围不同：
+> - `deploy.env` 影响 `deploy.sh` 健康检查（直连后端，绕过 nginx）——第一轮已修
+> - `nginx.conf` 影响外部 SLB/K8s 走 nginx 入口时的健康检查——第一轮遗漏，本次补修
 
 ## 约束与备注
 
@@ -77,6 +82,7 @@ shutdown 阶段（yield 之后）的 try/except 保留不变，避免停止失�
 - `backend/modules/admin/endpoints/sys/health.py`（新增）
 - `backend/main.py`
 - `deploy/deploy.env`
+- `deploy/nginx.conf`（补修第二处 `/openapi.json` 遗漏）
 - `docs/superpowers/specs/2026-05-27-ops-p0-fix-design.md`（设计规范）
 - `docs/superpowers/plans/2026-05-27-ops-p0-fix-plan.md`（实现计划，B 方案）
 
