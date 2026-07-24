@@ -39,6 +39,8 @@ WHITELIST_PREFIXES: Tuple[str, ...] = (
     # 不计入；通知的发布 / 编辑 / 删除 / 标记已读等写操作仍正常记录
     "/admin/sys/notice/my/unread-count",
     "/admin/sys/notice/my/list",
+    # 首页仪表盘：登录后首屏聚合查询，高频读取且非用户操作，不计入操作日志
+    "/admin/sys/dashboard/summary",
     "/docs",
     "/redoc",
     "/openapi.json",

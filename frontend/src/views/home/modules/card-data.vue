@@ -8,11 +8,11 @@ defineOptions({
   name: 'CardData'
 });
 
-interface CardData {
+/** 统计卡片数据项 */
+interface CardItem {
   key: string;
   title: string;
   value: number;
-  unit: string;
   color: {
     start: string;
     end: string;
@@ -20,50 +20,58 @@ interface CardData {
   icon: string;
 }
 
-const cardData = computed<CardData[]>(() => [
+const props = defineProps<{
+  /** 用户总数 */
+  userCount: number;
+  /** 角色总数 */
+  roleCount: number;
+  /** 在线用户数 */
+  onlineCount: number;
+  /** 今日登录次数 */
+  todayLoginCount: number;
+}>();
+
+/** 根据真实统计数据构造卡片配置 */
+const cardData = computed<CardItem[]>(() => [
   {
-    key: 'visitCount',
-    title: $t('page.home.visitCount'),
-    value: 9725,
-    unit: '',
+    key: 'userCount',
+    title: $t('page.home.userCount'),
+    value: props.userCount,
     color: {
       start: '#ec4786',
       end: '#b955a4'
     },
-    icon: 'ant-design:bar-chart-outlined'
+    icon: 'ant-design:user-outlined'
   },
   {
-    key: 'turnover',
-    title: $t('page.home.turnover'),
-    value: 1026,
-    unit: '$',
-    color: {
-      start: '#865ec0',
-      end: '#5144b4'
-    },
-    icon: 'ant-design:money-collect-outlined'
-  },
-  {
-    key: 'downloadCount',
-    title: $t('page.home.downloadCount'),
-    value: 970925,
-    unit: '',
+    key: 'roleCount',
+    title: $t('page.home.roleCount'),
+    value: props.roleCount,
     color: {
       start: '#56cdf3',
       end: '#719de3'
     },
-    icon: 'carbon:document-download'
+    icon: 'ant-design:team-outlined'
   },
   {
-    key: 'dealCount',
-    title: $t('page.home.dealCount'),
-    value: 9527,
-    unit: '',
+    key: 'onlineCount',
+    title: $t('page.home.onlineCount'),
+    value: props.onlineCount,
+    color: {
+      start: '#5acdb5',
+      end: '#3ca370'
+    },
+    icon: 'ant-design:online-outlined'
+  },
+  {
+    key: 'todayLoginCount',
+    title: $t('page.home.todayLoginCount'),
+    value: props.todayLoginCount,
     color: {
       start: '#fcbc25',
       end: '#f68057'
     },
-    icon: 'ant-design:trademark-circle-outlined'
+    icon: 'ant-design:login-outlined'
   }
 ]);
 
@@ -75,7 +83,8 @@ const [DefineGradientBg, GradientBg] = createReusableTemplate<GradientBgProps>()
 
 const themeStore = useThemeStore();
 
-function getGradientColor(color: CardData['color']) {
+/** 生成渐变背景色样式 */
+function getGradientColor(color: CardItem['color']) {
   return `linear-gradient(to bottom right, ${color.start}, ${color.end})`;
 }
 </script>
@@ -100,8 +109,7 @@ function getGradientColor(color: CardData['color']) {
           <div class="flex justify-between pt-12px">
             <SvgIcon :icon="item.icon" class="text-32px" />
             <CountTo
-              :prefix="item.unit"
-              :start-value="1"
+              :start-value="0"
               :end-value="item.value"
               class="text-30px text-white dark:text-dark"
             />

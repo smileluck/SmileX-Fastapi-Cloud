@@ -340,33 +340,16 @@ const local: App.I18n.Schema = {
       }
     },
     home: {
-      branchDesc:
-        '为了方便大家开发和更新合并，我们对main分支的代码进行了精简，只保留了首页菜单，其余内容已移至example分支进行维护。预览地址显示的内容即为example分支的内容。',
-      greeting: '早安，{userName}, 今天又是充满活力的一天!',
-      weatherDesc: '今日多云转晴，20℃ - 25℃!',
-      projectCount: '项目数',
-      todo: '待办',
-      message: '消息',
-      downloadCount: '下载量',
-      registerCount: '注册量',
-      schedule: '作息安排',
-      study: '学习',
-      work: '工作',
-      rest: '休息',
-      entertainment: '娱乐',
-      visitCount: '访问量',
-      turnover: '成交额',
-      dealCount: '成交量',
-      projectNews: {
-        title: '项目动态',
-        moreNews: '更多动态',
-        desc1: 'SmileX 在2021年5月28日创建了开源项目 soybean-admin!',
-        desc2: 'Yanbowe 向 soybean-admin 提交了一个bug，多标签栏不会自适应。',
-        desc3: 'SmileX 准备为 soybean-admin 的发布做充分的准备工作!',
-        desc4: 'SmileX 正在忙于为soybean-admin写项目说明文档！',
-        desc5: 'SmileX 刚才把工作台页面随便写了一些，凑合能看了！'
-      },
-      creativity: '创意'
+      welcome: '欢迎回来，{name}',
+      userCount: '用户总数',
+      roleCount: '角色数量',
+      onlineCount: '在线用户',
+      todayLoginCount: '今日登录',
+      recentLogin: '最近登录',
+      latestNotice: '最新公告',
+      loginSuccess: '成功',
+      loginFailed: '失败',
+      noData: '暂无数据'
     },
     monitor: {
       systemResources: '系统资源',
