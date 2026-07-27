@@ -86,7 +86,7 @@ class UserService:
         current_user_id: int | None = None,
     ) -> Select:
         """
-        构建用户列表查询对象（不加载关联角色）
+        构建用户列表查询对象（selectinload 关联角色，供列表响应回填）
 
         Args:
             query_params: 查询参数
@@ -112,7 +112,9 @@ class UserService:
                 SysUser.dept_id,
                 SysUser.created_at,
                 SysUser.updated_at,
-            )
+            ),
+            # 列表响应模型 SysUserListResponse 含 roles，必须预加载以避免异步懒加载
+            selectinload(SysUser.roles),
         )
         return UserService._apply_user_filters(
             base_query,
