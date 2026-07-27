@@ -17,14 +17,26 @@ const { hasAuth } = useAuth();
 
 const loading = ref(false);
 const data = ref<Api.SystemManage.Dept[]>([]);
+const expandedRowKeys = ref<number[]>([]);
 const drawerVisible = ref(false);
 const operateType = ref<NaiveUI.TableOperateType>('add');
 const editingRow = ref<Api.SystemManage.Dept | null>(null);
+
+/** 递归收集所有部门 id（含子部门），用于默认全部展开 */
+function collectDeptKeys(items: Api.SystemManage.Dept[]): number[] {
+  const keys: number[] = [];
+  for (const item of items) {
+    keys.push(item.id);
+    if (item.children?.length) keys.push(...collectDeptKeys(item.children));
+  }
+  return keys;
+}
 
 async function getData() {
   loading.value = true;
   const { data: tree } = await fetchGetDeptTree(false);
   data.value = tree || [];
+  expandedRowKeys.value = collectDeptKeys(data.value);
   loading.value = false;
 }
 
@@ -138,7 +150,8 @@ getData();
         :flex-height="!appStore.isMobile"
         :loading="loading"
         :row-key="(row: Api.SystemManage.Dept) => row.id"
-        :default-expand-all="true"
+        :expanded-row-keys="expandedRowKeys"
+        @update:expanded-row-keys="(keys: number[]) => (expandedRowKeys = keys)"
         class="sm:h-full"
       />
       <DeptOperateDrawer
