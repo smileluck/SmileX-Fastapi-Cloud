@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { NButton, NPopconfirm, NTag } from 'naive-ui';
 import { enableStatusRecord } from '@/constants/business';
+import { booleanToEnableStatus } from '@/utils/status';
 import {
   fetchDeleteDept,
   fetchGetDeptTree
@@ -73,12 +74,13 @@ const columns = [
     width: 100,
     render: (row: Api.SystemManage.Dept) => {
       if (row.status === null || row.status === undefined) return null;
-      const tagMap: Record<string, NaiveUI.ThemeColor> = {
+      const status = booleanToEnableStatus(row.status);
+      const tagMap: Record<Api.Common.EnableStatus, NaiveUI.ThemeColor> = {
         '1': 'success',
         '2': 'warning'
       };
-      const label = $t(enableStatusRecord[row.status as '1' | '2']);
-      return <NTag type={tagMap[row.status as string]}>{label}</NTag>;
+      const label = $t(enableStatusRecord[status]);
+      return <NTag type={tagMap[status]}>{label}</NTag>;
     }
   },
   {
@@ -136,7 +138,8 @@ getData();
         :flex-height="!appStore.isMobile"
         :loading="loading"
         :row-key="(row: Api.SystemManage.Dept) => row.id"
-        default-expand-all
+        :default-expand-all="true"
+        class="sm:h-full"
       />
       <DeptOperateDrawer
         v-model:visible="drawerVisible"
