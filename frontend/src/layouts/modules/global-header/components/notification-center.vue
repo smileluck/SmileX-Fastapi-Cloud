@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import { NBadge, NButton, NPopover, NList, NListItem, NEmpty, NDivider, NModal, NSpace, NTooltip } from 'naive-ui';
-import { useAuthStore } from '@/store/modules/auth';
+import { onMounted, onUnmounted, ref } from 'vue';
+import { NBadge, NButton, NDivider, NEmpty, NList, NListItem, NModal, NPopover, NSpace, NTooltip } from 'naive-ui';
 import { fetchGetMyNoticeList, fetchGetUnreadCount, fetchMarkAllAsRead, fetchMarkAsRead } from '@/service/api';
+import { useAuthStore } from '@/store/modules/auth';
 import { $t } from '@/locales';
 import SvgIcon from '@/components/custom/svg-icon.vue';
 
@@ -69,7 +69,10 @@ function handleWsNotification(event: CustomEvent) {
 }
 
 /** 优先级标签映射 */
-const priorityMap: Record<Api.Notification.NoticePriority, { label: string; type: 'default' | 'success' | 'warning' | 'error' }> = {
+const priorityMap: Record<
+  Api.Notification.NoticePriority,
+  { label: string; type: 'default' | 'success' | 'warning' | 'error' }
+> = {
   low: { label: $t('notification.priority.low'), type: 'default' },
   normal: { label: $t('notification.priority.normal'), type: 'success' },
   high: { label: $t('notification.priority.high'), type: 'warning' },
@@ -95,17 +98,13 @@ function onShowChange(show: boolean) {
 </script>
 
 <template>
-  <NPopover
-    v-model:show="showPopover"
-    trigger="click"
-    placement="bottom"
-    :width="360"
-    @update:show="onShowChange"
-  >
+  <NPopover v-model:show="showPopover" trigger="click" placement="bottom" :width="360" @update:show="onShowChange">
     <template #trigger>
       <NTooltip>
         <template #trigger>
-          <div class="relative cursor-pointer px-8px hover:bg-[#f6f6f6] dark:hover:bg-[#333] rounded-full transition-colors">
+          <div
+            class="relative cursor-pointer rounded-full px-8px transition-colors hover:bg-[#f6f6f6] dark:hover:bg-[#333]"
+          >
             <NBadge :value="unreadCount" :max="99" :show="unreadCount > 0">
               <SvgIcon icon="material-symbols:notifications-outline" class="text-20px" />
             </NBadge>
@@ -127,12 +126,12 @@ function onShowChange(show: boolean) {
         <NListItem v-for="notice in recentNotices" :key="notice.id" @click="handleNoticeClick(notice)">
           <div class="flex flex-col gap-4px">
             <div class="flex items-center justify-between">
-              <span class="font-medium truncate flex-1" :class="{ 'text-gray': notice.is_read }">
+              <span class="flex-1 truncate font-medium" :class="{ 'text-gray': notice.is_read }">
                 {{ notice.title }}
               </span>
-              <span v-if="!notice.is_read" class="w-8px h-8px rounded-full bg-primary" />
+              <span v-if="!notice.is_read" class="h-8px w-8px rounded-full bg-primary" />
             </div>
-            <div class="text-12px text-gray flex items-center gap-8px">
+            <div class="flex items-center gap-8px text-12px text-gray">
               <span>{{ notice.sender_name }}</span>
               <span v-if="priorityMap[notice.priority]">
                 <NBadge
@@ -178,7 +177,7 @@ function onShowChange(show: boolean) {
         <span v-if="selectedNotice.published_at">{{ selectedNotice.published_at }}</span>
       </div>
       <NDivider class="!my-0" />
-      <div class="text-14px leading-relaxed whitespace-pre-wrap">
+      <div class="whitespace-pre-wrap text-14px leading-relaxed">
         {{ selectedNotice.content }}
       </div>
     </div>

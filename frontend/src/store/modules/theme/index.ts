@@ -8,8 +8,10 @@ import { SetupStoreId } from '@/enum';
 import { useAuthStore } from '../auth';
 import {
   addThemeVarsToGlobal,
+  buildComponentOverrides,
   createThemeToken,
   getNaiveTheme,
+  initComponentConfig,
   initThemeSettings,
   toggleAuxiliaryColorModes,
   toggleCssDarkMode
@@ -26,6 +28,9 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
 
   /** Optional NaiveUI theme overrides from preset */
   const naiveThemeOverrides: Ref<App.Theme.NaiveUIThemeOverride | undefined> = ref(undefined);
+
+  /** NaiveUI component-level theme overrides configured by the user (persisted to localStorage) */
+  const componentConfig: Ref<App.Theme.ComponentConfigMap> = ref(initComponentConfig());
 
   /** Watermark time instance with controls */
   const { now: watermarkTime, pause: pauseWatermarkTime, resume: resumeWatermarkTime } = useNow({ controls: true });
@@ -56,7 +61,12 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
   });
 
   /** Naive theme */
-  const naiveTheme = computed(() => getNaiveTheme(themeColors.value, settings.value, naiveThemeOverrides.value));
+  const naiveTheme = computed(() =>
+    getNaiveTheme(themeColors.value, settings.value, {
+      preset: naiveThemeOverrides.value,
+      component: buildComponentOverrides(componentConfig.value)
+    })
+  );
 
   /**
    * Settings json
@@ -64,6 +74,9 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
    * It is for copy settings
    */
   const settingsJson = computed(() => JSON.stringify(settings.value));
+
+  /** Component config json — for the component tab's copy button */
+  const componentConfigJson = computed(() => JSON.stringify(componentConfig.value));
 
   /** Watermark time date formatter */
   const formattedWatermarkTime = computed(() => {
@@ -92,6 +105,9 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     const themeStore = useThemeStore();
 
     themeStore.$reset();
+    // $reset() is a no-op for standalone refs in setup stores, so clear explicitly.
+    themeStore.clearComponentConfig();
+    themeStore.setNaiveThemeOverrides(undefined);
   }
 
   /**
@@ -210,6 +226,72 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     naiveThemeOverrides.value = overrides;
   }
 
+  /**
+   * Replace a component's full config entry
+   *
+   * @param name Component name
+   * @param entry Config entry
+   */
+  function setComponentConfig(name: string, entry: App.Theme.ComponentConfigEntry) {
+    componentConfig.value[name] = entry;
+  }
+
+  /**
+   * Toggle a component's override on/off
+   *
+   * @param name Component name
+   * @param enabled Whether enabled
+   */
+  function setComponentEnabled(name: string, enabled: boolean) {
+    if (!componentConfig.value[name]) {
+      componentConfig.value[name] = { enabled, common: {}, advanced: {} };
+    } else {
+      componentConfig.value[name].enabled = enabled;
+    }
+  }
+
+  /**
+   * Set one structured (form) field for a component.
+   * Empty values delete the key so defu falls through cleanly (empty = inherit).
+   *
+   * @param name Component name
+   * @param key Property key
+   * @param value Property value
+   */
+  function setComponentCommonField(name: string, key: string, value: string | number) {
+    if (!componentConfig.value[name]) componentConfig.value[name] = { enabled: true, common: {}, advanced: {} };
+    if (value === '' || value === null || value === undefined) {
+      Reflect.deleteProperty(componentConfig.value[name].common, key);
+    } else {
+      componentConfig.value[name].common[key] = value;
+    }
+  }
+
+  /**
+   * Set a component's advanced (JSON5) override object
+   *
+   * @param name Component name
+   * @param obj Parsed object
+   */
+  function setComponentAdvanced(name: string, obj: App.Theme.ComponentConfigEntry['advanced']) {
+    if (!componentConfig.value[name]) componentConfig.value[name] = { enabled: true, common: {}, advanced: {} };
+    componentConfig.value[name].advanced = obj;
+  }
+
+  /**
+   * Remove a component's config entirely
+   *
+   * @param name Component name
+   */
+  function removeComponentConfig(name: string) {
+    Reflect.deleteProperty(componentConfig.value, name);
+  }
+
+  /** Clear all component config (the immediate watch persists `{}` to localStorage) */
+  function clearComponentConfig() {
+    componentConfig.value = {};
+  }
+
   /** Only run timer when watermark is visible and time display is enabled */
   function updateWatermarkTimer() {
     const { watermark } = settings.value;
@@ -266,6 +348,15 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
       { immediate: true }
     );
 
+    // persist component-level theme overrides to localStorage on every change
+    watch(
+      componentConfig,
+      val => {
+        localStg.set('themeCompOverrides', val);
+      },
+      { immediate: true, deep: true }
+    );
+
     // watch watermark settings to control timer
     watch(
       () => [settings.value.watermark.visible, settings.value.watermark.enableTime],
@@ -287,6 +378,8 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     themeColors,
     naiveTheme,
     settingsJson,
+    componentConfig,
+    componentConfigJson,
     watermarkContent,
     setGrayscale,
     setColourWeakness,
@@ -297,6 +390,12 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     setThemeLayout,
     setWatermarkEnableUserName,
     setWatermarkEnableTime,
-    setNaiveThemeOverrides
+    setNaiveThemeOverrides,
+    setComponentConfig,
+    setComponentEnabled,
+    setComponentCommonField,
+    setComponentAdvanced,
+    removeComponentConfig,
+    clearComponentConfig
   };
 });

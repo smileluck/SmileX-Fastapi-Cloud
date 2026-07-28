@@ -42,10 +42,20 @@ async function search() {
       <NCollapseItem :title="$t('common.search')" name="merchant-search">
         <NForm ref="formRef" :model="model" label-placement="left" :label-width="80">
           <NGrid responsive="screen" item-responsive>
-            <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.merchant.merchantName')" path="name" class="pr-24px">
+            <NFormItemGi
+              span="24 s:12 m:6"
+              :label="$t('page.manage.merchant.merchantName')"
+              path="name"
+              class="pr-24px"
+            >
               <NInput v-model:value="model.name" :placeholder="$t('page.manage.merchant.form.merchantName')" />
             </NFormItemGi>
-            <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.merchant.merchantCode')" path="code" class="pr-24px">
+            <NFormItemGi
+              span="24 s:12 m:6"
+              :label="$t('page.manage.merchant.merchantCode')"
+              path="code"
+              class="pr-24px"
+            >
               <NInput v-model:value="model.code" :placeholder="$t('page.manage.merchant.form.merchantCode')" />
             </NFormItemGi>
             <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.merchant.appId')" path="app_id" class="pr-24px">

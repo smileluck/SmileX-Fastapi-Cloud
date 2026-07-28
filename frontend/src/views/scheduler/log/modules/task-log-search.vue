@@ -56,11 +56,30 @@ function search() {
       <NCollapseItem :title="$t('common.search')" name="task-log-search">
         <NForm :model="model" label-placement="left" :label-width="80">
           <NGrid responsive="screen" item-responsive>
-            <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.schedulerLog.taskName')" path="task_name" class="pr-24px">
-              <NInput v-model:value="model.task_name" :placeholder="$t('page.manage.schedulerLog.form.taskName')" clearable />
+            <NFormItemGi
+              span="24 s:12 m:6"
+              :label="$t('page.manage.schedulerLog.taskName')"
+              path="task_name"
+              class="pr-24px"
+            >
+              <NInput
+                v-model:value="model.task_name"
+                :placeholder="$t('page.manage.schedulerLog.form.taskName')"
+                clearable
+              />
             </NFormItemGi>
-            <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.schedulerLog.status')" path="status" class="pr-24px">
-              <NSelect v-model:value="model.status" :options="statusOptions" :placeholder="$t('page.manage.schedulerLog.form.status')" clearable />
+            <NFormItemGi
+              span="24 s:12 m:6"
+              :label="$t('page.manage.schedulerLog.status')"
+              path="status"
+              class="pr-24px"
+            >
+              <NSelect
+                v-model:value="model.status"
+                :options="statusOptions"
+                :placeholder="$t('page.manage.schedulerLog.form.status')"
+                clearable
+              />
             </NFormItemGi>
             <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.schedulerLog.form.timeRange')" class="pr-24px">
               <NDatePicker v-model:value="timeRange" type="datetimerange" clearable class="w-full" />

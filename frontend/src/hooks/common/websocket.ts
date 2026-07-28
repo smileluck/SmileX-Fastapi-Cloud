@@ -27,7 +27,7 @@ export function useWebSocketNotification() {
       startHeartbeat();
     };
 
-    ws.onmessage = (event) => {
+    ws.onmessage = event => {
       try {
         const data = JSON.parse(event.data);
         lastMessage.value = data;
@@ -51,7 +51,7 @@ export function useWebSocketNotification() {
 
       if (shouldReconnect && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
         reconnectAttempts += 1;
-        const delay = BASE_RECONNECT_INTERVAL * Math.pow(2, reconnectAttempts - 1);
+        const delay = BASE_RECONNECT_INTERVAL * 2 ** (reconnectAttempts - 1);
         console.log(`[WebSocket] ${delay}ms 后尝试第 ${reconnectAttempts} 次重连...`);
         reconnectTimer = setTimeout(() => {
           if (currentToken) {
@@ -63,7 +63,7 @@ export function useWebSocketNotification() {
       }
     };
 
-    ws.onerror = (error) => {
+    ws.onerror = error => {
       console.error('[WebSocket] 连接错误:', error);
     };
   }

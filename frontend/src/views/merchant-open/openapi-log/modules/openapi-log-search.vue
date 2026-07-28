@@ -50,14 +50,37 @@ async function search() {
             <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.openapiLog.method')" path="method" class="pr-24px">
               <NInput v-model:value="model.method" :placeholder="$t('page.manage.openapiLog.form.method')" />
             </NFormItemGi>
-            <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.openapiLog.errCode')" path="err_code" class="pr-24px">
-              <NInputNumber v-model:value="model.err_code" class="w-full" :placeholder="$t('page.manage.openapiLog.form.errCode')" />
+            <NFormItemGi
+              span="24 s:12 m:6"
+              :label="$t('page.manage.openapiLog.errCode')"
+              path="err_code"
+              class="pr-24px"
+            >
+              <NInputNumber
+                v-model:value="model.err_code"
+                class="w-full"
+                :placeholder="$t('page.manage.openapiLog.form.errCode')"
+              />
             </NFormItemGi>
-            <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.openapiLog.clientIp')" path="client_ip" class="pr-24px">
+            <NFormItemGi
+              span="24 s:12 m:6"
+              :label="$t('page.manage.openapiLog.clientIp')"
+              path="client_ip"
+              class="pr-24px"
+            >
               <NInput v-model:value="model.client_ip" :placeholder="$t('page.manage.openapiLog.form.clientIp')" />
             </NFormItemGi>
-            <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.openapiLog.status')" path="status_code" class="pr-24px">
-              <NInputNumber v-model:value="model.status_code" class="w-full" :placeholder="$t('page.manage.openapiLog.form.status')" />
+            <NFormItemGi
+              span="24 s:12 m:6"
+              :label="$t('page.manage.openapiLog.status')"
+              path="status_code"
+              class="pr-24px"
+            >
+              <NInputNumber
+                v-model:value="model.status_code"
+                class="w-full"
+                :placeholder="$t('page.manage.openapiLog.form.status')"
+              />
             </NFormItemGi>
             <NFormItemGi span="24 m:12" class="pr-24px">
               <NSpace class="w-full" justify="end">

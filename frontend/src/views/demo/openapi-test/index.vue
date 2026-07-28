@@ -136,7 +136,12 @@ async function send() {
             <NInput v-model:value="form.path" placeholder="/open/demo/ping" />
           </NFormItemGi>
           <NFormItemGi v-if="form.method !== 'GET'" span="24" :label="$t('page.demo.openapiTest.body')" path="body">
-            <NInput v-model:value="form.body" type="textarea" :autosize="{ minRows: 2, maxRows: 6 }" placeholder='{"key":"value"}' />
+            <NInput
+              v-model:value="form.body"
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 6 }"
+              placeholder='{"key":"value"}'
+            />
           </NFormItemGi>
           <NFormItemGi span="24" :label="$t('page.demo.openapiTest.url')" path="url">
             <NText code class="break-all">{{ fullUrl }}</NText>
@@ -150,7 +155,12 @@ async function send() {
       </NForm>
     </NCard>
 
-    <NCard v-if="signature.sig" :bordered="false" :title="$t('page.demo.openapiTest.signatureTitle')" class="card-wrapper">
+    <NCard
+      v-if="signature.sig"
+      :bordered="false"
+      :title="$t('page.demo.openapiTest.signatureTitle')"
+      class="card-wrapper"
+    >
       <NDescriptions label-placement="left" :column="1" bordered size="small">
         <NDescriptionsItem :label="$t('page.demo.openapiTest.timestamp')">{{ signature.timestamp }}</NDescriptionsItem>
         <NDescriptionsItem :label="$t('page.demo.openapiTest.nonce')">{{ signature.nonce }}</NDescriptionsItem>
@@ -158,21 +168,36 @@ async function send() {
           <NText code class="break-all">{{ signature.sig }}</NText>
         </NDescriptionsItem>
         <NDescriptionsItem :label="$t('page.demo.openapiTest.canonical')">
-          <pre class="whitespace-pre-wrap break-all font-mono text-13px">{{ signature.canonical }}</pre>
+          <pre class="whitespace-pre-wrap break-all text-13px font-mono">{{ signature.canonical }}</pre>
         </NDescriptionsItem>
       </NDescriptions>
     </NCard>
 
-    <NCard v-if="response.status !== ''" :bordered="false" :title="$t('page.demo.openapiTest.responseTitle')" class="card-wrapper">
+    <NCard
+      v-if="response.status !== ''"
+      :bordered="false"
+      :title="$t('page.demo.openapiTest.responseTitle')"
+      class="card-wrapper"
+    >
       <NDescriptions label-placement="left" :column="2" bordered size="small" class="mb-12px">
         <NDescriptionsItem :label="$t('page.demo.openapiTest.status')">
-          <NTag :type="typeof response.status === 'number' && response.status >= 200 && response.status < 300 ? 'success' : 'error'">
+          <NTag
+            :type="
+              typeof response.status === 'number' && response.status >= 200 && response.status < 300
+                ? 'success'
+                : 'error'
+            "
+          >
             {{ response.status }}
           </NTag>
         </NDescriptionsItem>
-        <NDescriptionsItem :label="$t('page.demo.openapiTest.requestId')">{{ response.request_id || '-' }}</NDescriptionsItem>
+        <NDescriptionsItem :label="$t('page.demo.openapiTest.requestId')">
+          {{ response.request_id || '-' }}
+        </NDescriptionsItem>
       </NDescriptions>
-      <pre class="whitespace-pre-wrap break-all rounded-4px bg-#f5f5f5 p-12px font-mono text-13px dark:bg-#1e1e1e">{{ response.body }}</pre>
+      <pre class="whitespace-pre-wrap break-all rounded-4px bg-#f5f5f5 p-12px text-13px font-mono dark:bg-#1e1e1e">{{
+        response.body
+      }}</pre>
     </NCard>
   </NSpace>
 </template>

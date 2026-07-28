@@ -22,15 +22,7 @@ const searchParams: Api.SystemManage.LoginLogSearchParams = reactive({
   end_time: null
 });
 
-const {
-  columns,
-  columnChecks,
-  data,
-  getData,
-  getDataByPage,
-  loading,
-  mobilePagination
-} = useNaivePaginatedTable({
+const { columns, columnChecks, data, getData, getDataByPage, loading, mobilePagination } = useNaivePaginatedTable({
   api: () => fetchGetLoginLogList(searchParams),
   transform: response => {
     return defaultTransform(response);

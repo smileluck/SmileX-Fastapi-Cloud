@@ -80,7 +80,11 @@ const { columns, columnChecks, data, loading, getData, getDataByPage, mobilePagi
       render: row => {
         if (row.status_code === null || row.status_code === undefined) return '-';
         const ok = row.status_code >= 200 && row.status_code < 300;
-        return <NTag type={ok ? 'success' : 'error'} size="small">{row.status_code}</NTag>;
+        return (
+          <NTag type={ok ? 'success' : 'error'} size="small">
+            {row.status_code}
+          </NTag>
+        );
       }
     },
     {
@@ -88,7 +92,8 @@ const { columns, columnChecks, data, loading, getData, getDataByPage, mobilePagi
       title: $t('page.manage.openapiLog.errCode'),
       align: 'center',
       width: 100,
-      render: row => (row.err_code === null || row.err_code === undefined ? '-' : <NTag size="small">{row.err_code}</NTag>)
+      render: row =>
+        row.err_code === null || row.err_code === undefined ? '-' : <NTag size="small">{row.err_code}</NTag>
     },
     {
       key: 'client_ip',
@@ -164,7 +169,12 @@ async function handleDelete(id: number) {
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
     <OpenapiLogSearch v-model:model="searchParams" @search="getDataByPage" />
-    <NCard :title="$t('page.manage.openapiLog.title')" :bordered="false" size="small" class="card-wrapper sm:flex-1-hidden">
+    <NCard
+      :title="$t('page.manage.openapiLog.title')"
+      :bordered="false"
+      size="small"
+      class="card-wrapper sm:flex-1-hidden"
+    >
       <template #header-extra>
         <TableHeaderOperation
           v-model:columns="columnChecks"

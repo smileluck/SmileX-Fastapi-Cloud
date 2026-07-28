@@ -39,6 +39,7 @@
     "dev": "vite --mode test",
     "dev:prod": "vite --mode prod",
     "gen-route": "sa gen-route",
+    "gen-theme-catalog": "tsx scripts/gen-theme-catalog.ts",
     "lint": "eslint . --fix",
     "prepare": "simple-git-hooks",
     "preview": "vite preview",

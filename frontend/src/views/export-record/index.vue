@@ -24,15 +24,7 @@ const statusMap: Record<Api.ExportTask.ExportTaskStatus, { type: NaiveUI.ThemeCo
   failed: { type: 'error', label: $t('exportTask.status.failed') }
 };
 
-const {
-  columns,
-  columnChecks,
-  data,
-  getData,
-  getDataByPage,
-  loading,
-  mobilePagination
-} = useNaivePaginatedTable({
+const { columns, columnChecks, data, getData, getDataByPage, loading, mobilePagination } = useNaivePaginatedTable({
   api: () => fetchGetExportTaskList(searchParams),
   transform: response => defaultTransform(response),
   onPaginationParamsChange: params => {
@@ -68,7 +60,11 @@ const {
       width: 100,
       render: row => {
         const s = statusMap[row.status];
-        return <NTag type={s?.type || 'default'} size="small">{s?.label || row.status}</NTag>;
+        return (
+          <NTag type={s?.type || 'default'} size="small">
+            {s?.label || row.status}
+          </NTag>
+        );
       }
     },
     {

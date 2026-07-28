@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { jsonClone } from '@sa/utils';
-import { useNaiveForm } from '@/hooks/common/form';
-import { $t } from '@/locales';
 import {
   fetchCreateScheduledTask,
-  fetchUpdateScheduledTask,
   fetchCronPreview,
   fetchGetRegistryTasks,
-  fetchGetTaskParamsSchema
+  fetchGetTaskParamsSchema,
+  fetchUpdateScheduledTask
 } from '@/service/api';
+import { useNaiveForm } from '@/hooks/common/form';
+import { $t } from '@/locales';
 import JsonSchemaForm from './json-schema-form.vue';
 
 defineOptions({ name: 'TaskOperateDrawer' });
@@ -221,7 +221,7 @@ watch(visible, async visibleState => {
   <NDrawer v-model:show="visible" display-directive="show" :width="640">
     <NDrawerContent :title="title" :native-scrollbar="false" closable>
       <NForm ref="formRef" :model="model" :rules="rules">
-        <NFormItem :label="$t('page.manage.scheduler.template')" path="template" v-if="!isEdit">
+        <NFormItem v-if="!isEdit" :label="$t('page.manage.scheduler.template')" path="template">
           <NSelect
             v-model:value="selectedTemplateKey"
             :options="genericTemplateOptions"
@@ -231,13 +231,26 @@ watch(visible, async visibleState => {
           />
         </NFormItem>
         <NFormItem :label="$t('page.manage.scheduler.taskCategory')" path="task_category">
-          <NTag v-if="currentTemplate" :type="currentTemplate.task_category === 'generic' ? 'success' : 'info'" size="small">
-            {{ currentTemplate.task_category === 'generic' ? $t('page.manage.scheduler.taskCategories.generic') : $t('page.manage.scheduler.taskCategories.specialist') }}
+          <NTag
+            v-if="currentTemplate"
+            :type="currentTemplate.task_category === 'generic' ? 'success' : 'info'"
+            size="small"
+          >
+            {{
+              currentTemplate.task_category === 'generic'
+                ? $t('page.manage.scheduler.taskCategories.generic')
+                : $t('page.manage.scheduler.taskCategories.specialist')
+            }}
           </NTag>
-          <span v-else class="text-gray-400 text-13px">—</span>
+          <span v-else class="text-13px text-gray-400">—</span>
         </NFormItem>
         <NFormItem :label="$t('page.manage.scheduler.taskName')" path="name">
-          <NInput v-model:value="model.name" :placeholder="$t('page.manage.scheduler.form.taskName')" maxlength="100" show-count />
+          <NInput
+            v-model:value="model.name"
+            :placeholder="$t('page.manage.scheduler.form.taskName')"
+            maxlength="100"
+            show-count
+          />
         </NFormItem>
         <NFormItem :label="$t('page.manage.scheduler.taskKey')" path="task_key">
           <NInput
@@ -248,18 +261,21 @@ watch(visible, async visibleState => {
           />
         </NFormItem>
         <NFormItem :label="$t('page.manage.scheduler.description')" path="description">
-          <NInput v-model:value="model.description" type="textarea" :placeholder="$t('page.manage.scheduler.form.description')" :rows="3" maxlength="500" />
+          <NInput
+            v-model:value="model.description"
+            type="textarea"
+            :placeholder="$t('page.manage.scheduler.form.description')"
+            :rows="3"
+            maxlength="500"
+          />
         </NFormItem>
 
         <template v-if="hasParams">
           <NDivider title-placement="left" class="text-13px">{{ $t('page.manage.scheduler.triggerParams') }}</NDivider>
-          <div v-if="schemaLoading" class="text-gray-400 text-13px">{{ $t('page.manage.scheduler.schemaLoading') }}</div>
-          <JsonSchemaForm
-            v-else
-            v-model="paramsModel"
-            :schema="paramsSchema"
-            :required-mark="true"
-          />
+          <div v-if="schemaLoading" class="text-13px text-gray-400">
+            {{ $t('page.manage.scheduler.schemaLoading') }}
+          </div>
+          <JsonSchemaForm v-else v-model="paramsModel" :schema="paramsSchema" :required-mark="true" />
         </template>
 
         <NDivider title-placement="left" class="text-13px">{{ $t('page.manage.scheduler.advancedConfig') }}</NDivider>
@@ -268,7 +284,10 @@ watch(visible, async visibleState => {
         </NFormItem>
         <NFormItem :label="$t('page.manage.scheduler.cronExpression')" path="cron_expression">
           <NSpace vertical class="w-full">
-            <NInput v-model:value="model.cron_expression" :placeholder="$t('page.manage.scheduler.form.cronExpression')" />
+            <NInput
+              v-model:value="model.cron_expression"
+              :placeholder="$t('page.manage.scheduler.form.cronExpression')"
+            />
             <NButton size="small" :loading="cronPreviewLoading" @click="handleCronPreview">
               {{ $t('page.manage.scheduler.cronPreview') }}
             </NButton>
@@ -280,11 +299,19 @@ watch(visible, async visibleState => {
             </div>
           </NSpace>
         </NFormItem>
-        <NFormItem v-if="model.trigger_type !== 'cron'" :label="$t('page.manage.scheduler.triggerParams')" path="trigger_params">
+        <NFormItem
+          v-if="model.trigger_type !== 'cron'"
+          :label="$t('page.manage.scheduler.triggerParams')"
+          path="trigger_params"
+        >
           <NInput
             v-model:value="model.trigger_params"
             type="textarea"
-            :placeholder="model.trigger_type === 'interval' ? '{&quot;seconds&quot;: 60}' : '{&quot;run_date&quot;: &quot;2026-01-01 00:00:00&quot;}'"
+            :placeholder="
+              model.trigger_type === 'interval'
+                ? '{&quot;seconds&quot;: 60}'
+                : '{&quot;run_date&quot;: &quot;2026-01-01 00:00:00&quot;}'
+            "
             :rows="2"
           />
         </NFormItem>

@@ -63,7 +63,11 @@ function search() {
               path="description"
               class="pr-24px"
             >
-              <NInput v-model:value="model.description" :placeholder="$t('page.manage.config.form.configDesc')" clearable />
+              <NInput
+                v-model:value="model.description"
+                :placeholder="$t('page.manage.config.form.configDesc')"
+                clearable
+              />
             </NFormItemGi>
             <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.config.configType')" path="type" class="pr-24px">
               <NSelect

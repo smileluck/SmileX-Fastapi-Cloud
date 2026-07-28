@@ -24,6 +24,8 @@ declare namespace StorageType {
     darkMode: boolean;
     /** The theme settings */
     themeSettings: App.Theme.ThemeSetting;
+    /** NaiveUI component-level theme overrides (per-component enabled + common/advanced config) */
+    themeCompOverrides: App.Theme.ComponentConfigMap;
     /**
      * The override theme flags
      *

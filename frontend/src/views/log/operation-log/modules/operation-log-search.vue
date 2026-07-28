@@ -1,9 +1,20 @@
 <script setup lang="ts">
-import { toRaw, computed } from 'vue';
+import { computed, toRaw } from 'vue';
+import {
+  NButton,
+  NCard,
+  NCollapse,
+  NCollapseItem,
+  NDatePicker,
+  NForm,
+  NFormItemGi,
+  NGrid,
+  NInput,
+  NSpace
+} from 'naive-ui';
 import dayjs from 'dayjs';
 import { jsonClone } from '@sa/utils';
 import { $t } from '@/locales';
-import { NButton, NCard, NCollapse, NCollapseItem, NDatePicker, NForm, NFormItemGi, NGrid, NInput, NSpace } from 'naive-ui';
 
 defineOptions({
   name: 'OperationLogSearch'
@@ -52,10 +63,17 @@ function search() {
       <NCollapseItem :title="$t('common.search')" name="operation-log-search">
         <NForm :model="model" label-placement="left" :label-width="80">
           <NGrid responsive="screen" item-responsive>
-            <NFormItemGi span="24 s:12 m:6" :label="$t('page.log.operationLog.username')" path="username"
-              class="pr-24px">
-              <NInput v-model:value="model.username" :placeholder="$t('page.log.operationLog.form.username')"
-                clearable />
+            <NFormItemGi
+              span="24 s:12 m:6"
+              :label="$t('page.log.operationLog.username')"
+              path="username"
+              class="pr-24px"
+            >
+              <NInput
+                v-model:value="model.username"
+                :placeholder="$t('page.log.operationLog.form.username')"
+                clearable
+              />
             </NFormItemGi>
             <NFormItemGi span="24 s:12 m:6" :label="$t('page.log.operationLog.module')" path="module" class="pr-24px">
               <NInput v-model:value="model.module" :placeholder="$t('page.log.operationLog.form.module')" clearable />

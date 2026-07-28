@@ -10,6 +10,8 @@
 
 详细索引见 [business/README.md](./business/README.md)。近期：
 
+- [2026-07-27 NaiveUI 组件级主题配置](./business/2026-07-27_naiveui_component_theme_config.md) — 主题抽屉新增「组件」Tab：codegen 从 GlobalThemeOverrides 生成全部组件 × 属性表，每组件单独启用 + 表单/JSON5 混合编辑，localStorage 持久化（dev 也生效），合并优先级 用户组件配置 > 预设 > 自动；zh/en i18n
+
 - [2026-07-23 首页仪表盘（聚合接口 + 业务统计 + 活动流）](./business/2026-07-23_homepage_dashboard.md) — 修复空白首页：新增聚合接口 `/admin/sys/dashboard/summary`（Redis 缓存 60s）+ 业务统计卡片（用户/角色/在线/今日登录）+ 最近登录时间线 + 最新公告列表；清理 5 个模板遗留组件；更新 i18n
 
 - [2026-05-27 运维 P0 修复：健康探针 + 启动硬终止](./business/2026-05-27_ops_p0_health_probe.md) — 新增无鉴权顶级探针 `/health`（liveness）与 `/ready`（readiness，检查 DB+Redis）；`deploy.env` 健康检查从 `/openapi.json` 改为 `/ready`（修复生产环境 openapi 被禁用导致健康检查恒 404）；`main.py` lifespan 调度器同步失败改为硬阻止启动，IP 黑名单预热失败加结构化降级日志，种子数据降 WARNING；采用顶级路由方案（B 方案），澄清 `/open/*` 是商户 HMAC 签名接口，顶级路径天然不受任何业务中间件约束

@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { NButton, NDescriptions, NDescriptionsItem, NDrawer, NDrawerContent, NDivider, NScrollbar, NSpin } from 'naive-ui';
+import {
+  NButton,
+  NDescriptions,
+  NDescriptionsItem,
+  NDivider,
+  NDrawer,
+  NDrawerContent,
+  NScrollbar,
+  NSpin
+} from 'naive-ui';
 import { fetchGetOperationLogDetail } from '@/service/api';
 import { $t } from '@/locales';
 
@@ -101,12 +110,16 @@ function formatJson(str: string | null): string {
 
           <NDivider>{{ $t('page.log.operationLog.requestParams') }}</NDivider>
           <NScrollbar x-scrollable style="max-height: 200px">
-            <pre class="whitespace-pre-wrap break-all rounded bg-gray-100 p-12px text-13px dark:bg-dark-800">{{ formatJson(detail.request_params) }}</pre>
+            <pre class="whitespace-pre-wrap break-all rounded bg-gray-100 p-12px text-13px dark:bg-dark-800">{{
+              formatJson(detail.request_params)
+            }}</pre>
           </NScrollbar>
 
           <NDivider>{{ $t('page.log.operationLog.responseResult') }}</NDivider>
           <NScrollbar x-scrollable style="max-height: 200px">
-            <pre class="whitespace-pre-wrap break-all rounded bg-gray-100 p-12px text-13px dark:bg-dark-800">{{ formatJson(detail.response_result) }}</pre>
+            <pre class="whitespace-pre-wrap break-all rounded bg-gray-100 p-12px text-13px dark:bg-dark-800">{{
+              formatJson(detail.response_result)
+            }}</pre>
           </NScrollbar>
         </template>
       </NSpin>

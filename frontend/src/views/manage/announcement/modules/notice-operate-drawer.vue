@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { jsonClone } from '@sa/utils';
+import { fetchCreateNotice, fetchUpdateNotice } from '@/service/api';
 import { useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
-import { fetchCreateNotice, fetchUpdateNotice } from '@/service/api';
 
 defineOptions({
   name: 'NoticeOperateDrawer'
@@ -113,7 +113,12 @@ watch(visible, () => {
     <NDrawerContent :title="title" :native-scrollbar="false" closable>
       <NForm ref="formRef" :model="model" :rules="rules">
         <NFormItem :label="$t('page.manage.announcement.noticeType')" path="title">
-          <NInput v-model:value="model.title" :placeholder="$t('page.manage.announcement.form.title')" maxlength="200" show-count />
+          <NInput
+            v-model:value="model.title"
+            :placeholder="$t('page.manage.announcement.form.title')"
+            maxlength="200"
+            show-count
+          />
         </NFormItem>
         <NFormItem :label="$t('page.manage.announcement.noticeContent')" path="content">
           <NInput
@@ -142,7 +147,12 @@ watch(visible, () => {
           v-if="model.target_type === 'role'"
           :label="$t('page.manage.announcement.targetRole')"
           path="target_role_ids"
-          :rule="{ required: true, message: $t('page.manage.announcement.form.roleIds'), type: 'array', trigger: 'change' }"
+          :rule="{
+            required: true,
+            message: $t('page.manage.announcement.form.roleIds'),
+            type: 'array',
+            trigger: 'change'
+          }"
         >
           <NSelect
             v-model:value="model.target_role_ids"
@@ -157,7 +167,12 @@ watch(visible, () => {
           v-if="model.target_type === 'user'"
           :label="$t('page.manage.announcement.targetUser')"
           path="target_user_ids"
-          :rule="{ required: true, message: $t('page.manage.announcement.form.userIds'), type: 'array', trigger: 'change' }"
+          :rule="{
+            required: true,
+            message: $t('page.manage.announcement.form.userIds'),
+            type: 'array',
+            trigger: 'change'
+          }"
         >
           <NSelect
             v-model:value="model.target_user_ids"

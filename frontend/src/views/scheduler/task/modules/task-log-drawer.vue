@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { $t } from '@/locales';
 import { fetchGetTaskLogDetail } from '@/service/api';
+import { $t } from '@/locales';
 
 defineOptions({ name: 'TaskLogDrawer' });
 
@@ -81,18 +81,27 @@ const statusMap: Record<string, { type: NaiveUI.ThemeColor; label: string }> = {
               {{ detail.duration_ms != null ? `${detail.duration_ms.toFixed(0)} ms` : '-' }}
             </NDescriptionsItem>
             <NDescriptionsItem :label="$t('page.manage.schedulerLog.triggeredBy')">
-              {{ detail.triggered_by === 'manual' ? $t('page.manage.schedulerLog.triggeredByValues.manual') : $t('page.manage.schedulerLog.triggeredByValues.scheduler') }}
+              {{
+                detail.triggered_by === 'manual'
+                  ? $t('page.manage.schedulerLog.triggeredByValues.manual')
+                  : $t('page.manage.schedulerLog.triggeredByValues.scheduler')
+              }}
             </NDescriptionsItem>
           </NDescriptions>
 
           <NDivider v-if="detail.result">{{ $t('page.manage.schedulerLog.result') }}</NDivider>
           <NScrollbar v-if="detail.result" x-scrollable style="max-height: 200px">
-            <pre class="whitespace-pre-wrap break-all rounded bg-gray-100 p-12px text-13px dark:bg-dark-800">{{ formatJson(detail.result) }}</pre>
+            <pre class="whitespace-pre-wrap break-all rounded bg-gray-100 p-12px text-13px dark:bg-dark-800">{{
+              formatJson(detail.result)
+            }}</pre>
           </NScrollbar>
 
           <NDivider v-if="detail.error_message">{{ $t('page.manage.schedulerLog.errorMessage') }}</NDivider>
           <NScrollbar v-if="detail.error_message" x-scrollable style="max-height: 200px">
-            <pre class="whitespace-pre-wrap break-all rounded bg-red-50 p-12px text-13px text-red-600 dark:bg-dark-800">{{ detail.error_message }}</pre>
+            <pre
+              class="whitespace-pre-wrap break-all rounded bg-red-50 p-12px text-13px text-red-600 dark:bg-dark-800"
+              >{{ detail.error_message }}</pre
+            >
           </NScrollbar>
         </template>
       </NSpin>

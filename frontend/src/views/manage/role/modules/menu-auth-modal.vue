@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, h, shallowRef, watch } from 'vue';
 import { NTag } from 'naive-ui';
-import { fetchAssignMenuToRole, fetchGetAllPages, fetchGetAssignMenuTree, fetchGetRole } from '@/service/api';
 import { menuTypeRecord } from '@/constants/business';
-import { $t } from '@/locales';
+import { fetchAssignMenuToRole, fetchGetAllPages, fetchGetAssignMenuTree, fetchGetRole } from '@/service/api';
 import { formatButtonLabel } from '@/utils/menu-button';
+import { $t } from '@/locales';
 
 defineOptions({
   name: 'MenuAuthModal'
@@ -157,7 +157,11 @@ function renderLabel({ option }: { option: Record<string, unknown> }) {
       {
         default: () => [
           buttonLabel,
-          h(NTag, { type: tagType, size: 'small', bordered: false }, { default: () => $t(menuTypeRecord[node.menuType]) })
+          h(
+            NTag,
+            { type: tagType, size: 'small', bordered: false },
+            { default: () => $t(menuTypeRecord[node.menuType]) }
+          )
         ]
       }
     );

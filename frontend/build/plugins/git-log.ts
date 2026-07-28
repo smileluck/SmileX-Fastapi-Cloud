@@ -1,5 +1,5 @@
-import type { PluginOption } from 'vite';
 import { spawnSync } from 'node:child_process';
+import type { PluginOption } from 'vite';
 
 /** virtual module 标识 */
 const VIRTUAL_ID = 'virtual:smilex-git-log';

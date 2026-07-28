@@ -13,10 +13,7 @@ export function getHeaderPlugins(): HeaderPlugin[] {
   return _headerPlugins;
 }
 
-export function registerPluginI18n(
-  pluginName: string,
-  messages: Record<string, Record<string, unknown>>
-) {
+export function registerPluginI18n(pluginName: string, messages: Record<string, Record<string, unknown>>) {
   for (const [locale, msg] of Object.entries(messages)) {
     i18n.global.mergeLocaleMessage(locale, msg);
   }

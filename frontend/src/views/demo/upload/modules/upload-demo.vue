@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, h } from 'vue';
+import { computed, h, ref } from 'vue';
 import { NTag } from 'naive-ui';
 import type { UploadFileInfo } from 'naive-ui';
 import { fetchUploadFile } from '@/service/api/file';
@@ -54,8 +54,18 @@ function renderStatus(row: UploadResult) {
 
 const tableColumns = computed(() => [
   { title: $t('page.demo.upload.fileName'), key: 'name', ellipsis: { tooltip: true } },
-  { title: $t('page.demo.upload.fileType'), key: 'extension', width: 100, render: (row: UploadResult) => row.extension || '-' },
-  { title: $t('page.demo.upload.fileSize'), key: 'size', width: 120, render: (row: UploadResult) => formatFileSize(row.size) },
+  {
+    title: $t('page.demo.upload.fileType'),
+    key: 'extension',
+    width: 100,
+    render: (row: UploadResult) => row.extension || '-'
+  },
+  {
+    title: $t('page.demo.upload.fileSize'),
+    key: 'size',
+    width: 120,
+    render: (row: UploadResult) => formatFileSize(row.size)
+  },
   { title: $t('page.demo.upload.uploadResult'), key: 'status', width: 120, render: renderStatus }
 ]);
 
@@ -70,7 +80,15 @@ function updateResult(index: number, patch: Partial<UploadResult>) {
 }
 
 /** 单文件 custom-request 回调 */
-function handleSingleCustomRequest({ file, onFinish, onError }: { file: UploadFileInfo; onFinish: () => void; onError: () => void }) {
+function handleSingleCustomRequest({
+  file,
+  onFinish,
+  onError
+}: {
+  file: UploadFileInfo;
+  onFinish: () => void;
+  onError: () => void;
+}) {
   if (!file.file) {
     onError();
     return;
@@ -79,18 +97,25 @@ function handleSingleCustomRequest({ file, onFinish, onError }: { file: UploadFi
   const ext = file.name.includes('.') ? `.${file.name.split('.').pop()!}` : '';
   const idx = pushResult({ name: file.name, size: file.file.size, extension: ext, status: 'uploading' });
 
-  fetchUploadFile(file.file).then(({ data, error }) => {
-    if (!error && data) {
-      updateResult(idx, { name: data.original_name, size: data.file_size, extension: data.extension, status: 'success' });
-      onFinish();
-    } else {
-      updateResult(idx, { status: 'error', message: (error?.response?.data as any)?.msg || 'Upload failed' });
+  fetchUploadFile(file.file)
+    .then(({ data, error }) => {
+      if (!error && data) {
+        updateResult(idx, {
+          name: data.original_name,
+          size: data.file_size,
+          extension: data.extension,
+          status: 'success'
+        });
+        onFinish();
+      } else {
+        updateResult(idx, { status: 'error', message: (error?.response?.data as any)?.msg || 'Upload failed' });
+        onError();
+      }
+    })
+    .catch(() => {
+      updateResult(idx, { status: 'error', message: 'Network error' });
       onError();
-    }
-  }).catch(() => {
-    updateResult(idx, { status: 'error', message: 'Network error' });
-    onError();
-  });
+    });
 }
 
 /** 多文件：点击按钮触发逐个上传 */
@@ -109,7 +134,12 @@ async function doBatchUpload() {
     try {
       const { data, error } = await fetchUploadFile(file);
       if (!error && data) {
-        updateResult(idx, { name: data.original_name, size: data.file_size, extension: data.extension, status: 'success' });
+        updateResult(idx, {
+          name: data.original_name,
+          size: data.file_size,
+          extension: data.extension,
+          status: 'success'
+        });
       } else {
         updateResult(idx, { status: 'error', message: (error?.response?.data as any)?.msg || 'Upload failed' });
       }
@@ -146,7 +176,9 @@ const pendingCount = computed(() => fileList.value.filter(f => f.status === 'pen
         <div style="padding: 20px 0">
           <NIcon size="48" :depth="3" style="margin-bottom: 8px">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M11 20H6.5a3.5 3.5 0 0 1 0-7h.05A5 5 0 0 1 16 8.05A4.5 4.5 0 0 1 20 12.5a4.5 4.5 0 0 1-4.5 4.5H13v3a1 1 0 0 1-2 0v-3zm1-8a1 1 0 0 1 1 1v3h2.5a2.5 2.5 0 0 0 0-5h-.5l-.05-.5a3 3 0 0 0-5.67-1.21l-.21.71H7.5a1.5 1.5 0 0 0 0 3H11v-1a1 1 0 0 1 1-1z"/>
+              <path
+                d="M11 20H6.5a3.5 3.5 0 0 1 0-7h.05A5 5 0 0 1 16 8.05A4.5 4.5 0 0 1 20 12.5a4.5 4.5 0 0 1-4.5 4.5H13v3a1 1 0 0 1-2 0v-3zm1-8a1 1 0 0 1 1 1v3h2.5a2.5 2.5 0 0 0 0-5h-.5l-.05-.5a3 3 0 0 0-5.67-1.21l-.21.71H7.5a1.5 1.5 0 0 0 0 3H11v-1a1 1 0 0 1 1-1z"
+              />
             </svg>
           </NIcon>
           <NText style="font-size: 16px">{{ $t('page.demo.upload.dragOrClick') }}</NText>
@@ -159,23 +191,12 @@ const pendingCount = computed(() => fileList.value.filter(f => f.status === 'pen
 
     <!-- Multi-file: upload button + progress -->
     <template v-if="props.multiple">
-      <NProgress
-        v-if="uploading"
-        type="line"
-        :percentage="uploadProgress"
-        indicator-placement="inside"
-        processing
-      />
+      <NProgress v-if="uploading" type="line" :percentage="uploadProgress" indicator-placement="inside" processing />
 
       <NSpace>
-        <NButton
-          type="primary"
-          :disabled="!canUpload"
-          :loading="uploading"
-          @click="doBatchUpload"
-        >
+        <NButton type="primary" :disabled="!canUpload" :loading="uploading" @click="doBatchUpload">
           {{ $t('page.demo.upload.startUpload') }}
-          <template v-if="pendingCount > 0"> ({{ pendingCount }})</template>
+          <template v-if="pendingCount > 0">({{ pendingCount }})</template>
         </NButton>
       </NSpace>
     </template>

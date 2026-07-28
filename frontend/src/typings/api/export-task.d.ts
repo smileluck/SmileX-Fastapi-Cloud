@@ -45,8 +45,10 @@ declare namespace Api {
     };
 
     /** export task search params */
-    type ExportTaskSearchParams = CommonType.RecordNullable<{
-      status?: ExportTaskStatus;
-    } & CommonSearchParams>;
+    type ExportTaskSearchParams = CommonType.RecordNullable<
+      {
+        status?: ExportTaskStatus;
+      } & CommonSearchParams
+    >;
   }
 }

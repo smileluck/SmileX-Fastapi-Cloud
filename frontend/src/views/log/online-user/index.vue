@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { reactive } from 'vue';
 import { NButton, NCard, NDataTable, NPopconfirm, NSpace, useMessage } from 'naive-ui';
-import { fetchGetOnlineUserList, fetchKickUser, fetchKickAllOnlineUsers } from '@/service/api';
+import { fetchGetOnlineUserList, fetchKickAllOnlineUsers, fetchKickUser } from '@/service/api';
 import { useAppStore } from '@/store/modules/app';
 import { defaultTransform, useNaivePaginatedTable } from '@/hooks/common/table';
 import { useAuth } from '@/hooks/business/auth';
@@ -19,15 +19,7 @@ const searchParams: Api.SystemManage.OnlineUserSearchParams = reactive({
   ip: null
 });
 
-const {
-  columns,
-  columnChecks,
-  data,
-  getData,
-  getDataByPage,
-  loading,
-  mobilePagination
-} = useNaivePaginatedTable({
+const { columns, columnChecks, data, getData, getDataByPage, loading, mobilePagination } = useNaivePaginatedTable({
   api: () => fetchGetOnlineUserList(searchParams),
   transform: response => defaultTransform(response),
   onPaginationParamsChange: params => {

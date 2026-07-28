@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, computed } from 'vue';
+import { computed, watch } from 'vue';
 import { useEcharts } from '@/hooks/common/echarts';
 import { $t } from '@/locales';
 
@@ -122,8 +122,8 @@ function getCoreColor(val: number): string {
     <NGi>
       <NCard size="small" :title="$t('page.monitor.cpuUsage')">
         <div class="card-body">
-          <div class="flex items-center gap-16px h-full">
-            <div class="flex-1 grid grid-cols-2 gap-x-12px gap-y-6px">
+          <div class="h-full flex items-center gap-16px">
+            <div class="grid grid-cols-2 flex-1 gap-x-12px gap-y-6px">
               <div v-for="(val, idx) in cpuCores" :key="idx" class="flex items-center gap-6px">
                 <span class="w-42px shrink-0 text-12px text-gray">C{{ idx }}</span>
                 <div class="h-8px flex-1 overflow-hidden rounded-full" style="background: var(--n-border-color)">
@@ -145,7 +145,7 @@ function getCoreColor(val: number): string {
     <NGi>
       <NCard size="small" :title="$t('page.monitor.memoryUsage')">
         <div class="card-body">
-          <div class="flex items-center gap-16px h-full">
+          <div class="h-full flex items-center gap-16px">
             <div class="flex-1">
               <NDescriptions label-placement="left" :column="1" bordered size="small">
                 <NDescriptionsItem label="Total (MB)">
@@ -194,7 +194,7 @@ function getCoreColor(val: number): string {
     <NGi>
       <NCard size="small" :title="$t('page.monitor.diskUsage')">
         <div class="card-body">
-          <div class="flex items-center gap-16px h-full">
+          <div class="h-full flex items-center gap-16px">
             <div class="flex-1">
               <NDescriptions label-placement="left" :column="1" bordered size="small">
                 <NDescriptionsItem label="Total (GB)">

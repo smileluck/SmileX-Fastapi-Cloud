@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { NModal, NImage } from 'naive-ui';
+import { NImage, NModal } from 'naive-ui';
 import { getFilePreviewUrl } from '@/service/api/file';
 import { $t } from '@/locales';
 
@@ -55,12 +55,7 @@ const previewUrl = computed(() => {
         object-fit="contain"
         style="max-height: 75vh"
       />
-      <video
-        v-else-if="isVideo"
-        :src="previewUrl"
-        controls
-        style="max-width: 100%; max-height: 75vh"
-      >
+      <video v-else-if="isVideo" :src="previewUrl" controls style="max-width: 100%; max-height: 75vh">
         {{ $t('page.manage.file.videoNotSupported') }}
       </video>
       <span v-else style="color: #999">{{ $t('page.manage.file.previewNotSupported') }}</span>

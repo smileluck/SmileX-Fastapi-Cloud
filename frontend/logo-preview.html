@@ -4,19 +4,45 @@
     <meta charset="UTF-8" />
     <title>SmileX Logo Preview</title>
     <style>
-      :root { color-scheme: light dark; }
+      :root {
+        color-scheme: light dark;
+      }
       body {
         margin: 0;
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family:
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
         background: #f6f7fb;
         color: #1f2330;
         padding: 40px 24px 64px;
       }
-      h1 { font-size: 22px; margin: 0 0 4px; }
-      p.lead { margin: 0 0 32px; color: #6b7280; font-size: 14px; }
-      .block { margin-bottom: 36px; }
-      .block > h2 { font-size: 15px; margin: 0 0 14px; color: #4b5563; font-weight: 600; }
-      .row { display: flex; align-items: flex-end; gap: 28px; flex-wrap: wrap; }
+      h1 {
+        font-size: 22px;
+        margin: 0 0 4px;
+      }
+      p.lead {
+        margin: 0 0 32px;
+        color: #6b7280;
+        font-size: 14px;
+      }
+      .block {
+        margin-bottom: 36px;
+      }
+      .block > h2 {
+        font-size: 15px;
+        margin: 0 0 14px;
+        color: #4b5563;
+        font-weight: 600;
+      }
+      .row {
+        display: flex;
+        align-items: flex-end;
+        gap: 28px;
+        flex-wrap: wrap;
+      }
       .card {
         display: flex;
         flex-direction: column;
@@ -27,8 +53,13 @@
         background: #ffffff;
         box-shadow: 0 1px 3px rgba(20, 30, 60, 0.08);
       }
-      .card.dark { background: #14151a; }
-      .card .sz { font-size: 11px; color: #9ca3af; }
+      .card.dark {
+        background: #14151a;
+      }
+      .card .sz {
+        font-size: 11px;
+        color: #9ca3af;
+      }
       .stage {
         display: grid;
         place-items: center;
@@ -37,13 +68,24 @@
         padding: 48px;
         box-shadow: 0 1px 3px rgba(20, 30, 60, 0.08);
       }
-      .stage.dark { background: #14151a; }
-      code { background: #eef; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+      .stage.dark {
+        background: #14151a;
+      }
+      code {
+        background: #eef;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
     </style>
   </head>
   <body>
     <h1>SmileX · 微笑的云</h1>
-    <p class="lead">Smile + Cloud。紫蓝渐变(<code>#a5b4fc → #646cff → #4f46e5</code>),白色笑脸。项目内跟随主题色变量。</p>
+    <p class="lead">
+      Smile + Cloud。紫蓝渐变(
+      <code>#a5b4fc → #646cff → #4f46e5</code>
+      ),白色笑脸。项目内跟随主题色变量。
+    </p>
 
     <!-- 全局定义一次,多处引用 -->
     <svg width="0" height="0" aria-hidden="true" style="position: absolute">
@@ -72,32 +114,72 @@
     <div class="block">
       <h2>大图</h2>
       <div class="row">
-        <div class="stage"><svg width="240" height="240"><use href="#smilexLogo" /></svg></div>
-        <div class="stage dark"><svg width="240" height="240"><use href="#smilexLogo" /></svg></div>
+        <div class="stage">
+          <svg width="240" height="240"><use href="#smilexLogo" /></svg>
+        </div>
+        <div class="stage dark">
+          <svg width="240" height="240"><use href="#smilexLogo" /></svg>
+        </div>
       </div>
     </div>
 
     <div class="block">
       <h2>多尺寸(浅色背景)</h2>
       <div class="row">
-        <div class="card"><svg width="128" height="128"><use href="#smilexLogo" /></svg><span class="sz">128</span></div>
-        <div class="card"><svg width="64" height="64"><use href="#smilexLogo" /></svg><span class="sz">64</span></div>
-        <div class="card"><svg width="48" height="48"><use href="#smilexLogo" /></svg><span class="sz">48</span></div>
-        <div class="card"><svg width="32" height="32"><use href="#smilexLogo" /></svg><span class="sz">32</span></div>
-        <div class="card"><svg width="24" height="24"><use href="#smilexLogo" /></svg><span class="sz">24</span></div>
-        <div class="card"><svg width="16" height="16"><use href="#smilexLogo" /></svg><span class="sz">16</span></div>
+        <div class="card">
+          <svg width="128" height="128"><use href="#smilexLogo" /></svg>
+          <span class="sz">128</span>
+        </div>
+        <div class="card">
+          <svg width="64" height="64"><use href="#smilexLogo" /></svg>
+          <span class="sz">64</span>
+        </div>
+        <div class="card">
+          <svg width="48" height="48"><use href="#smilexLogo" /></svg>
+          <span class="sz">48</span>
+        </div>
+        <div class="card">
+          <svg width="32" height="32"><use href="#smilexLogo" /></svg>
+          <span class="sz">32</span>
+        </div>
+        <div class="card">
+          <svg width="24" height="24"><use href="#smilexLogo" /></svg>
+          <span class="sz">24</span>
+        </div>
+        <div class="card">
+          <svg width="16" height="16"><use href="#smilexLogo" /></svg>
+          <span class="sz">16</span>
+        </div>
       </div>
     </div>
 
     <div class="block">
       <h2>多尺寸(深色背景)</h2>
       <div class="row">
-        <div class="card dark"><svg width="128" height="128"><use href="#smilexLogo" /></svg><span class="sz">128</span></div>
-        <div class="card dark"><svg width="64" height="64"><use href="#smilexLogo" /></svg><span class="sz">64</span></div>
-        <div class="card dark"><svg width="48" height="48"><use href="#smilexLogo" /></svg><span class="sz">48</span></div>
-        <div class="card dark"><svg width="32" height="32"><use href="#smilexLogo" /></svg><span class="sz">32</span></div>
-        <div class="card dark"><svg width="24" height="24"><use href="#smilexLogo" /></svg><span class="sz">24</span></div>
-        <div class="card dark"><svg width="16" height="16"><use href="#smilexLogo" /></svg><span class="sz">16</span></div>
+        <div class="card dark">
+          <svg width="128" height="128"><use href="#smilexLogo" /></svg>
+          <span class="sz">128</span>
+        </div>
+        <div class="card dark">
+          <svg width="64" height="64"><use href="#smilexLogo" /></svg>
+          <span class="sz">64</span>
+        </div>
+        <div class="card dark">
+          <svg width="48" height="48"><use href="#smilexLogo" /></svg>
+          <span class="sz">48</span>
+        </div>
+        <div class="card dark">
+          <svg width="32" height="32"><use href="#smilexLogo" /></svg>
+          <span class="sz">32</span>
+        </div>
+        <div class="card dark">
+          <svg width="24" height="24"><use href="#smilexLogo" /></svg>
+          <span class="sz">24</span>
+        </div>
+        <div class="card dark">
+          <svg width="16" height="16"><use href="#smilexLogo" /></svg>
+          <span class="sz">16</span>
+        </div>
       </div>
     </div>
   </body>

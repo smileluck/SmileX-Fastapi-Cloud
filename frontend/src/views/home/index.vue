@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { fetchDashboardSummary } from '@/service/api/dashboard';
 import { useAppStore } from '@/store/modules/app';
 import { useAuthStore } from '@/store/modules/auth';
-import { fetchDashboardSummary } from '@/service/api/dashboard';
 import CardData from './modules/card-data.vue';
 import RecentLogin from './modules/recent-login.vue';
 import LatestNotice from './modules/latest-notice.vue';

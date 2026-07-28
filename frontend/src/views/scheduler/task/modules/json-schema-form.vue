@@ -130,7 +130,11 @@ function isStringType(prop: Api.Scheduler.JsonSchemaProperty): boolean {
       />
       <NInput
         v-else
-        :value="typeof modelValue[entry.key] === 'string' ? modelValue[entry.key] : JSON.stringify(modelValue[entry.key] ?? '')"
+        :value="
+          typeof modelValue[entry.key] === 'string'
+            ? modelValue[entry.key]
+            : JSON.stringify(modelValue[entry.key] ?? '')
+        "
         type="textarea"
         :rows="2"
         :placeholder="entry.prop.description || $t('page.manage.scheduler.paramPlaceholder', { label: labelOf(entry) })"

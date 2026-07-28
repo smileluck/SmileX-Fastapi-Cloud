@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { fetchVerifyCaptcha } from '@/service/api/auth';
 import { $t } from '@/locales';
 
@@ -41,9 +41,12 @@ function resetSlider() {
   isDragging.value = false;
 }
 
-watch(() => props.captchaId, () => {
-  resetSlider();
-});
+watch(
+  () => props.captchaId,
+  () => {
+    resetSlider();
+  }
+);
 
 function startDrag(e: MouseEvent | TouchEvent) {
   if (status.value === 'success' || verifyLoading.value) return;
@@ -112,26 +115,62 @@ onBeforeUnmount(() => {
     <!-- 图片区域 -->
     <div class="sc-image" :style="{ height: `${IMAGE_HEIGHT}px` }">
       <img :src="backgroundImage" class="sc-image__bg" alt="" />
-      <img
-        :src="puzzleImage"
-        class="sc-image__piece"
-        :style="{ top: `${puzzleY}px`, left: `${sliderX}px` }"
-        alt=""
-      />
+      <img :src="puzzleImage" class="sc-image__piece" :style="{ top: `${puzzleY}px`, left: `${sliderX}px` }" alt="" />
       <!-- 遮罩 -->
-      <transition name="sc-fade">
+      <Transition name="sc-fade">
         <div v-if="status === 'success'" class="sc-image__mask sc-image__mask--success">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
           <span>{{ $t('captcha.success') }}</span>
         </div>
         <div v-else-if="status === 'fail'" class="sc-image__mask sc-image__mask--fail">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
           <span>{{ $t('captcha.fail') }}</span>
         </div>
-      </transition>
+      </Transition>
       <!-- 刷新按钮 -->
-      <button v-if="status !== 'success'" class="sc-image__refresh" :disabled="verifyLoading" @click="handleRefresh" :title="$t('captcha.refresh')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" /></svg>
+      <button
+        v-if="status !== 'success'"
+        class="sc-image__refresh"
+        :disabled="verifyLoading"
+        :title="$t('captcha.refresh')"
+        @click="handleRefresh"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="23 4 23 10 17 10" />
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+        </svg>
       </button>
     </div>
 
@@ -149,10 +188,61 @@ onBeforeUnmount(() => {
         @mousedown="startDrag"
         @touchstart="startDrag"
       >
-        <svg v-if="verifyLoading" class="sc-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" /></svg>
-        <svg v-else-if="status === 'success'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-        <svg v-else-if="status === 'fail'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-        <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 4 12 8 18" /><polyline points="16 6 20 12 16 18" /></svg>
+        <svg
+          v-if="verifyLoading"
+          class="sc-spin"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <path
+            d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+          />
+        </svg>
+        <svg
+          v-else-if="status === 'success'"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        <svg
+          v-else-if="status === 'fail'"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+        <svg
+          v-else
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="8 6 4 12 8 18" />
+          <polyline points="16 6 20 12 16 18" />
+        </svg>
       </div>
       <span v-if="sliderX === 0 && status === 'idle'" class="sc-track__hint">{{ $t('captcha.slideToVerify') }}</span>
     </div>
@@ -212,9 +302,16 @@ onBeforeUnmount(() => {
   background: rgb(245 34 45 / 0.42);
 }
 
-.sc-fade-enter-active { transition: opacity 0.2s; }
-.sc-fade-leave-active { transition: opacity 0.15s; }
-.sc-fade-enter-from, .sc-fade-leave-to { opacity: 0; }
+.sc-fade-enter-active {
+  transition: opacity 0.2s;
+}
+.sc-fade-leave-active {
+  transition: opacity 0.15s;
+}
+.sc-fade-enter-from,
+.sc-fade-leave-to {
+  opacity: 0;
+}
 
 .sc-image__refresh {
   position: absolute;
@@ -276,7 +373,9 @@ onBeforeUnmount(() => {
   cursor: grab;
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.18);
   z-index: 1;
-  transition: box-shadow 0.15s, background 0.2s;
+  transition:
+    box-shadow 0.15s,
+    background 0.2s;
   color: #999;
 }
 
@@ -315,8 +414,12 @@ onBeforeUnmount(() => {
 }
 
 @keyframes sc-rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .sc-spin {

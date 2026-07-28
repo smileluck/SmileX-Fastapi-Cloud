@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { reactive, ref } from 'vue';
 import { NButton, NCard, NDataTable, NPopconfirm, NTag, useMessage } from 'naive-ui';
-import { fetchGetFileList, fetchDownloadFile, fetchDeleteFile, fetchBatchDeleteFiles } from '@/service/api';
+import { fetchBatchDeleteFiles, fetchDeleteFile, fetchDownloadFile, fetchGetFileList } from '@/service/api';
 import { useAppStore } from '@/store/modules/app';
 import { defaultTransform, useNaivePaginatedTable, useTableOperate } from '@/hooks/common/table';
 import { useAuth } from '@/hooks/business/auth';
@@ -36,15 +36,7 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-const {
-  columns,
-  columnChecks,
-  data,
-  getData,
-  getDataByPage,
-  loading,
-  mobilePagination
-} = useNaivePaginatedTable({
+const { columns, columnChecks, data, getData, getDataByPage, loading, mobilePagination } = useNaivePaginatedTable({
   api: () => fetchGetFileList(searchParams),
   transform: defaultTransform as any,
   onPaginationParamsChange: params => {
@@ -100,7 +92,11 @@ const {
           local: $t('page.manage.file.platform.local'),
           oss: $t('page.manage.file.platform.oss')
         };
-        return <NTag type="info" size="small">{platformMap[row.storage_platform] || row.storage_platform}</NTag>;
+        return (
+          <NTag type="info" size="small">
+            {platformMap[row.storage_platform] || row.storage_platform}
+          </NTag>
+        );
       }
     },
     {
@@ -225,15 +221,9 @@ async function handleBatchDelete() {
         :pagination="mobilePagination"
         class="sm:h-full"
       />
-      <FileUploadDrawer
-        v-model:visible="uploadDrawerVisible"
-        @submitted="getDataByPage"
-      />
+      <FileUploadDrawer v-model:visible="uploadDrawerVisible" @submitted="getDataByPage" />
     </NCard>
-    <FilePreviewModal
-      v-model:visible="previewVisible"
-      :file="previewFile"
-    />
+    <FilePreviewModal v-model:visible="previewVisible" :file="previewFile" />
   </div>
 </template>
 

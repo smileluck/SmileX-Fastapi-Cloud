@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { NBadge, NButton, NEmpty, NList, NListItem, NPopover, NTag, NTooltip } from 'naive-ui';
-import { useRouterPush } from '@/hooks/common/router';
 import { fetchDownloadExportFile, fetchGetExportTaskList } from '@/service/api';
 import { useAuthStore } from '@/store/modules/auth';
+import { useRouterPush } from '@/hooks/common/router';
 import { $t } from '@/locales';
 import SvgIcon from '@/components/custom/svg-icon.vue';
 
@@ -110,17 +110,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <NPopover
-    v-model:show="showPopover"
-    trigger="click"
-    placement="bottom"
-    :width="380"
-    @update:show="onShowChange"
-  >
+  <NPopover v-model:show="showPopover" trigger="click" placement="bottom" :width="380" @update:show="onShowChange">
     <template #trigger>
       <NTooltip>
         <template #trigger>
-          <div class="relative cursor-pointer px-8px hover:bg-[#f6f6f6] dark:hover:bg-[#333] rounded-full transition-colors">
+          <div
+            class="relative cursor-pointer rounded-full px-8px transition-colors hover:bg-[#f6f6f6] dark:hover:bg-[#333]"
+          >
             <NBadge dot :show="hasRunningTask">
               <SvgIcon icon="material-symbols:download-2" class="text-20px" />
             </NBadge>
@@ -140,15 +136,21 @@ onUnmounted(() => {
     <div class="max-h-400px overflow-y-auto">
       <NList v-if="recentTasks.length > 0" hoverable :show-divider="false">
         <NListItem v-for="task in recentTasks" :key="task.id">
-          <div class="flex flex-col gap-6px w-full">
+          <div class="w-full flex flex-col gap-6px">
             <div class="flex items-center gap-8px">
               <NTag :type="statusMap[task.status].type" size="small">{{ statusMap[task.status].label }}</NTag>
-              <span class="font-medium truncate flex-1" :title="task.task_name">{{ task.task_name }}</span>
-              <NButton v-if="task.status === 'completed'" text size="small" type="primary" @click="handleDownload(task, $event)">
+              <span class="flex-1 truncate font-medium" :title="task.task_name">{{ task.task_name }}</span>
+              <NButton
+                v-if="task.status === 'completed'"
+                text
+                size="small"
+                type="primary"
+                @click="handleDownload(task, $event)"
+              >
                 {{ $t('common.actions.download') }}
               </NButton>
             </div>
-            <div class="text-12px text-gray flex items-center gap-8px">
+            <div class="flex items-center gap-8px text-12px text-gray">
               <span v-if="task.created_at">{{ task.created_at }}</span>
               <NTag v-if="task.status === 'failed' && task.error_message" type="error" size="small" :bordered="false">
                 {{ task.error_message }}

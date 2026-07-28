@@ -7,6 +7,19 @@ declare namespace App {
     /** NaiveUI theme overrides that can be specified in preset */
     type NaiveUIThemeOverride = import('naive-ui').GlobalThemeOverrides;
 
+    /** One NaiveUI component's user-configured theme override entry */
+    interface ComponentConfigEntry {
+      /** Whether this component's override is enabled */
+      enabled: boolean;
+      /** Values from the structured (form) fields, keyed by GlobalThemeOverrides property name */
+      common: Record<string, string | number>;
+      /** Parsed object from the advanced JSON5 editor */
+      advanced: Record<string, any>;
+    }
+
+    /** Map of component name -> config entry, keyed by GlobalThemeOverrides top-level key (e.g. "common", "Button") */
+    type ComponentConfigMap = Record<string, ComponentConfigEntry>;
+
     /** Theme setting */
     interface ThemeSetting {
       /** Theme scheme */
@@ -414,6 +427,7 @@ declare namespace App {
           layout: string;
           general: string;
           preset: string;
+          component: string;
         };
         appearance: {
           themeSchema: { title: string } & Record<UnionKey.ThemeScheme, string>;
@@ -514,6 +528,27 @@ declare namespace App {
           copySuccessMsg: string;
           resetConfig: string;
           resetSuccessMsg: string;
+        };
+        componentConfig: {
+          title: string;
+          searchPlaceholder: string;
+          noMatch: string;
+          searchPropPlaceholder: string;
+          enable: string;
+          enabled: string;
+          notEnabledHint: string;
+          noProps: string;
+          groupColor: string;
+          groupSize: string;
+          groupFont: string;
+          groupOther: string;
+          advanced: string;
+          advancedHint: string;
+          jsonValid: string;
+          jsonInvalid: string;
+          copy: string;
+          copySuccess: string;
+          components: Record<string, string>;
         };
       };
       route: Record<I18nRouteKey, string>;
@@ -1158,74 +1193,74 @@ declare namespace App {
             };
           };
         };
-      log: {
-        loginLog: {
-          title: string;
-          username: string;
-          ip: string;
-          status: string;
-          detail: string;
-          userAgent: string;
-          loginTime: string;
-          success: string;
-          failed: string;
-          clear: string;
-          clearConfirm: string;
-          form: {
+        log: {
+          loginLog: {
+            title: string;
             username: string;
             ip: string;
             status: string;
-            timeRange: string;
-            startTime: string;
-            endTime: string;
+            detail: string;
+            userAgent: string;
+            loginTime: string;
+            success: string;
+            failed: string;
+            clear: string;
+            clearConfirm: string;
+            form: {
+              username: string;
+              ip: string;
+              status: string;
+              timeRange: string;
+              startTime: string;
+              endTime: string;
+            };
           };
-        };
-        operationLog: {
-          title: string;
-          username: string;
-          module: string;
-          action: string;
-          description: string;
-          method: string;
-          path: string;
-          ip: string;
-          responseCode: string;
-          responseResult: string;
-          elapsedMs: string;
-          requestParams: string;
-          operateTime: string;
-          viewDetail: string;
-          detailTitle: string;
-          clear: string;
-          clearConfirm: string;
-          form: {
+          operationLog: {
+            title: string;
             username: string;
             module: string;
             action: string;
-            timeRange: string;
-            startTime: string;
-            endTime: string;
-          };
-        };
-        onlineUser: {
-          title: string;
-          username: string;
-          nickname: string;
-          ip: string;
-          userAgent: string;
-          loginTime: string;
-          kick: string;
-          kickAll: string;
-          kickConfirm: string;
-          kickAllConfirm: string;
-          kickSuccess: string;
-          kickAllSuccess: string;
-          form: {
-            username: string;
+            description: string;
+            method: string;
+            path: string;
             ip: string;
+            responseCode: string;
+            responseResult: string;
+            elapsedMs: string;
+            requestParams: string;
+            operateTime: string;
+            viewDetail: string;
+            detailTitle: string;
+            clear: string;
+            clearConfirm: string;
+            form: {
+              username: string;
+              module: string;
+              action: string;
+              timeRange: string;
+              startTime: string;
+              endTime: string;
+            };
+          };
+          onlineUser: {
+            title: string;
+            username: string;
+            nickname: string;
+            ip: string;
+            userAgent: string;
+            loginTime: string;
+            kick: string;
+            kickAll: string;
+            kickConfirm: string;
+            kickAllConfirm: string;
+            kickSuccess: string;
+            kickAllSuccess: string;
+            form: {
+              username: string;
+              ip: string;
+            };
           };
         };
-      };
       };
       form: {
         required: string;

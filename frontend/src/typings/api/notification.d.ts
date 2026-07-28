@@ -64,10 +64,12 @@ declare namespace Api {
     };
 
     /** my notice search params */
-    type MyNoticeSearchParams = CommonType.RecordNullable<{
-      is_read?: boolean;
-      type?: NoticeType;
-    } & CommonSearchParams>;
+    type MyNoticeSearchParams = CommonType.RecordNullable<
+      {
+        is_read?: boolean;
+        type?: NoticeType;
+      } & CommonSearchParams
+    >;
 
     /** my notice list */
     type MyNoticeList = Common.PaginatingQueryRecord<MyNotice>;

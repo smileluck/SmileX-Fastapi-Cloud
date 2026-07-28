@@ -1,11 +1,7 @@
 <script setup lang="tsx">
 import { reactive } from 'vue';
 import { NButton, NCard, NDataTable, NPopconfirm, NTag } from 'naive-ui';
-import {
-  fetchBatchDeleteIpBlacklist,
-  fetchDeleteIpBlacklist,
-  fetchGetIpBlacklistList
-} from '@/service/api';
+import { fetchBatchDeleteIpBlacklist, fetchDeleteIpBlacklist, fetchGetIpBlacklistList } from '@/service/api';
 import { useAppStore } from '@/store/modules/app';
 import { defaultTransform, useNaivePaginatedTable, useTableOperate } from '@/hooks/common/table';
 import { useAuth } from '@/hooks/business/auth';
@@ -71,7 +67,11 @@ const {
       width: 100,
       render: row => {
         const isPermanent = row.type === 'permanent';
-        return <NTag type={isPermanent ? 'error' : 'warning'}>{isPermanent ? $t('page.manage.ipBlacklist.typePermanent') : $t('page.manage.ipBlacklist.typeTemporary')}</NTag>;
+        return (
+          <NTag type={isPermanent ? 'error' : 'warning'}>
+            {isPermanent ? $t('page.manage.ipBlacklist.typePermanent') : $t('page.manage.ipBlacklist.typeTemporary')}
+          </NTag>
+        );
       }
     },
     {
@@ -123,14 +123,11 @@ const {
   ]
 });
 
-const {
-  drawerVisible,
-  operateType,
-  handleAdd,
-  checkedRowKeys,
-  onBatchDeleted,
-  onDeleted
-} = useTableOperate(tableData, 'id', getData);
+const { drawerVisible, operateType, handleAdd, checkedRowKeys, onBatchDeleted, onDeleted } = useTableOperate(
+  tableData,
+  'id',
+  getData
+);
 
 async function handleDelete(id: number) {
   const { error } = await fetchDeleteIpBlacklist(id);
@@ -151,7 +148,12 @@ async function handleBatchDelete() {
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
     <IpBlacklistSearch v-model:model="searchParams" @search="getDataByPage" />
-    <NCard :title="$t('page.manage.ipBlacklist.title')" :bordered="false" size="small" class="card-wrapper sm:flex-1-hidden">
+    <NCard
+      :title="$t('page.manage.ipBlacklist.title')"
+      :bordered="false"
+      size="small"
+      class="card-wrapper sm:flex-1-hidden"
+    >
       <template #header-extra>
         <TableHeaderOperation
           v-model:columns="columnChecks"

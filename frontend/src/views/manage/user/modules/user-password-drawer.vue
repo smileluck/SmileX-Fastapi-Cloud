@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { fetchChangeUserPassword } from '@/service/api/system-manage';
 import { REG_PWD } from '@/constants/reg';
+import { fetchChangeUserPassword } from '@/service/api/system-manage';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
 

@@ -1,9 +1,21 @@
 <script setup lang="ts">
-import { toRaw, computed } from 'vue';
+import { computed, toRaw } from 'vue';
+import {
+  NButton,
+  NCard,
+  NCollapse,
+  NCollapseItem,
+  NDatePicker,
+  NForm,
+  NFormItemGi,
+  NGrid,
+  NInput,
+  NSelect,
+  NSpace
+} from 'naive-ui';
 import dayjs from 'dayjs';
 import { jsonClone } from '@sa/utils';
 import { $t } from '@/locales';
-import { NButton, NCard, NCollapse, NCollapseItem, NDatePicker, NForm, NFormItemGi, NGrid, NInput, NSelect, NSpace } from 'naive-ui';
 
 defineOptions({
   name: 'LoginLogSearch'
@@ -64,8 +76,12 @@ function search() {
               <NInput v-model:value="model.ip" :placeholder="$t('page.log.loginLog.form.ip')" clearable />
             </NFormItemGi>
             <NFormItemGi span="24 s:12 m:6" :label="$t('page.log.loginLog.status')" path="status" class="pr-24px">
-              <NSelect v-model:value="model.status as any" :options="statusOptions as any"
-                :placeholder="$t('page.log.loginLog.form.status')" clearable />
+              <NSelect
+                v-model:value="model.status as any"
+                :options="statusOptions as any"
+                :placeholder="$t('page.log.loginLog.form.status')"
+                clearable
+              />
             </NFormItemGi>
             <NFormItemGi span="24 s:12 m:6" :label="$t('page.log.loginLog.form.timeRange')" class="pr-24px">
               <NDatePicker v-model:value="timeRange" type="datetimerange" clearable class="w-full" />

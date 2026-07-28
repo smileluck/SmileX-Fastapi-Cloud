@@ -6,8 +6,8 @@ import { fetchDeleteDict, fetchDeleteDictItem, fetchGetDictItemList, fetchGetDic
 import { useAppStore } from '@/store/modules/app';
 import { defaultTransform, useNaivePaginatedTable, useTableOperate } from '@/hooks/common/table';
 import { useAuth } from '@/hooks/business/auth';
-import { $t } from '@/locales';
 import { booleanToEnableStatus } from '@/utils/status';
+import { $t } from '@/locales';
 import DictOperateDrawer from './modules/dict-operate-drawer.vue';
 import DictItemOperateDrawer from './modules/dict-item-operate-drawer.vue';
 import DictSearch from './modules/dict-search.vue';

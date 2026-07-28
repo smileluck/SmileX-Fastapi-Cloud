@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, h, ref, shallowRef, watch } from 'vue';
+import { NTag } from 'naive-ui';
 import { jsonClone } from '@sa/utils';
 import { enableStatusOptions, menuTypeRecord } from '@/constants/business';
-import { fetchCreateRole, fetchUpdateRole, fetchGetAssignMenuTree, fetchGetRole } from '@/service/api';
+import { fetchCreateRole, fetchGetAssignMenuTree, fetchGetRole, fetchUpdateRole } from '@/service/api';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
-import { $t } from '@/locales';
 import { booleanToEnableStatus } from '@/utils/status';
-import { NTag } from 'naive-ui';
+import { $t } from '@/locales';
 
 defineOptions({
   name: 'RoleOperateDrawer'
@@ -102,7 +102,11 @@ function renderMenuLabel({ option }: { option: Record<string, unknown> }) {
       { class: 'flex items-center gap-8px' },
       {
         default: () => [
-          h(NTag, { type: tagType, size: 'small', bordered: false }, { default: () => $t(menuTypeRecord[node.menuType]) }),
+          h(
+            NTag,
+            { type: tagType, size: 'small', bordered: false },
+            { default: () => $t(menuTypeRecord[node.menuType]) }
+          ),
           displayLabel
         ]
       }
@@ -242,7 +246,7 @@ watch(visible, async () => {
             virtual-scroll
             block-line
             :render-label="renderMenuLabel"
-            class="flex-1-hidden w-full"
+            class="w-full flex-1-hidden"
           />
         </NFormItem>
       </NForm>

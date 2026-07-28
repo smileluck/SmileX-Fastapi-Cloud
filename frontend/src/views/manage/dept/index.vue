@@ -2,13 +2,10 @@
 import { ref } from 'vue';
 import { NButton, NPopconfirm, NTag } from 'naive-ui';
 import { enableStatusRecord } from '@/constants/business';
-import { booleanToEnableStatus } from '@/utils/status';
-import {
-  fetchDeleteDept,
-  fetchGetDeptTree
-} from '@/service/api';
+import { fetchDeleteDept, fetchGetDeptTree } from '@/service/api';
 import { useAppStore } from '@/store/modules/app';
 import { useAuth } from '@/hooks/business/auth';
+import { booleanToEnableStatus } from '@/utils/status';
 import { $t } from '@/locales';
 import DeptOperateDrawer from './modules/dept-operate-drawer.vue';
 
@@ -151,8 +148,8 @@ getData();
         :loading="loading"
         :row-key="(row: Api.SystemManage.Dept) => row.id"
         :expanded-row-keys="expandedRowKeys"
-        @update:expanded-row-keys="(keys: number[]) => (expandedRowKeys = keys)"
         class="sm:h-full"
+        @update:expanded-row-keys="(keys: (string | number)[]) => (expandedRowKeys = keys as number[])"
       />
       <DeptOperateDrawer
         v-model:visible="drawerVisible"

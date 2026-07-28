@@ -10,6 +10,7 @@
 
 ## 需求索引
 
+- [2026-07-27 NaiveUI 组件级主题配置](./2026-07-27_naiveui_component_theme_config.md) — 主题抽屉新增「组件」Tab：codegen 从 GlobalThemeOverrides 生成全部 92 组件 × 2217 属性表，每组件单独启用 + 表单/JSON5 混合编辑，localStorage 持久化（dev 也生效），合并优先级 用户组件配置 > 预设 > 自动；zh/en i18n；顺带修 setup-store $reset 对独立 ref 无效问题
 - [2026-07-23 首页仪表盘](./2026-07-23_homepage_dashboard.md) — 修复空白首页：新增聚合接口 `/admin/sys/dashboard/summary`（Redis 缓存 60s）+ 业务统计卡片（用户/角色/在线/今日登录）+ 最近登录时间线 + 最新公告列表
 - [2026-05-24 API 限流 / IP 黑名单](./2026-05-24_rate_limit_blacklist.md) — Redis 多维度限流 + DB 持久化 IP 黑名单 + 自动拉黑
 - [2026-05-31 多租户插件](./2026-05-31_multi_tenant_plugin.md) — 可选多租户插件，行级隔离，JWT 识别租户

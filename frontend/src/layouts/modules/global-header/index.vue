@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useFullscreen } from '@vueuse/core';
 import { GLOBAL_HEADER_MENU_ID } from '@/constants/app';
+import { getHeaderPlugins } from '@/plugins/plugin-registry';
 import { useAppStore } from '@/store/modules/app';
 import { useThemeStore } from '@/store/modules/theme';
 import GlobalLogo from '../global-logo/index.vue';
@@ -10,7 +11,6 @@ import ThemeButton from './components/theme-button.vue';
 import UserAvatar from './components/user-avatar.vue';
 import NotificationCenter from './components/notification-center.vue';
 import ExportRecordCenter from './components/export-record-center.vue';
-import { getHeaderPlugins } from '@/plugins/plugin-registry';
 
 defineOptions({
   name: 'GlobalHeader'
@@ -59,7 +59,7 @@ const headerPlugins = getHeaderPlugins();
       />
       <NotificationCenter />
       <ExportRecordCenter />
-      <component v-for="plugin in headerPlugins" :key="plugin.name || plugin" :is="plugin" />
+      <component :is="plugin" v-for="plugin in headerPlugins" :key="plugin.name || plugin" />
       <ThemeButton />
       <UserAvatar />
     </div>

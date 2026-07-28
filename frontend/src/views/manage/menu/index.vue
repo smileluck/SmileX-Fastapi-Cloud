@@ -9,8 +9,8 @@ import { fetchDeleteMenu, fetchGetAllPages, fetchGetMenuListTree } from '@/servi
 import { useAppStore } from '@/store/modules/app';
 import { useAuth } from '@/hooks/business/auth';
 import { tableCellText } from '@/hooks/common/table';
-import { $t } from '@/locales';
 import { formatButtonLabel } from '@/utils/menu-button';
+import { $t } from '@/locales';
 import SvgIcon from '@/components/custom/svg-icon.vue';
 import MenuOperateModal, { type OperateType } from './modules/menu-operate-modal.vue';
 

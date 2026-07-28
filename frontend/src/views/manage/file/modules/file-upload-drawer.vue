@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { NButton, NDrawer, NDrawerContent, NUpload, NUploadDragger, NIcon, NText, NSpace, useMessage } from 'naive-ui';
+import { NButton, NDrawer, NDrawerContent, NIcon, NSpace, NText, NUpload, NUploadDragger, useMessage } from 'naive-ui';
 import type { UploadFileInfo } from 'naive-ui';
 import { fetchUploadFile, fetchUploadFiles } from '@/service/api/file';
 import { $t } from '@/locales';
@@ -29,7 +29,15 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-async function handleUpload({ file, onFinish, onError }: { file: UploadFileInfo; onFinish: () => void; onError: () => void }) {
+async function handleUpload({
+  file,
+  onFinish,
+  onError
+}: {
+  file: UploadFileInfo;
+  onFinish: () => void;
+  onError: () => void;
+}) {
   if (!file.file) {
     onError();
     return;

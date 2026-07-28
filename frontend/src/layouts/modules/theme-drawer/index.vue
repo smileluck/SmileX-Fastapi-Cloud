@@ -7,6 +7,7 @@ import LayoutSettings from './modules/layout/index.vue';
 import GeneralSettings from './modules/general/index.vue';
 import ConfigOperation from './modules/config-operation.vue';
 import PresetSettings from './modules/preset/index.vue';
+import ComponentSettings from './modules/component/index.vue';
 
 defineOptions({
   name: 'ThemeDrawer'
@@ -16,14 +17,12 @@ const appStore = useAppStore();
 const activeTab = ref('appearance');
 
 const drawerWidth = computed(() => {
-  const width = 400;
-
-  // On mobile devices, use 90% of viewport width with a maximum of 400px
+  // On mobile devices, use 90% of viewport width
   if (appStore.isMobile) {
-    return `min(90vw, ${width}px)`;
+    return '90vw';
   }
 
-  return width;
+  return '40%';
 });
 </script>
 
@@ -35,6 +34,7 @@ const drawerWidth = computed(() => {
         <NTab name="layout" :tab="$t('theme.tabs.layout')"></NTab>
         <NTab name="general" :tab="$t('theme.tabs.general')"></NTab>
         <NTab name="preset" :tab="$t('theme.tabs.preset')"></NTab>
+        <NTab name="component" :tab="$t('theme.tabs.component')"></NTab>
       </NTabs>
 
       <div class="min-h-400px">
@@ -43,6 +43,7 @@ const drawerWidth = computed(() => {
           <LayoutSettings v-else-if="activeTab === 'layout'" />
           <GeneralSettings v-else-if="activeTab === 'general'" />
           <PresetSettings v-else-if="activeTab === 'preset'" />
+          <ComponentSettings v-else-if="activeTab === 'component'" />
         </KeepAlive>
       </div>
 

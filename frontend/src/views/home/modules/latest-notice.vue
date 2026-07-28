@@ -61,7 +61,7 @@ const isEmpty = computed(() => noticeItems.value.length === 0);
     <NEmpty v-if="isEmpty" :description="$t('page.home.noData')" />
     <NList v-else hoverable clickable>
       <NListItem v-for="item in noticeItems" :key="item.id">
-        <div class="flex w-full items-center justify-between">
+        <div class="w-full flex items-center justify-between">
           <div class="flex items-center gap-8px overflow-hidden">
             <NTag :type="item.tagType" size="small">{{ item.type }}</NTag>
             <NEllipsis class="font-500" :line-clamp="1">{{ item.title }}</NEllipsis>

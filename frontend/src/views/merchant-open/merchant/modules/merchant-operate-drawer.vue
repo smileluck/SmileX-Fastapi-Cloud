@@ -66,7 +66,10 @@ const model = ref<Model>(createDefaultModel());
 type RuleKey = Extract<keyof Model, 'name' | 'status' | 'contact_email' | 'contact_phone'>;
 
 const rules = computed<Record<RuleKey, App.Global.FormRule | App.Global.FormRule[]>>(() => ({
-  name: [defaultRequiredRule, { min: 1, max: 100, trigger: ['input', 'blur'], message: $t('page.manage.merchant.form.merchantName') }],
+  name: [
+    defaultRequiredRule,
+    { min: 1, max: 100, trigger: ['input', 'blur'], message: $t('page.manage.merchant.form.merchantName') }
+  ],
   status: defaultRequiredRule,
   contact_email: [
     {
@@ -166,7 +169,11 @@ watch(visible, () => {
           <NInput v-model:value="model.contact_name" :placeholder="$t('page.manage.merchant.form.contactName')" />
         </NFormItem>
         <NFormItem :label="$t('page.manage.merchant.contactPhone')" path="contact_phone">
-          <NInput v-model:value="model.contact_phone" :placeholder="$t('page.manage.merchant.form.contactPhone')" maxlength="11" />
+          <NInput
+            v-model:value="model.contact_phone"
+            :placeholder="$t('page.manage.merchant.form.contactPhone')"
+            maxlength="11"
+          />
         </NFormItem>
         <NFormItem :label="$t('page.manage.merchant.contactEmail')" path="contact_email">
           <NInput v-model:value="model.contact_email" :placeholder="$t('page.manage.merchant.form.contactEmail')" />
@@ -180,7 +187,12 @@ watch(visible, () => {
           <NInputNumber v-model:value="model.sort" :min="0" class="w-full" />
         </NFormItem>
         <NFormItem :label="$t('page.manage.merchant.remark')" path="remark">
-          <NInput v-model:value="model.remark" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" :placeholder="$t('page.manage.merchant.form.remark')" />
+          <NInput
+            v-model:value="model.remark"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4 }"
+            :placeholder="$t('page.manage.merchant.form.remark')"
+          />
         </NFormItem>
       </NForm>
       <template #footer>

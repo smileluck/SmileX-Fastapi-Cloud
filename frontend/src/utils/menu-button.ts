@@ -56,11 +56,7 @@ function resolveFromName(name: string): ActionKey | null {
  * @param permission  按钮的 permission（如 sys:dept:add），可选
  * @param parentName  父菜单的 name（如 manage_dept），可选
  */
-export function formatButtonLabel(
-  buttonName: string,
-  permission?: string | null,
-  parentName?: string | null
-): string {
+export function formatButtonLabel(buttonName: string, permission?: string | null, parentName?: string | null): string {
   const actionKey = (permission && resolveFromPermission(permission)) || resolveFromName(buttonName);
   const actionLabel = actionKey ? $t(`common.actions.${actionKey}`) : '';
   const parentLabel = parentName ? $t(`route.${parentName}` as App.I18n.I18nKey) : '';
@@ -72,4 +68,3 @@ export function formatButtonLabel(
   if (actionLabel) return actionLabel;
   return buttonName;
 }
-

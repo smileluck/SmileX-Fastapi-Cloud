@@ -2,14 +2,10 @@
 import { computed, ref, watch } from 'vue';
 import { jsonClone } from '@sa/utils';
 import { enableStatusOptions } from '@/constants/business';
-import {
-  fetchCreateDept,
-  fetchGetDeptTreeSelect,
-  fetchUpdateDept
-} from '@/service/api';
+import { fetchCreateDept, fetchGetDeptTreeSelect, fetchUpdateDept } from '@/service/api';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
-import { $t } from '@/locales';
 import { booleanToEnableStatus } from '@/utils/status';
+import { $t } from '@/locales';
 
 defineOptions({
   name: 'DeptOperateDrawer'
@@ -35,7 +31,9 @@ const visible = defineModel<boolean>('visible', {
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { defaultRequiredRule } = useFormRules();
 
-const title = computed(() => (props.operateType === 'add' ? $t('page.manage.dept.addDept') : $t('page.manage.dept.editDept')));
+const title = computed(() =>
+  props.operateType === 'add' ? $t('page.manage.dept.addDept') : $t('page.manage.dept.editDept')
+);
 
 type Model = {
   parent_id: number | null;

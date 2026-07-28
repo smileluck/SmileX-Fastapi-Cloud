@@ -2,13 +2,13 @@
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { NButton, NCard, NDataTable, NPopconfirm, NTag, useMessage } from 'naive-ui';
-import { fetchGetTaskLogList, fetchBatchDeleteTaskLog, fetchClearTaskLog } from '@/service/api';
+import { fetchBatchDeleteTaskLog, fetchClearTaskLog, fetchGetTaskLogList } from '@/service/api';
 import { useAppStore } from '@/store/modules/app';
 import { defaultTransform, useNaivePaginatedTable, useTableOperate } from '@/hooks/common/table';
 import { useAuth } from '@/hooks/business/auth';
 import { $t } from '@/locales';
-import TaskLogSearch from './modules/task-log-search.vue';
 import TaskLogDrawer from '../task/modules/task-log-drawer.vue';
+import TaskLogSearch from './modules/task-log-search.vue';
 
 defineOptions({ name: 'SchedulerLogPage' });
 
@@ -35,15 +35,7 @@ const statusMap: Record<string, { type: NaiveUI.ThemeColor; label: string }> = {
   timeout: { type: 'warning', label: $t('page.manage.scheduler.lastStatuses.timeout') }
 };
 
-const {
-  columns,
-  columnChecks,
-  data,
-  getData,
-  getDataByPage,
-  loading,
-  mobilePagination
-} = useNaivePaginatedTable({
+const { columns, columnChecks, data, getData, getDataByPage, loading, mobilePagination } = useNaivePaginatedTable({
   api: () => fetchGetTaskLogList(searchParams),
   transform: response => defaultTransform(response),
   onPaginationParamsChange: params => {
@@ -84,7 +76,11 @@ const {
       width: 80,
       render: row => {
         const s = statusMap[row.status];
-        return <NTag type={s?.type || 'default'} size="small">{s?.label || row.status}</NTag>;
+        return (
+          <NTag type={s?.type || 'default'} size="small">
+            {s?.label || row.status}
+          </NTag>
+        );
       }
     },
     {
@@ -104,7 +100,7 @@ const {
       title: $t('page.manage.schedulerLog.duration'),
       align: 'center',
       width: 100,
-      render: row => row.duration_ms != null ? `${row.duration_ms.toFixed(0)} ms` : '-'
+      render: row => (row.duration_ms != null ? `${row.duration_ms.toFixed(0)} ms` : '-')
     },
     {
       key: 'triggered_by',
@@ -113,9 +109,13 @@ const {
       width: 80,
       render: row => {
         const isManual = row.triggered_by === 'manual';
-        return <NTag type={isManual ? 'warning' : 'info'} size="small">
-          {isManual ? $t('page.manage.schedulerLog.triggeredByValues.manual') : $t('page.manage.schedulerLog.triggeredByValues.scheduler')}
-        </NTag>;
+        return (
+          <NTag type={isManual ? 'warning' : 'info'} size="small">
+            {isManual
+              ? $t('page.manage.schedulerLog.triggeredByValues.manual')
+              : $t('page.manage.schedulerLog.triggeredByValues.scheduler')}
+          </NTag>
+        );
       }
     },
     {
@@ -170,7 +170,12 @@ async function handleClear() {
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
     <TaskLogSearch v-model:model="searchParams" @search="getDataByPage" />
-    <NCard :title="$t('page.manage.schedulerLog.title')" :bordered="false" size="small" class="flex-1-hidden card-wrapper">
+    <NCard
+      :title="$t('page.manage.schedulerLog.title')"
+      :bordered="false"
+      size="small"
+      class="flex-1-hidden card-wrapper"
+    >
       <template #header-extra>
         <TableHeaderOperation
           v-model:columns="columnChecks"
@@ -206,10 +211,7 @@ async function handleClear() {
         :pagination="mobilePagination"
         class="sm:h-full"
       />
-      <TaskLogDrawer
-        v-model:visible="detailVisible"
-        :log-id="detailLogId"
-      />
+      <TaskLogDrawer v-model:visible="detailVisible" :log-id="detailLogId" />
     </NCard>
   </div>
 </template>

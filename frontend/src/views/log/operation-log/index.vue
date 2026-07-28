@@ -29,15 +29,7 @@ const searchParams: Api.SystemManage.OperationLogSearchParams = reactive({
   end_time: null
 });
 
-const {
-  columns,
-  columnChecks,
-  data,
-  getData,
-  getDataByPage,
-  loading,
-  mobilePagination
-} = useNaivePaginatedTable({
+const { columns, columnChecks, data, getData, getDataByPage, loading, mobilePagination } = useNaivePaginatedTable({
   api: () => fetchGetOperationLogList(searchParams),
   transform: response => {
     return defaultTransform(response);
@@ -118,7 +110,11 @@ const {
       render: row => {
         if (!row.response_code) return '-';
         const type: NaiveUI.ThemeColor = row.response_code < 400 ? 'success' : 'error';
-        return <NTag type={type} size="small">{row.response_code}</NTag>;
+        return (
+          <NTag type={type} size="small">
+            {row.response_code}
+          </NTag>
+        );
       }
     },
     {
@@ -270,10 +266,7 @@ async function handleAsyncExport() {
         :pagination="mobilePagination"
         class="sm:h-full"
       />
-      <OperationLogDetailDrawer
-        v-model:visible="detailDrawerVisible"
-        :log-id="detailLogId"
-      />
+      <OperationLogDetailDrawer v-model:visible="detailDrawerVisible" :log-id="detailLogId" />
     </NCard>
   </div>
 </template>

@@ -36,18 +36,14 @@ const tableColumns = [
     <NCard :bordered="false" :title="$t('page.demo.dict.selectDemo')" class="card-wrapper">
       <NSpace vertical :size="12">
         <NText>{{ $t('page.demo.dict.selectLabel') }}</NText>
-        <DictSelect dict-code="gender" v-model:value="selectedGender" />
-        <NText depth="3">
-          v-model value: {{ selectedGender ?? 'null' }}
-        </NText>
+        <DictSelect v-model:value="selectedGender" dict-code="gender" />
+        <NText depth="3">v-model value: {{ selectedGender ?? 'null' }}</NText>
 
         <NDivider />
 
         <NText>{{ $t('page.demo.dict.selectWithDefault') }}</NText>
-        <DictSelect dict-code="gender" v-model:value="selectedGender2" />
-        <NText depth="3">
-          v-model value: {{ selectedGender2 ?? 'null' }}
-        </NText>
+        <DictSelect v-model:value="selectedGender2" dict-code="gender" />
+        <NText depth="3">v-model value: {{ selectedGender2 ?? 'null' }}</NText>
       </NSpace>
     </NCard>
 
@@ -66,15 +62,15 @@ const tableColumns = [
       <NSpace vertical :size="12">
         <NText>{{ $t('page.demo.dict.textLabel') }}</NText>
         <NDescriptions bordered :column="3" label-placement="left">
-          <NDescriptions-item label="value = 1">
+          <NDescriptionsItem label="value = 1">
             <DictText dict-code="gender" value="1" />
-          </NDescriptions-item>
-          <NDescriptions-item label="value = 2">
+          </NDescriptionsItem>
+          <NDescriptionsItem label="value = 2">
             <DictText dict-code="gender" value="2" />
-          </NDescriptions-item>
-          <NDescriptions-item label="value = 0">
+          </NDescriptionsItem>
+          <NDescriptionsItem label="value = 0">
             <DictText dict-code="gender" value="0" />
-          </NDescriptions-item>
+          </NDescriptionsItem>
         </NDescriptions>
       </NSpace>
     </NCard>
@@ -82,11 +78,7 @@ const tableColumns = [
     <NCard :bordered="false" :title="$t('page.demo.dict.tableDemo')" class="card-wrapper">
       <NSpace vertical :size="12">
         <NText>{{ $t('page.demo.dict.tableLabel') }}</NText>
-        <NDataTable
-          :bordered="false"
-          :columns="tableColumns"
-          :data="tableData"
-        />
+        <NDataTable :bordered="false" :columns="tableColumns" :data="tableData" />
       </NSpace>
     </NCard>
   </NSpace>

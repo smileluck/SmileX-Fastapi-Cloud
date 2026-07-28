@@ -119,7 +119,12 @@ async function handleSubmit() {
           <NFormItemGi :span="24" :label="$t('page.manage.ipBlacklist.type')" path="type">
             <NSelect v-model:value="form.type" :options="typeOptions" />
           </NFormItemGi>
-          <NFormItemGi v-if="form.type === 'temporary'" :span="24" :label="$t('page.manage.ipBlacklist.expireAt')" path="expire_at">
+          <NFormItemGi
+            v-if="form.type === 'temporary'"
+            :span="24"
+            :label="$t('page.manage.ipBlacklist.expireAt')"
+            path="expire_at"
+          >
             <NDatePicker
               v-model:value="form.expire_at"
               type="datetime"

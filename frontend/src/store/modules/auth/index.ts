@@ -4,13 +4,13 @@ import { defineStore } from 'pinia';
 import { useLoading } from '@sa/hooks';
 import { fetchGetUserInfo, fetchLogin } from '@/service/api';
 import { useRouterPush } from '@/hooks/common/router';
+import { useWebSocketNotification } from '@/hooks/common/websocket';
 import { localStg } from '@/utils/storage';
 import { SetupStoreId } from '@/enum';
 import { $t } from '@/locales';
 import { useRouteStore } from '../route';
 import { useTabStore } from '../tab';
 import { clearAuthStorage, getToken } from './shared';
-import { useWebSocketNotification } from '@/hooks/common/websocket';
 
 export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   const route = useRoute();

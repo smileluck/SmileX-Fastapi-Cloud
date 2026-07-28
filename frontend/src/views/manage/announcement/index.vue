@@ -1,17 +1,12 @@
 <script setup lang="tsx">
 import { reactive, ref } from 'vue';
 import { NButton, NCard, NDataTable, NPopconfirm, NTag, useMessage } from 'naive-ui';
-import {
-  fetchGetNoticeList,
-  fetchDeleteNotice,
-  fetchBatchDeleteNotice,
-  fetchPublishNotice
-} from '@/service/api';
+import { fetchBatchDeleteNotice, fetchDeleteNotice, fetchGetNoticeList, fetchPublishNotice } from '@/service/api';
 import { useAppStore } from '@/store/modules/app';
 import { defaultTransform, useNaivePaginatedTable, useTableOperate } from '@/hooks/common/table';
 import { useAuth } from '@/hooks/business/auth';
-import { $t } from '@/locales';
 import { booleanToEnableStatus } from '@/utils/status';
+import { $t } from '@/locales';
 import NoticeOperateDrawer from './modules/notice-operate-drawer.vue';
 import NoticeSearch from './modules/notice-search.vue';
 
@@ -105,7 +100,11 @@ const {
       width: 100,
       render: row => {
         const typeLabel = typeOptions.find(opt => opt.value === row.type)?.label || row.type;
-        return <NTag type="info" size="small">{typeLabel}</NTag>;
+        return (
+          <NTag type="info" size="small">
+            {typeLabel}
+          </NTag>
+        );
       }
     },
     {
@@ -115,7 +114,11 @@ const {
       width: 100,
       render: row => {
         const targetLabel = targetTypeOptions.find(opt => opt.value === row.target_type)?.label || row.target_type;
-        return <NTag type="default" size="small">{targetLabel}</NTag>;
+        return (
+          <NTag type="default" size="small">
+            {targetLabel}
+          </NTag>
+        );
       }
     },
     {
@@ -126,7 +129,22 @@ const {
       render: row => {
         const pm = priorityOptions.find(opt => opt.value === row.priority);
         if (!pm) return null;
-        return <NTag type={pm.value === 'low' ? 'default' : pm.value === 'normal' ? 'success' : pm.value === 'high' ? 'warning' : 'error'} size="small">{pm.label}</NTag>;
+        return (
+          <NTag
+            type={
+              pm.value === 'low'
+                ? 'default'
+                : pm.value === 'normal'
+                  ? 'success'
+                  : pm.value === 'high'
+                    ? 'warning'
+                    : 'error'
+            }
+            size="small"
+          >
+            {pm.label}
+          </NTag>
+        );
       }
     },
     {
@@ -142,8 +160,15 @@ const {
           '1': 'success',
           '2': 'warning'
         };
-        const label = row.status === '1' ? $t('page.manage.announcement.status.published') : $t('page.manage.announcement.status.draft');
-        return <NTag type={tagMap[row.status]} size="small">{label}</NTag>;
+        const label =
+          row.status === '1'
+            ? $t('page.manage.announcement.status.published')
+            : $t('page.manage.announcement.status.draft');
+        return (
+          <NTag type={tagMap[row.status]} size="small">
+            {label}
+          </NTag>
+        );
       }
     },
     {

@@ -33,6 +33,16 @@ export function initThemeSettings() {
 }
 
 /**
+ * Init NaiveUI component-level theme overrides from localStorage.
+ *
+ * Unlike {@link initThemeSettings}, this reads from storage in BOTH dev and prod:
+ * component config has no source-of-truth file, so localStorage is the source of truth.
+ */
+export function initComponentConfig(): App.Theme.ComponentConfigMap {
+  return localStg.get('themeCompOverrides') ?? {};
+}
+
+/**
  * create theme token css vars value by theme settings
  *
  * @param colors Theme colors
@@ -234,16 +244,44 @@ function getNaiveThemeColors(colors: App.Theme.ThemeColor, recommended = false) 
 }
 
 /**
+ * Build a GlobalThemeOverrides object from the user's component config map.
+ *
+ * Only enabled components contribute. Within a component, advanced (JSON5) values
+ * win over structured (form) values on key collision.
+ *
+ * @param map Component config map
+ */
+export function buildComponentOverrides(map?: App.Theme.ComponentConfigMap): GlobalThemeOverrides | undefined {
+  if (!map) return undefined;
+  const result: GlobalThemeOverrides = {};
+  for (const [name, entry] of Object.entries(map)) {
+    if (entry?.enabled) {
+      const merged = { ...entry.common, ...entry.advanced };
+      if (Object.keys(merged).length > 0) {
+        (result as Record<string, unknown>)[name] = merged;
+      }
+    }
+  }
+  return Object.keys(result).length > 0 ? result : undefined;
+}
+
+/** Override layers for {@link getNaiveTheme}. Precedence: `component` > `preset` > auto. */
+interface NaiveThemeOverrideLayers {
+  preset?: GlobalThemeOverrides;
+  component?: GlobalThemeOverrides;
+}
+
+/**
  * Get naive theme
  *
  * @param colors Theme colors
  * @param settings Theme settings object
- * @param overrides Optional manual overrides from preset
+ * @param layers Optional override layers; precedence: component > preset > auto-generated
  */
 export function getNaiveTheme(
   colors: App.Theme.ThemeColor,
   settings: App.Theme.ThemeSetting,
-  overrides?: GlobalThemeOverrides
+  layers?: NaiveThemeOverrideLayers
 ) {
   const { primary: colorLoading } = colors;
 
@@ -260,7 +298,9 @@ export function getNaiveTheme(
     }
   };
 
-  // If there are overrides, merge them with priority
-  // overrides has higher priority than auto-generated theme
-  return overrides ? defu(overrides, theme) : theme;
+  // preset overrides win over auto-generated theme
+  let merged = layers?.preset ? defu(layers.preset, theme) : theme;
+  // user component config wins over preset + auto-generated
+  if (layers?.component) merged = defu(layers.component, merged);
+  return merged;
 }

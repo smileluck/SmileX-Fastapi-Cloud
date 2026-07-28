@@ -1,11 +1,11 @@
 <script setup lang="tsx">
 import { computed, reactive, ref, watch } from 'vue';
-import dayjs from 'dayjs';
 import { NButton, NDataTable, NPopconfirm, NTag, useMessage } from 'naive-ui';
+import dayjs from 'dayjs';
+import { fetchBatchDeleteTaskLog, fetchClearTaskLog, fetchGetTaskLogList } from '@/service/api';
 import { defaultTransform, useNaivePaginatedTable } from '@/hooks/common/table';
 import { useAuth } from '@/hooks/business/auth';
 import { $t } from '@/locales';
-import { fetchGetTaskLogList, fetchBatchDeleteTaskLog, fetchClearTaskLog } from '@/service/api';
 import TaskLogDrawer from './task-log-drawer.vue';
 
 defineOptions({ name: 'TaskExecutionLog' });
@@ -73,14 +73,7 @@ const statusMap: Record<string, { type: NaiveUI.ThemeColor; label: string }> = {
   timeout: { type: 'warning', label: $t('page.manage.scheduler.lastStatuses.timeout') }
 };
 
-const {
-  columns,
-  columnChecks,
-  data,
-  getData,
-  loading,
-  mobilePagination
-} = useNaivePaginatedTable({
+const { columns, columnChecks, data, getData, loading, mobilePagination } = useNaivePaginatedTable({
   api: () => fetchGetTaskLogList(searchParams),
   transform: response => defaultTransform(response),
   onPaginationParamsChange: params => {
@@ -114,7 +107,11 @@ const {
       width: 80,
       render: row => {
         const s = statusMap[row.status];
-        return <NTag type={s?.type || 'default'} size="small">{s?.label || row.status}</NTag>;
+        return (
+          <NTag type={s?.type || 'default'} size="small">
+            {s?.label || row.status}
+          </NTag>
+        );
       }
     },
     {
@@ -134,7 +131,7 @@ const {
       title: $t('page.manage.schedulerLog.duration'),
       align: 'center',
       width: 100,
-      render: row => row.duration_ms != null ? `${row.duration_ms.toFixed(0)} ms` : '-'
+      render: row => (row.duration_ms != null ? `${row.duration_ms.toFixed(0)} ms` : '-')
     },
     {
       key: 'triggered_by',
@@ -143,9 +140,13 @@ const {
       width: 80,
       render: row => {
         const isManual = row.triggered_by === 'manual';
-        return <NTag type={isManual ? 'warning' : 'info'} size="small">
-          {isManual ? $t('page.manage.schedulerLog.triggeredByValues.manual') : $t('page.manage.schedulerLog.triggeredByValues.scheduler')}
-        </NTag>;
+        return (
+          <NTag type={isManual ? 'warning' : 'info'} size="small">
+            {isManual
+              ? $t('page.manage.schedulerLog.triggeredByValues.manual')
+              : $t('page.manage.schedulerLog.triggeredByValues.scheduler')}
+          </NTag>
+        );
       }
     },
     {
@@ -200,13 +201,7 @@ async function handleClear() {
         size="small"
         style="width: 120px"
       />
-      <NDatePicker
-        v-model:value="timeRange"
-        type="datetimerange"
-        clearable
-        size="small"
-        style="width: 340px"
-      />
+      <NDatePicker v-model:value="timeRange" type="datetimerange" clearable size="small" style="width: 340px" />
       <NPopconfirm v-if="hasAuth('sys:scheduler:log:delete')" @positive-click="handleClear">
         {{ $t('page.manage.schedulerLog.clearConfirm') }}
         <template #trigger>
@@ -232,9 +227,6 @@ async function handleClear() {
       :row-key="(row: Api.Scheduler.TaskLog) => row.id"
       :pagination="mobilePagination"
     />
-    <TaskLogDrawer
-      v-model:visible="logDetailVisible"
-      :log-id="detailLogId"
-    />
+    <TaskLogDrawer v-model:visible="logDetailVisible" :log-id="detailLogId" />
   </div>
 </template>

@@ -146,15 +146,21 @@ async function handleAccountLogin(account: Account) {
       <NInput v-model:value="model.userName" :placeholder="$t('page.login.common.userNamePlaceholder')" />
     </NFormItem>
     <NFormItem path="password">
-      <NInput v-model:value="model.password" type="password" show-password-on="click"
-        :placeholder="$t('page.login.common.passwordPlaceholder')" />
+      <NInput
+        v-model:value="model.password"
+        type="password"
+        show-password-on="click"
+        :placeholder="$t('page.login.common.passwordPlaceholder')"
+      />
     </NFormItem>
     <NSpace vertical :size="24">
       <div class="flex-y-center justify-between">
         <NCheckbox v-model:checked="rememberMe">{{ $t('page.login.pwdLogin.rememberMe') }}</NCheckbox>
-        <!-- <NButton quaternary @click="toggleLoginModule('reset-pwd')">
+        <!--
+ <NButton quaternary @click="toggleLoginModule('reset-pwd')">
           {{ $t('page.login.pwdLogin.forgetPassword') }}
-        </NButton> -->
+        </NButton> 
+-->
       </div>
       <!-- Slider Captcha -->
       <div v-if="captchaRequired" class="captcha-wrapper">
@@ -186,7 +192,8 @@ async function handleAccountLogin(account: Account) {
       >
         {{ $t('route.login') }}
       </NButton>
-      <!-- <div class="flex-y-center justify-between gap-12px">
+      <!--
+ <div class="flex-y-center justify-between gap-12px">
         <NButton class="flex-1" block @click="toggleLoginModule('code-login')">
           {{ $t(loginModuleRecord['code-login']) }}
         </NButton>
@@ -199,7 +206,8 @@ async function handleAccountLogin(account: Account) {
         <NButton v-for="item in accounts" :key="item.key" type="primary" @click="handleAccountLogin(item)">
           {{ item.label }}
         </NButton>
-      </div> -->
+      </div> 
+-->
     </NSpace>
   </NForm>
 </template>
