@@ -30,6 +30,7 @@ class JWTModel(BaseModel):
     ACCESS_LIFETIME: int = Field(3600, description="访问令牌有效期")
     REFRESH_LIFETIME: int = Field(86400, description="刷新令牌/会话有效期")
     SESSION_PREFIX: str = Field("JWT_SESSION:", description="会话前缀")
+    PREVIEW_TOKEN_EXPIRES: int = Field(300, description="文件预览令牌有效期(秒)")
 
 
 class LocalUploadModel(BaseModel):

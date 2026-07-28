@@ -271,7 +271,7 @@ class JWTAuthManager:
         file_id: int,
         user_id: int,
         session_id: str,
-        expires_seconds: int = 300,
+        expires_seconds: Optional[int] = None,
         secret_key: Optional[str] = None,
         algorithm: Optional[str] = None,
     ) -> str:
@@ -284,13 +284,14 @@ class JWTAuthManager:
             file_id: 绑定的文件 ID（预览时校验一致）
             user_id: 申请者用户 ID
             session_id: 申请者会话 ID
-            expires_seconds: 有效期秒数，默认 300（5 分钟）
+            expires_seconds: 有效期秒数；None 时读 settings.JWT.PREVIEW_TOKEN_EXPIRES
             secret_key: 签名密钥（多租户下传租户密钥）
             algorithm: 签名算法
 
         Returns:
             str: 预览令牌（scope=preview）
         """
+        _expires = expires_seconds if expires_seconds is not None else settings.JWT.PREVIEW_TOKEN_EXPIRES
         payload = {
             "file_id": str(file_id),
             "user_id": str(user_id),
@@ -299,7 +300,7 @@ class JWTAuthManager:
         }
         return cls.create_access_token(
             payload,
-            expires_delta=timedelta(seconds=expires_seconds),
+            expires_delta=timedelta(seconds=_expires),
             secret_key=secret_key,
             algorithm=algorithm,
         )

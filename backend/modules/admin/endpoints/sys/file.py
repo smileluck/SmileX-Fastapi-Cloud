@@ -161,7 +161,7 @@ async def get_preview_token(
     db: AsyncSession = Depends(get_session),
     user: SysUser = Depends(current_user),
 ):
-    """换取短期（5 分钟）、绑定单文件的预览令牌。
+    """换取短期（默认 5 分钟，由 JWT__PREVIEW_TOKEN_EXPIRES 配置）、绑定单文件的预览令牌。
 
     浏览器通过 <img>/<video> src 直接访问预览时不会携带 Authorization 头，
     前端先调用本接口换取 preview token，再以 ?token= 访问预览接口。
@@ -171,7 +171,7 @@ async def get_preview_token(
     # current_user 依赖已完成验签，这里仅取 session_id 用于令牌追溯
     payload = JWTAuthManager.decode_token_unverified(token)
     session_id = payload.get("session_id", "")
-    expires_seconds = 300
+    expires_seconds = settings.JWT.PREVIEW_TOKEN_EXPIRES
     preview_token = JWTAuthManager.create_preview_token(
         file_id=file_id,
         user_id=user.id,

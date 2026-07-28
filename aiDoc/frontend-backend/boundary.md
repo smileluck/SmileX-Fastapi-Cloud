@@ -250,7 +250,7 @@ METHOD \n PATH \n timestamp \n nonce \n app_id \n sha256(body).hexdigest()
 | 项 | 值 |
 |---|---|
 | 换令牌接口 | `POST /admin/sys/file/{id}/preview-token` |
-| 响应 data | `{ preview_token: string, expires_in: number }`（默认 300） |
+| 响应 data | `{ preview_token: string, expires_in: number }`；有效期由后端 `JWT__PREVIEW_TOKEN_EXPIRES` 配置（默认 300 秒） |
 | 预览接口鉴权 | query `token`，需 `scope=preview` + file_id 绑定 |
 | 前端封装 | `fetchGetPreviewToken`、`getFilePreviewUrl(fileId, previewToken)`（`src/service/api/file.ts`）；组件 `views/manage/file/modules/file-preview-modal.vue` 打开时异步换 token |
 | 已知妥协 | 预览令牌有效期内即使用户登出仍可用（短 exp 缓解；强一致需 preview_file 内查 Redis session） |
