@@ -1,9 +1,11 @@
-"""initial schema (squashed from init.sql)
+"""initial schema (structure only)
 
 Revision ID: 0001
 Revises:
 Create Date: 2026-06-04
 
+合并自历史 0001~0011 的全部结构变更（建表 / 加列 / 加索引 / 枚举），
+仅含 DDL，不含任何种子数据。种子数据见 0002_seed_data。
 """
 from typing import Sequence, Union
 
@@ -94,6 +96,29 @@ def upgrade() -> None:
     op.create_index(op.f('ix_sys_dict_id'), 'sys_dict', ['id'], unique=True)
     op.create_index(op.f('ix_sys_dict_code'), 'sys_dict', ['code'], unique=True)
 
+    # sys_dept 必须先于 sys_user 创建，供 sys_user.dept_id 外键引用
+    op.create_table(
+        'sys_dept',
+        sa.Column('id', sa.BigInteger(), nullable=False, comment='雪花算法主键 ID'),
+        sa.Column('parent_id', sa.BigInteger(), nullable=True, comment='父部门ID，顶级部门为NULL'),
+        sa.Column('name', sa.String(100), nullable=False, comment='部门名称'),
+        sa.Column('code', sa.String(100), nullable=True, comment='部门编码'),
+        sa.Column('status', sa.Boolean(), nullable=False, comment='状态：True-启用，False-禁用'),
+        sa.Column('sort', sa.Integer(), nullable=False, comment='排序号'),
+        sa.Column('tenant_id', sa.BigInteger(), nullable=True, comment='租户ID'),
+        sa.Column('deleted_at', sa.DateTime(timezone=True), nullable=True, comment='删除时间，为空则未删除'),
+        sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, comment='创建时间'),
+        sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True, comment='更新时间'),
+        sa.PrimaryKeyConstraint('id'),
+        sa.ForeignKeyConstraint(['parent_id'], ['sys_dept.id'], ondelete='SET NULL'),
+        comment='系统部门表\n树形结构，用于行级数据权限的范围计算',
+    )
+    op.create_index(op.f('ix_sys_dept_id'), 'sys_dept', ['id'], unique=True)
+    op.create_index(op.f('ix_sys_dept_parent_id'), 'sys_dept', ['parent_id'], unique=False)
+    op.create_index(op.f('ix_sys_dept_code'), 'sys_dept', ['code'], unique=False)
+    op.create_index('ix_sys_dept_tenant_id', 'sys_dept', ['tenant_id'], unique=False)
+    op.create_index('_ux_sys_dept_parent_name', 'sys_dept', ['parent_id', 'name'], unique=True)
+
     op.create_table(
         'sys_user',
         sa.Column('id', sa.BigInteger(), nullable=False, comment='雪花算法主键 ID'),
@@ -111,11 +136,14 @@ def upgrade() -> None:
         sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, comment='创建时间'),
         sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True, comment='更新时间'),
         sa.Column('last_tenant_id', sa.BigInteger(), nullable=True, comment='最后租户ID'),
+        sa.Column('dept_id', sa.BigInteger(), nullable=True, comment='所属部门ID'),
         sa.PrimaryKeyConstraint('id'),
+        sa.ForeignKeyConstraint(['dept_id'], ['sys_dept.id'], ondelete='SET NULL'),
         comment='系统用户表\n存储系统管理用户的基本信息和认证凭证',
     )
     op.create_index(op.f('ix_sys_user_id'), 'sys_user', ['id'], unique=True)
-    op.create_index(op.f('ix_sys_user_username'), 'sys_user', ['username'], unique=True)
+    op.create_index(op.f('ix_sys_user_username'), 'sys_user', ['username'], unique=False)
+    op.create_index(op.f('ix_sys_user_dept_id'), 'sys_user', ['dept_id'], unique=False)
 
     op.create_table(
         'sys_role',
@@ -129,11 +157,13 @@ def upgrade() -> None:
         sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, comment='创建时间'),
         sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True, comment='更新时间'),
         sa.Column('desc', sa.Text(), nullable=True, comment='角色描述'),
+        sa.Column('data_scope', sa.Enum('ALL', 'DEPT_AND_SUB', 'DEPT_ONLY', 'SELF', name='sys_role_data_scope'), nullable=False, server_default='SELF', comment='数据范围：ALL/DEPT_AND_SUB/DEPT_ONLY/SELF'),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('name'),
         comment='系统角色表\n存储角色信息及其关联的权限配置',
     )
     op.create_index(op.f('ix_sys_role_id'), 'sys_role', ['id'], unique=True)
+    op.create_index('ix_sys_role_name', 'sys_role', ['name'], unique=True)
 
     op.create_table(
         'sys_menu',
@@ -157,6 +187,7 @@ def upgrade() -> None:
         sa.Column('is_system', sa.Boolean(), nullable=False, comment='是否为系统内置菜单'),
         sa.Column('meta_href', sa.String(500), nullable=True, comment='外部链接地址'),
         sa.Column('meta_keep_alive', sa.Boolean(), nullable=False, comment='是否缓存路由'),
+        sa.Column('meta_icon_type', sa.SmallInteger(), nullable=False, server_default='1', comment='图标类型：1-iconify，2-本地'),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(['parent_id'], ['sys_menu.id'], ondelete='CASCADE'),
         comment='系统菜单表\n存储系统菜单、目录和按钮等权限点',
@@ -343,6 +374,7 @@ def upgrade() -> None:
         sa.Column('timeout', sa.Integer(), nullable=False, comment='超时时间(秒)'),
         sa.Column('max_retries', sa.Integer(), nullable=False, comment='最大重试次数'),
         sa.Column('concurrent_policy', sa.String(20), nullable=False, comment='并发策略: skip/replace/run'),
+        sa.Column('params', sa.JSON(), nullable=True, comment='通用任务参数 JSON'),
         sa.Column('deleted_at', sa.DateTime(timezone=True), nullable=True, comment='删除时间，为空则未删除'),
         sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, comment='创建时间'),
         sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True, comment='更新时间'),
@@ -374,6 +406,56 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_sys_scheduled_task_log_id'), 'sys_scheduled_task_log', ['id'], unique=True)
     op.create_index(op.f('ix_sys_scheduled_task_log_task_id'), 'sys_scheduled_task_log', ['task_id'], unique=False)
+
+    op.create_table(
+        'sys_merchant',
+        sa.Column('id', sa.BigInteger(), nullable=False, comment='雪花算法主键 ID'),
+        sa.Column('name', sa.String(length=100), nullable=False, comment='商户名称'),
+        sa.Column('code', sa.String(length=100), nullable=True, comment='商户编码'),
+        sa.Column('contact_name', sa.String(length=50), nullable=True, comment='联系人姓名'),
+        sa.Column('contact_phone', sa.String(length=30), nullable=True, comment='联系电话'),
+        sa.Column('contact_email', sa.String(length=100), nullable=True, comment='联系邮箱'),
+        sa.Column('app_id', sa.String(length=50), nullable=False, comment='商户AppId（公开标识）'),
+        sa.Column('app_secret_encrypted', sa.String(length=500), nullable=False, comment='app_secret（Fernet 加密后的 token，验签时解密）'),
+        sa.Column('status', sa.Boolean(), nullable=False, comment='状态：True-启用，False-禁用'),
+        sa.Column('secret_updated_at', sa.DateTime(timezone=True), nullable=True, comment='密钥最近一次重置时间'),
+        sa.Column('remark', sa.String(length=500), nullable=True, comment='备注'),
+        sa.Column('sort', sa.Integer(), nullable=False, comment='排序号'),
+        sa.Column('deleted_at', sa.DateTime(timezone=True), nullable=True, comment='删除时间，为空则未删除'),
+        sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, comment='创建时间'),
+        sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True, comment='更新时间'),
+        sa.PrimaryKeyConstraint('id'),
+        sa.UniqueConstraint('app_id', name='uk_sys_merchant_app_id'),
+        comment='系统商户表',
+    )
+    op.create_index(op.f('ix_sys_merchant_id'), 'sys_merchant', ['id'], unique=True)
+    op.create_index(op.f('ix_sys_merchant_code'), 'sys_merchant', ['code'], unique=False)
+    op.create_index(op.f('ix_sys_merchant_app_id'), 'sys_merchant', ['app_id'], unique=False)
+
+    op.create_table(
+        'sys_openapi_log',
+        sa.Column('id', sa.BigInteger(), nullable=False, comment='雪花算法主键 ID'),
+        sa.Column('app_id', sa.String(length=50), nullable=False, comment='调用方 AppId（来自请求头，可能不存在）'),
+        sa.Column('method', sa.String(length=10), nullable=False, comment='HTTP方法'),
+        sa.Column('path', sa.String(length=255), nullable=False, comment='请求路径'),
+        sa.Column('merchant_name', sa.String(length=100), nullable=True, comment='商户名称（冗余，便于展示；可能为空）'),
+        sa.Column('status_code', sa.Integer(), nullable=True, comment='HTTP响应状态码'),
+        sa.Column('err_code', sa.Integer(), nullable=True, comment='业务错误码（成功为空）'),
+        sa.Column('msg', sa.String(length=255), nullable=True, comment='响应消息'),
+        sa.Column('client_ip', sa.String(length=50), nullable=True, comment='客户端IP'),
+        sa.Column('request_id', sa.String(length=64), nullable=True, comment='请求追踪ID'),
+        sa.Column('latency_ms', sa.Integer(), nullable=True, comment='请求耗时(毫秒)'),
+        sa.Column('deleted_at', sa.DateTime(timezone=True), nullable=True, comment='删除时间，为空则未删除'),
+        sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, comment='创建时间'),
+        sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True, comment='更新时间'),
+        sa.PrimaryKeyConstraint('id'),
+        comment='开放API调用日志表',
+    )
+    op.create_index(op.f('ix_sys_openapi_log_id'), 'sys_openapi_log', ['id'], unique=True)
+    op.create_index(op.f('ix_sys_openapi_log_app_id'), 'sys_openapi_log', ['app_id'], unique=False)
+    op.create_index(op.f('ix_sys_openapi_log_path'), 'sys_openapi_log', ['path'], unique=False)
+    op.create_index(op.f('ix_sys_openapi_log_err_code'), 'sys_openapi_log', ['err_code'], unique=False)
+    op.create_index(op.f('ix_sys_openapi_log_request_id'), 'sys_openapi_log', ['request_id'], unique=False)
 
     # ================================================================
     # Tables with FK dependencies
@@ -419,130 +501,13 @@ def upgrade() -> None:
         comment='用户角色关联表',
     )
 
-    # ================================================================
-    # Seed data
-    # ================================================================
-
-    # Admin user
-    op.execute("""
-        INSERT INTO sys_user (id, username, password, nickname, email, phone, avatar, last_login_at, last_login_ip, status, is_superuser, deleted_at, created_at, updated_at, last_tenant_id)
-        VALUES (2250298479026176, 'admin', '$2b$12$MPXWjrezSywnujoarubtJuKUJKBXugHEEqobTbIWtbJRXAp2aaTUy', '超级管理员', 'admin@example.com', '13800138000', '', NULL, NULL, TRUE, TRUE, NULL, '2026-02-02 10:00:29.81271+08', NULL, NULL)
-    """)
-
-    # System configs (rate limit)
-    op.execute("""
-        INSERT INTO sys_config (id, key, value, default_value, validation_rule, description, type, "group", is_system, deleted_at, created_at, updated_at) VALUES
-        (2,  'rate_limit.enabled',               'true',    'true',  NULL, '限流总开关',                     'BOOLEAN', 'SECURITY', TRUE, NULL, '2026-05-24 17:05:48.363922+08', NULL),
-        (3,  'rate_limit.ip_per_minute',          '120',     '120',   NULL, 'IP 全局限流（次/分钟）',           'NUMBER',  'SECURITY', TRUE, NULL, '2026-05-24 17:05:48.363922+08', NULL),
-        (4,  'rate_limit.user_per_minute',        '300',     '300',   NULL, '用户限流（次/分钟）',             'NUMBER',  'SECURITY', TRUE, NULL, '2026-05-24 17:05:48.363922+08', NULL),
-        (5,  'rate_limit.login_fail_max',         '5',       '5',     NULL, '登录失败上限次数',                 'NUMBER',  'SECURITY', TRUE, NULL, '2026-05-24 17:05:48.363922+08', NULL),
-        (6,  'rate_limit.login_fail_window',      '600',     '600',   NULL, '登录失败统计窗口（秒）',           'NUMBER',  'SECURITY', TRUE, NULL, '2026-05-24 17:05:48.363922+08', NULL),
-        (7,  'rate_limit.login_fail_block_ttl',   '1800',    '1800',  NULL, '登录失败自动拉黑时长（秒）',       'NUMBER',  'SECURITY', TRUE, NULL, '2026-05-24 17:05:48.363922+08', NULL),
-        (8,  'rate_limit.blacklist_redis_ttl',    '86400',   '86400', NULL, '永久黑名单 Redis 兜底 TTL（秒）', 'NUMBER',  'SECURITY', TRUE, NULL, '2026-05-24 17:05:48.363922+08', NULL),
-        (9,  'rate_limit.whitelist_path_prefixes','["/docs","/redoc","/openapi.json","/admin/health"]', '["/docs","/redoc","/openapi.json","/admin/health"]', NULL, '路径白名单前缀',     'JSON',    'SECURITY', TRUE, NULL, '2026-05-24 17:05:48.363922+08', NULL),
-        (10, 'rate_limit.whitelist_ips',          '[]',      '[]',    NULL, 'IP 白名单',                      'JSON',    'SECURITY', TRUE, NULL, '2026-05-24 17:05:48.363922+08', NULL),
-        (11, 'rate_limit.path_rules',             '[]',      '[]',    NULL, '路径细粒度限流规则',              'JSON',    'SECURITY', TRUE, NULL, '2026-05-24 17:05:48.363922+08', NULL)
-    """)
-
-    # System menus (sorted by id to satisfy parent_id FK)
-    op.execute("""
-        INSERT INTO sys_menu (id, parent_id, name, path, component, redirect, permission, meta_icon, meta_hidden, meta_affix, meta_breadcrumb, status, type, sort, deleted_at, created_at, updated_at, is_system, meta_href, meta_keep_alive) VALUES
-        (2874692539129856, NULL, 'home',                    '/home',                'layout.base$view.home',    NULL,                        NULL,                    'mdi:monitor-dashboard',                FALSE, FALSE, TRUE, TRUE, 'MENU',     1,  NULL, '2026-05-23 16:32:07.074678+08', '2026-05-23 21:29:36.710187+08', TRUE,  NULL, FALSE),
-        (2874692539129857, NULL, 'manage',                  '/manage',              'layout.base',              NULL,                        NULL,                    'mdi:cog',                              FALSE, FALSE, TRUE, TRUE, 'CATALOG',  3,  NULL, '2026-05-23 16:32:07.074678+08', '2026-05-29 18:23:19.933746+08', TRUE,  NULL, FALSE),
-        (2874692539129858, NULL, 'log',                      '/log',                'layout.base',              NULL,                        NULL,                    'mdi:file-document-outline',            FALSE, FALSE, TRUE, TRUE, 'CATALOG',  4,  NULL, '2026-05-23 16:32:07.074678+08', '2026-05-29 18:23:23.435562+08', TRUE,  NULL, FALSE),
-        (2874692539129859, 2874692539129857, 'manage_config', '/manage/config', 'view.manage_config', NULL, 'sys:config:list', NULL, FALSE, FALSE, TRUE, TRUE, 'MENU', 1, NULL, '2026-05-23 16:32:07.074678+08', NULL, TRUE, NULL, FALSE),
-        (2874692539129860, 2874692539129857, 'manage_dict',   '/manage/dict',   'view.manage_dict',   NULL, 'sys:dict:list',   NULL, FALSE, FALSE, TRUE, TRUE, 'MENU', 2, NULL, '2026-05-23 16:32:07.074678+08', NULL, TRUE, NULL, FALSE),
-        (2874692539129861, 2874692539129857, 'manage_menu',   '/manage/menu',   'view.manage_menu',   NULL, 'sys:menu:list',   NULL, FALSE, FALSE, TRUE, TRUE, 'MENU', 3, NULL, '2026-05-23 16:32:07.074678+08', NULL, TRUE, NULL, FALSE),
-        (2874692539129862, 2874692539129857, 'manage_role',   '/manage/role',   'view.manage_role',   NULL, 'sys:role:list',   NULL, FALSE, FALSE, TRUE, TRUE, 'MENU', 4, NULL, '2026-05-23 16:32:07.074678+08', NULL, TRUE, NULL, FALSE),
-        (2874692539129863, 2874692539129857, 'manage_user',   '/manage/user',   'view.manage_user',   NULL, 'sys:user:list',   NULL, FALSE, FALSE, TRUE, TRUE, 'MENU', 5, NULL, '2026-05-23 16:32:07.074678+08', NULL, TRUE, NULL, FALSE),
-        (2874692539129864, 2874692539129858, 'log_login-log',  '/log/login-log', 'view.log_login-log',  NULL, 'sys:login-log:list',  NULL, FALSE, FALSE, TRUE, TRUE, 'MENU', 1, NULL, '2026-05-23 16:32:07.074678+08', NULL, TRUE, NULL, FALSE),
-        (2874692539129865, 2874692539129858, 'log_operation-log', '/log/operation-log', 'view.log_operation-log', NULL, 'sys:operation-log:list', NULL, FALSE, FALSE, TRUE, TRUE, 'MENU', 2, NULL, '2026-05-23 16:32:07.074678+08', '2026-05-24 14:06:24.504114+08', TRUE, NULL, FALSE),
-        (2879249581154304, 2874692539129857, 'log_online-user', '/log/online-user', 'view.log_online-user', NULL, 'sys:online-user:list', NULL, FALSE, FALSE, TRUE, TRUE, 'MENU', 9, NULL, '2026-05-24 11:51:01.998205+08', '2026-05-24 14:06:39.545192+08', TRUE, NULL, FALSE),
-        (2880160334618624, 2874692539129861, 'manage_menu_list',    NULL, NULL, NULL, 'sys:menu:list',    NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 1, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334618625, 2874692539129861, 'manage_menu_add',     NULL, NULL, NULL, 'sys:menu:add',     NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 2, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334684160, 2874692539129861, 'manage_menu_edit',    NULL, NULL, NULL, 'sys:menu:edit',    NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 3, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334684161, 2874692539129861, 'manage_menu_delete',  NULL, NULL, NULL, 'sys:menu:delete',  NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 4, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334684162, 2874692539129862, 'manage_role_list',    NULL, NULL, NULL, 'sys:role:list',    NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 1, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334749696, 2874692539129862, 'manage_role_add',     NULL, NULL, NULL, 'sys:role:add',     NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 2, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334749697, 2874692539129862, 'manage_role_edit',    NULL, NULL, NULL, 'sys:role:edit',    NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 3, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334749698, 2874692539129862, 'manage_role_delete',  NULL, NULL, NULL, 'sys:role:delete',  NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 4, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334749699, 2874692539129863, 'manage_user_list',    NULL, NULL, NULL, 'sys:user:list',    NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 1, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334749700, 2874692539129863, 'manage_user_add',     NULL, NULL, NULL, 'sys:user:add',     NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 2, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334749701, 2874692539129863, 'manage_user_edit',    NULL, NULL, NULL, 'sys:user:edit',    NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 3, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334749702, 2874692539129863, 'manage_user_delete',  NULL, NULL, NULL, 'sys:user:delete',  NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 4, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334815232, 2874692539129860, 'manage_dict_list',    NULL, NULL, NULL, 'sys:dict:list',    NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 1, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334815233, 2874692539129860, 'manage_dict_add',     NULL, NULL, NULL, 'sys:dict:add',     NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 2, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334815234, 2874692539129860, 'manage_dict_edit',    NULL, NULL, NULL, 'sys:dict:edit',    NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 3, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334815235, 2874692539129860, 'manage_dict_delete',  NULL, NULL, NULL, 'sys:dict:delete',  NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 4, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334815236, 2874692539129859, 'manage_config_list',  NULL, NULL, NULL, 'sys:config:list',  NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 1, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334880768, 2874692539129859, 'manage_config_add',   NULL, NULL, NULL, 'sys:config:add',   NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 2, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334880769, 2874692539129859, 'manage_config_edit',  NULL, NULL, NULL, 'sys:config:edit',  NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 3, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334880770, 2874692539129859, 'manage_config_delete',NULL, NULL, NULL, 'sys:config:delete',NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 4, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334880771, 2874692539129864, 'log_login-log_list',    NULL, NULL, NULL, 'sys:log:list',   NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 1, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334880772, 2874692539129864, 'log_login-log_delete',  NULL, NULL, NULL, 'sys:log:delete', NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 2, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334880773, 2874692539129865, 'log_operation-log_list', NULL, NULL, NULL, 'sys:oplog:list', NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 1, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334946304, 2874692539129865, 'log_operation-log_delete',NULL,NULL, NULL, 'sys:oplog:delete',NULL,TRUE, FALSE, FALSE, TRUE, 'BUTTON', 2, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334946305, 2879249581154304, 'log_online-user_list', NULL, NULL, NULL, 'sys:online:list',  NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 1, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880160334946306, 2879249581154304, 'log_online-user_kick', NULL, NULL, NULL, 'sys:online:kick',  NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 2, NULL, '2026-05-24 15:42:39.00864+08',  NULL, TRUE, NULL, FALSE),
-        (2880487316791296, 2874692539129857, 'manage_ip-blacklist', '/manage/ip-blacklist', 'view.manage_ip-blacklist', NULL, 'sys:blacklist:list', NULL, FALSE, FALSE, TRUE, TRUE, 'MENU', 10, NULL, '2026-05-24 17:05:48.363922+08', NULL, TRUE, NULL, FALSE),
-        (2880487316987904, 2880487316791296, 'manage_ip-blacklist_list',   NULL, NULL, NULL, 'sys:blacklist:list',   NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 1, NULL, '2026-05-24 17:05:48.363922+08', NULL, TRUE, NULL, FALSE),
-        (2880487317118976, 2880487316791296, 'manage_ip-blacklist_add',    NULL, NULL, NULL, 'sys:blacklist:add',    NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 2, NULL, '2026-05-24 17:05:48.363922+08', NULL, TRUE, NULL, FALSE),
-        (2880487317118977, 2880487316791296, 'manage_ip-blacklist_remove', NULL, NULL, NULL, 'sys:blacklist:remove', NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 3, NULL, '2026-05-24 17:05:48.363922+08', NULL, TRUE, NULL, FALSE),
-        (2886339278741504, 2874692539129857, 'manage_announcement', '/manage/announcement', 'view.manage_announcement', NULL, 'sys:notice:list', NULL, FALSE, FALSE, TRUE, TRUE, 'MENU', 11, NULL, '2026-05-25 17:54:02.170377+08', NULL, TRUE, NULL, FALSE),
-        (2886339279134720, 2886339278741504, 'manage_announcement_list',    NULL, NULL, NULL, 'sys:notice:list',    NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 1, NULL, '2026-05-25 17:54:02.170377+08', NULL, TRUE, NULL, FALSE),
-        (2886339279134721, 2886339278741504, 'manage_announcement_add',     NULL, NULL, NULL, 'sys:notice:add',     NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 2, NULL, '2026-05-25 17:54:02.170377+08', NULL, TRUE, NULL, FALSE),
-        (2886339279134722, 2886339278741504, 'manage_announcement_edit',    NULL, NULL, NULL, 'sys:notice:edit',    NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 3, NULL, '2026-05-25 17:54:02.170377+08', NULL, TRUE, NULL, FALSE),
-        (2886339279134723, 2886339278741504, 'manage_announcement_delete',  NULL, NULL, NULL, 'sys:notice:delete',  NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 4, NULL, '2026-05-25 17:54:02.170377+08', NULL, TRUE, NULL, FALSE),
-        (2886339279134724, 2886339278741504, 'manage_announcement_publish', NULL, NULL, NULL, 'sys:notice:publish', NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 5, NULL, '2026-05-25 17:54:02.170377+08', NULL, TRUE, NULL, FALSE),
-        (2907499345027072, NULL, 'demo',                        '/demo',                'layout.base',              NULL,                        NULL, 'arcticons:example',                    FALSE, FALSE, TRUE, TRUE, 'CATALOG',  5,  NULL, '2026-05-29 11:35:19.200988+08', '2026-05-29 15:14:30.990737+08', TRUE,  NULL, FALSE),
-        (2907499345027073, NULL, 'monitor',                     '/monitor',             'layout.base$view.monitor',  NULL,                        'sys:monitor:list', 'mdi:chart-areaspline-variant',    FALSE, FALSE, TRUE, TRUE, 'MENU',     2,  NULL, '2026-05-28 20:18:46.884071+08', '2026-05-29 18:23:07.213857+08', TRUE,  NULL, FALSE),
-        (2907499345027074, 2907499345027073, 'monitor_view',    NULL, NULL, NULL, 'sys:monitor:view', NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 1, NULL, '2026-05-28 20:18:46.884071+08', NULL, TRUE, NULL, FALSE),
-        (2907499345027075, 2907499345027072, 'demo_upload',     '/demo/upload', 'view.demo_upload', NULL, NULL, 'mdi:upload', FALSE, FALSE, TRUE, TRUE, 'MENU', 5, NULL, '2026-05-28 23:08:07.48867+08', '2026-05-29 15:13:41.448095+08', TRUE, NULL, FALSE),
-        (2907499345027076, 2874692539129857, 'manage_file',     '/manage/file', 'view.manage_file', NULL, 'sys:file:list', NULL, FALSE, FALSE, TRUE, TRUE, 'MENU', 8, NULL, '2026-05-28 23:08:07.48867+08', NULL, TRUE, NULL, FALSE),
-        (2907499345027077, 2907499345027076, 'manage_file_list',     NULL, NULL, NULL, 'sys:file:list',     NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 1, NULL, '2026-05-28 23:08:07.48867+08', NULL, TRUE, NULL, FALSE),
-        (2907499345027078, 2907499345027076, 'manage_file_upload',   NULL, NULL, NULL, 'sys:file:upload',   NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 2, NULL, '2026-05-28 23:08:07.48867+08', NULL, TRUE, NULL, FALSE),
-        (2907499345027079, 2907499345027076, 'manage_file_download', NULL, NULL, NULL, 'sys:file:download', NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 3, NULL, '2026-05-28 23:08:07.48867+08', NULL, TRUE, NULL, FALSE),
-        (2907499345027080, 2907499345027076, 'manage_file_delete',   NULL, NULL, NULL, 'sys:file:delete',   NULL, TRUE, FALSE, FALSE, TRUE, 'BUTTON', 4, NULL, '2026-05-28 23:08:07.48867+08', NULL, TRUE, NULL, FALSE),
-        (2907499345027081, 2907499345027072, 'demo_dict',       '/demo/dict', 'view.demo_dict', NULL, NULL, 'mdi:book-alphabet', FALSE, FALSE, TRUE, TRUE, 'MENU', 4, NULL, '2026-06-04 16:00:00+08', NULL, TRUE, NULL, FALSE),
-        (2942406613671936, NULL, 'scheduler', '/scheduler', 'layout.base', '/scheduler/task', NULL, 'material-symbols:schedule-outline', FALSE, FALSE, TRUE, TRUE, 'CATALOG', 95, NULL, '2026-06-04 15:32:41.846173+08', NULL, FALSE, NULL, FALSE),
-        (2942406615113728, 2942406613671936, 'scheduler_task', '/scheduler/task', 'view.scheduler_task', NULL, 'sys:scheduler:list', 'material-symbols:task-alt-outline', FALSE, FALSE, TRUE, TRUE, 'MENU', 1, NULL, '2026-06-04 15:32:41.875798+08', NULL, FALSE, NULL, FALSE),
-        (2942406615965696, 2942406615113728, '新增任务',  NULL, NULL, NULL, 'sys:scheduler:add',     NULL, FALSE, FALSE, TRUE, TRUE, 'BUTTON', 0, NULL, '2026-06-04 15:32:41.884895+08', NULL, FALSE, NULL, FALSE),
-        (2942406615965697, 2942406615113728, '编辑任务',  NULL, NULL, NULL, 'sys:scheduler:edit',    NULL, FALSE, FALSE, TRUE, TRUE, 'BUTTON', 0, NULL, '2026-06-04 15:32:41.884895+08', NULL, FALSE, NULL, FALSE),
-        (2942406615965698, 2942406615113728, '删除任务',  NULL, NULL, NULL, 'sys:scheduler:delete',  NULL, FALSE, FALSE, TRUE, TRUE, 'BUTTON', 0, NULL, '2026-06-04 15:32:41.884895+08', NULL, FALSE, NULL, FALSE),
-        (2942406615965699, 2942406615113728, '任务详情',  NULL, NULL, NULL, 'sys:scheduler:detail',  NULL, FALSE, FALSE, TRUE, TRUE, 'BUTTON', 0, NULL, '2026-06-04 15:32:41.88592+08',  NULL, FALSE, NULL, FALSE),
-        (2942406615965700, 2942406615113728, '启停任务',  NULL, NULL, NULL, 'sys:scheduler:status',  NULL, FALSE, FALSE, TRUE, TRUE, 'BUTTON', 0, NULL, '2026-06-04 15:32:41.88592+08',  NULL, FALSE, NULL, FALSE),
-        (2942406615965701, 2942406615113728, '手动执行',  NULL, NULL, NULL, 'sys:scheduler:trigger', NULL, FALSE, FALSE, TRUE, TRUE, 'BUTTON', 0, NULL, '2026-06-04 15:32:41.88592+08',  NULL, FALSE, NULL, FALSE),
-        (2942406615965702, 2942406613671936, 'scheduler_log', '/scheduler/log', 'view.scheduler_log', NULL, 'sys:scheduler:log:list', 'material-symbols:history', FALSE, FALSE, TRUE, TRUE, 'MENU', 2, NULL, '2026-06-04 15:32:41.886454+08', NULL, FALSE, NULL, FALSE),
-        (2942406617800704, 2942406615965702, '日志详情',  NULL, NULL, NULL, 'sys:scheduler:log:detail',  NULL, FALSE, FALSE, TRUE, TRUE, 'BUTTON', 0, NULL, '2026-06-04 15:32:41.899353+08', NULL, FALSE, NULL, FALSE),
-        (2942406617800705, 2942406615965702, '删除日志',  NULL, NULL, NULL, 'sys:scheduler:log:delete',  NULL, FALSE, FALSE, TRUE, TRUE, 'BUTTON', 0, NULL, '2026-06-04 15:32:41.899767+08', NULL, FALSE, NULL, FALSE)
-    """)
-
-    # Gender dict
-    op.execute("""
-        INSERT INTO sys_dict (id, name, code, description, status, is_system, sort, deleted_at, created_at, updated_at) VALUES
-        (8, '性别', 'gender', '性别字典：男、女、未知', TRUE, TRUE, 1, NULL, '2026-06-03 21:52:40.052698+08', '2026-06-03 21:52:40.052698+08')
-    """)
-
-    op.execute("""
-        INSERT INTO sys_dict_item (id, dict_id, value, label, description, ext_info, status, sort, deleted_at, created_at, updated_at) VALUES
-        (7, 8, '1', '男',   NULL, NULL, TRUE, 1, NULL, '2026-06-03 21:52:40.052698+08', '2026-06-03 21:52:40.052698+08'),
-        (8, 8, '2', '女',   NULL, NULL, TRUE, 2, NULL, '2026-06-03 21:52:40.052698+08', '2026-06-03 21:52:40.052698+08'),
-        (9, 8, '0', '未知', NULL, NULL, TRUE, 3, NULL, '2026-06-03 21:52:40.052698+08', '2026-06-03 21:52:40.052698+08')
-    """)
-
-    # System scheduled tasks
-    op.execute("""
-        INSERT INTO sys_scheduled_task (id, name, task_key, cron_expression, description, trigger_type, trigger_params, status, module, function_path, is_system, last_run_at, next_run_at, last_status, timeout, max_retries, concurrent_policy, deleted_at, created_at, updated_at) VALUES
-        (2938394705010688, '清理过期操作日志', 'system.cleanup_operation_logs', '0 3 * * *', '自动清理30天前的操作日志', 'cron', NULL, TRUE, 'modules.scheduler.tasks.builtin', 'modules.scheduler.tasks.builtin.cleanup_operation_logs', TRUE, NULL, NULL, NULL, 300, 0, 'skip', NULL, '2026-06-03 22:32:24.969304+08', NULL),
-        (2938394705010689, '清理过期登录日志', 'system.cleanup_login_logs',     '0 4 * * *', '自动清理30天前的登录日志', 'cron', '',    TRUE, 'modules.scheduler.tasks.builtin', 'modules.scheduler.tasks.builtin.cleanup_login_logs',     TRUE, NULL, NULL, NULL, 300, 0, 'skip', NULL, '2026-06-03 22:32:24.97958+08',  NULL),
-        (2942449943060480, '刷新限流配置缓存', 'system.refresh_rate_limit_config', '25', '定时从数据库刷新限流参数到内存缓存，避免请求路径上回源', 'interval', '{"seconds": 25}', TRUE, 'modules.scheduler.tasks.rate_limit_config', 'modules.scheduler.tasks.rate_limit_config.refresh_rate_limit_config', TRUE, NULL, NULL, NULL, 300, 0, 'skip', NULL, '2026-06-04 15:43:43.002522+08', NULL)
-    """)
-
 
 def downgrade() -> None:
     op.drop_table('sys_user_role')
     op.drop_table('sys_role_menu')
     op.drop_table('sys_dict_item')
+    op.drop_table('sys_openapi_log')
+    op.drop_table('sys_merchant')
     op.drop_table('sys_scheduled_task_log')
     op.drop_table('sys_scheduled_task')
     op.drop_table('sys_notice_read')
@@ -556,6 +521,7 @@ def downgrade() -> None:
     op.drop_table('sys_menu')
     op.drop_table('sys_role')
     op.drop_table('sys_user')
+    op.drop_table('sys_dept')
     op.drop_table('sys_dict')
     op.drop_table('sys_config')
     op.drop_table('plugin_registry')
@@ -563,3 +529,4 @@ def downgrade() -> None:
     op.execute('DROP TYPE IF EXISTS menutype')
     op.execute('DROP TYPE IF EXISTS configgroup')
     op.execute('DROP TYPE IF EXISTS configtype')
+    op.execute('DROP TYPE IF EXISTS sys_role_data_scope')
