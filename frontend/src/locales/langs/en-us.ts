@@ -280,6 +280,7 @@ const local: App.I18n.Schema = {
       jsonInvalid: 'Invalid JSON',
       copy: 'Copy Component Config',
       copySuccess: 'Component config copied',
+      preview: 'Preview',
       components: {
         common: 'Common',
         Alert: 'Alert',

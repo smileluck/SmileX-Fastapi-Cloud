@@ -548,6 +548,7 @@ declare namespace App {
           jsonInvalid: string;
           copy: string;
           copySuccess: string;
+          preview: string;
           components: Record<string, string>;
         };
       };

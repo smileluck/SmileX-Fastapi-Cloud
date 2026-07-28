@@ -276,6 +276,7 @@ const local: App.I18n.Schema = {
       jsonInvalid: 'JSON 无效',
       copy: '复制组件配置',
       copySuccess: '组件配置已复制',
+      preview: '预览',
       components: {
         common: '通用',
         Alert: '警告提示',

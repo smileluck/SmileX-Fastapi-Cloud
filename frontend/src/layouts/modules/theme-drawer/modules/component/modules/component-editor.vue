@@ -6,6 +6,7 @@ import { $t } from '@/locales';
 import { componentLabel } from '../component-label';
 import PropFields from './prop-fields.vue';
 import AdvancedJson from './advanced-json.vue';
+import ComponentPreview from './component-preview.vue';
 
 defineOptions({
   name: 'ComponentEditor'
@@ -58,6 +59,8 @@ onMounted(initClipboard);
 
     <NScrollbar class="flex-1">
       <div class="flex-col-stretch gap-16px pb-16px">
+        <ComponentPreview :name="name" />
+
         <PropFields :name="name" />
 
         <AdvancedJson :name="name" />
