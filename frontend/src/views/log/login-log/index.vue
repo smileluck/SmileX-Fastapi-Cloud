@@ -149,7 +149,7 @@ async function handleClear() {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <LoginLogSearch v-model:model="searchParams" @search="getDataByPage" />
+    <LoginLogSearch :model="searchParams" @search="getDataByPage" />
     <NCard :title="$t('page.log.loginLog.title')" :bordered="false" size="small" class="flex-1-hidden card-wrapper">
       <template #header-extra>
         <TableHeaderOperation

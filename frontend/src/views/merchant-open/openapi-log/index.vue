@@ -168,7 +168,7 @@ async function handleDelete(id: number) {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <OpenapiLogSearch v-model:model="searchParams" @search="getDataByPage" />
+    <OpenapiLogSearch :model="searchParams" @search="getDataByPage" />
     <NCard
       :title="$t('page.manage.openapiLog.title')"
       :bordered="false"

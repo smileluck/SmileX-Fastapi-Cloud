@@ -280,7 +280,7 @@ async function handleBatchDelete() {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <NoticeSearch v-model:model="searchParams" @search="getNoticeDataByPage" @reset="getNoticeDataByPage" />
+    <NoticeSearch :model="searchParams" @search="getNoticeDataByPage" @reset="getNoticeDataByPage" />
     <NCard
       :title="$t('page.manage.announcement.title')"
       :bordered="false"

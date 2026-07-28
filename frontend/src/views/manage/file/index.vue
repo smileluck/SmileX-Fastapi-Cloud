@@ -194,7 +194,7 @@ async function handleBatchDelete() {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <FileSearch v-model:model="searchParams" @search="getDataByPage" @reset="getDataByPage" />
+    <FileSearch :model="searchParams" @search="getDataByPage" @reset="getDataByPage" />
     <NCard :title="$t('page.manage.file.title')" :bordered="false" size="small" class="flex-1-hidden card-wrapper">
       <template #header-extra>
         <TableHeaderOperation

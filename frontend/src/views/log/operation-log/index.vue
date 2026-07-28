@@ -226,7 +226,7 @@ async function handleAsyncExport() {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <OperationLogSearch v-model:model="searchParams" @search="getDataByPage" />
+    <OperationLogSearch :model="searchParams" @search="getDataByPage" />
     <NCard :title="$t('page.log.operationLog.title')" :bordered="false" size="small" class="flex-1-hidden card-wrapper">
       <template #header-extra>
         <TableHeaderOperation

@@ -114,7 +114,7 @@ async function handleKickAllOnline() {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <OnlineUserSearch v-model:model="searchParams" @search="getDataByPage" />
+    <OnlineUserSearch :model="searchParams" @search="getDataByPage" />
     <NCard :title="$t('page.log.onlineUser.title')" :bordered="false" size="small" class="flex-1-hidden card-wrapper">
       <template #header-extra>
         <TableHeaderOperation

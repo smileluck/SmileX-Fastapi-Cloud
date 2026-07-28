@@ -244,7 +244,7 @@ async function handleBatchResetConfig() {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <ConfigSearch v-model:model="configSearchParams" @search="getConfigDataByPage" />
+    <ConfigSearch :model="configSearchParams" @search="getConfigDataByPage" />
     <NCard :title="$t('page.manage.config.title')" :bordered="false" size="small" class="card-wrapper sm:flex-1-hidden">
       <template #header-extra>
         <TableHeaderOperation

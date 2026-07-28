@@ -425,7 +425,7 @@ watch(activeTab, tab => {
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
     <NTabs v-model:value="activeTab" type="line" class="flex-1-hidden">
       <NTabPane name="dict" :tab="$t('page.manage.dict.dictManage')" class="flex-1-hidden">
-        <DictSearch v-model:model="dictSearchParams" @search="getDictDataByPage" />
+        <DictSearch :model="dictSearchParams" @search="getDictDataByPage" />
         <NCard :title="$t('page.manage.dict.title')" :bordered="false" size="small" class="flex-1-hidden card-wrapper">
           <template #header-extra>
             <TableHeaderOperation

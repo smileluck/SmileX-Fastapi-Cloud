@@ -283,7 +283,7 @@ async function handleSyncRegistry() {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <TaskSearch v-model:model="searchParams" @search="getDataByPage" />
+    <TaskSearch :model="searchParams" @search="getDataByPage" />
     <NCard :title="$t('page.manage.scheduler.title')" :bordered="false" size="small" class="flex-1-hidden card-wrapper">
       <template #header-extra>
         <TableHeaderOperation
