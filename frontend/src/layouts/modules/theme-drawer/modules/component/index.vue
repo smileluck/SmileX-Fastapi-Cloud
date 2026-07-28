@@ -49,15 +49,15 @@ function isEnabled(name: string) {
     </template>
 
     <!-- Desktop: component list on the left, editor on the right -->
-    <div v-else class="flex items-stretch gap-16px">
-      <div class="w-210px flex-col-stretch shrink-0 gap-8px">
+    <div v-else class="h-[calc(100vh-200px)] flex items-stretch gap-16px">
+      <div class="h-full w-210px flex-col-stretch shrink-0 gap-8px">
         <NInput
           v-model:value="search"
           :placeholder="$t('theme.componentConfig.searchPlaceholder')"
           clearable
           size="small"
         />
-        <NScrollbar class="component-list">
+        <NScrollbar class="flex-1">
           <div
             v-for="name in filteredNames"
             :key="name"
@@ -76,16 +76,12 @@ function isEnabled(name: string) {
 
       <NDivider vertical class="m-0! h-auto!" />
 
-      <ComponentEditor :name="selected" class="min-w-0 flex-1" />
+      <ComponentEditor :name="selected" class="h-full min-w-0 flex-1" />
     </div>
   </div>
 </template>
 
 <style scoped>
-.component-list {
-  max-height: calc(100vh - 280px);
-}
-
 .component-item:hover {
   background-color: rgba(var(--primary-color), 0.08);
 }

@@ -82,10 +82,10 @@ function setValue(key: string, value: string | number) {
           </NDivider>
           <div class="flex-col-stretch gap-6px">
             <div v-for="p in grouped[g]" :key="p.key" class="w-full flex-y-center gap-12px">
-              <span class="w-2/5 shrink-0 ellipsis-text text-right text-13px text-base-text" :title="p.key">
+              <span class="w-1/2 shrink-0 ellipsis-text text-right text-13px text-base-text" :title="p.key">
                 {{ p.key }}
               </span>
-              <div class="w-3/5">
+              <div class="w-1/2">
                 <NColorPicker
                   v-if="inferPropKind(p.key, p.typeText) === 'color'"
                   :value="(getValue(p.key) as string) || null"

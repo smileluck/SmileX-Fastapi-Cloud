@@ -40,7 +40,7 @@ onMounted(initClipboard);
 </script>
 
 <template>
-  <div class="flex-col-stretch gap-16px">
+  <div class="h-full flex-col-stretch gap-16px">
     <div class="flex-y-center justify-between">
       <span class="text-15px font-600">{{ label }}</span>
       <div class="flex-y-center gap-8px">
@@ -56,9 +56,13 @@ onMounted(initClipboard);
       {{ $t('theme.componentConfig.notEnabledHint') }}
     </NAlert>
 
-    <PropFields :name="name" />
+    <NScrollbar class="flex-1">
+      <div class="flex-col-stretch gap-16px pb-16px">
+        <PropFields :name="name" />
 
-    <AdvancedJson :name="name" />
+        <AdvancedJson :name="name" />
+      </div>
+    </NScrollbar>
   </div>
 </template>
 
