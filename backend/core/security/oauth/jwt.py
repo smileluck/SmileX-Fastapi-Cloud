@@ -3,6 +3,7 @@
 
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any, TypeVar
+import uuid
 import jwt
 import logging
 from fastapi import HTTPException, status
@@ -79,6 +80,7 @@ class JWTAuthManager:
                     "iat": datetime.now(timezone.utc),
                     "aud": settings.JWT.AUDIENCE,
                     "iss": "spatialtemporal-ai-cloud",
+                    "jti": uuid.uuid4().hex,
                 }
             )
             encoded_jwt = jwt.encode(to_encode, _key, algorithm=_alg)
@@ -125,6 +127,7 @@ class JWTAuthManager:
                     "aud": settings.JWT.AUDIENCE,
                     "iss": "spatialtemporal-ai-cloud",
                     "type": "refresh",
+                    "jti": uuid.uuid4().hex,
                 }
             )
             encoded_jwt = jwt.encode(to_encode, _key, algorithm=_alg)
@@ -261,3 +264,52 @@ class JWTAuthManager:
             expires_in=_lifetime,
             refresh_token=refresh_token,
         )
+
+    @classmethod
+    def create_preview_token(
+        cls,
+        file_id: int,
+        user_id: int,
+        session_id: str,
+        expires_seconds: int = 300,
+        secret_key: Optional[str] = None,
+        algorithm: Optional[str] = None,
+    ) -> str:
+        """创建短期、绑定单文件的预览令牌。
+
+        用于文件在线预览（<img>/<video> src 无法携带 Authorization 头），
+        替代直接把 access token 放进 URL query，缩小令牌泄露面。
+
+        Args:
+            file_id: 绑定的文件 ID（预览时校验一致）
+            user_id: 申请者用户 ID
+            session_id: 申请者会话 ID
+            expires_seconds: 有效期秒数，默认 300（5 分钟）
+            secret_key: 签名密钥（多租户下传租户密钥）
+            algorithm: 签名算法
+
+        Returns:
+            str: 预览令牌（scope=preview）
+        """
+        payload = {
+            "file_id": str(file_id),
+            "user_id": str(user_id),
+            "session_id": session_id,
+            "scope": "preview",
+        }
+        return cls.create_access_token(
+            payload,
+            expires_delta=timedelta(seconds=expires_seconds),
+            secret_key=secret_key,
+            algorithm=algorithm,
+        )
+
+    @classmethod
+    def decode_preview_token(
+        cls,
+        token: str,
+        secret_key: Optional[str] = None,
+        algorithm: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """解码预览令牌（验签 + 验过期 + 验 aud）。"""
+        return cls.decode_token(token, secret_key=secret_key, algorithm=algorithm)

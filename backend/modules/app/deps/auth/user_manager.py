@@ -16,7 +16,7 @@ from core.redis import get_redis_util
 from core.utils.memory_cache import get_memory_cache, CacheNamespace
 from fastapi.concurrency import run_in_threadpool
 from core.utils.session_utils import generate_session_id
-from core.security.oauth.user_manager import base_user_manager
+from core.security.oauth.user_manager import base_user_manager, build_session_key
 import random
 from database.models.business.user import AppUser  # 导入 AppUser 类
 from modules.app.schemas.auth import (
@@ -277,7 +277,11 @@ class UserManager:
             raise TokenError()
         if not user_role:
             raise TokenError()
-        cache_key = settings.JWT.SESSION_PREFIX + user_role + str(user_id)
+        # jti 黑名单校验：每次直查 Redis，不进内存缓存，保证吊销即时生效
+        jti = payload.get("jti")
+        if jti and await base_user_manager.is_token_revoked(jti):
+            raise TokenError(msg="令牌已被吊销")
+        cache_key = build_session_key(user_role, int(user_id))
         # 检查内存缓存
         _cache = get_memory_cache()
         session_ck = f"{cache_key}:{session_id}"
@@ -314,7 +318,7 @@ class UserManager:
         """
         退出登录，删除指定会话
         """
-        cache_key = settings.JWT.SESSION_PREFIX + "app" + str(user_id)
+        cache_key = build_session_key("app", user_id)
         get_memory_cache().delete(CacheNamespace.SESSION, f"{cache_key}:{session_id}")
         await get_redis_util().hdel(cache_key, session_id)
 

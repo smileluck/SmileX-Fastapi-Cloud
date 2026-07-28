@@ -15,6 +15,7 @@ from core.config import settings
 from core.exception.errors import NotFoundError
 from core.storage import (
     get_storage_backend,
+    validate_file_content,
     validate_file_extension,
     validate_file_size,
     generate_stored_name,
@@ -58,6 +59,13 @@ class FileService:
         upload_cfg = settings.UPLOAD_LOCAL
         ext = validate_file_extension(original_name, upload_cfg.ALLOWED_EXTENSIONS)
         validate_file_size(len(file_data), upload_cfg.MAX_FILE_SIZE)
+        # 扩展名 ↔ 真实类型 ↔ 声明 MIME 三方交叉校验，挡住改扩展名伪装（如 .exe 改 .png）
+        if upload_cfg.MAGIC_CHECK_ENABLED:
+            trusted_mime = validate_file_content(
+                file_data, ext, mime_type, strict_mime=upload_cfg.MIME_STRICT
+            )
+        else:
+            trusted_mime = mime_type or "application/octet-stream"
 
         stored_name = generate_stored_name(ext)
         now = timezone.now()
@@ -71,7 +79,7 @@ class FileService:
             stored_name=stored_name,
             file_path=file_path,
             file_size=len(file_data),
-            mime_type=mime_type,
+            mime_type=trusted_mime,
             extension=ext,
             storage_platform=settings.STORAGE.PLATFORM,
             created_by=created_by,

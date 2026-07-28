@@ -24,7 +24,7 @@ from modules.admin.schemas.sys.file import (
     SysFileUploadResponse,
     SysFileListResponse,
 )
-from core.security.oauth.jwt import JWTAuthManager
+from core.security.oauth.jwt import JWTAuthManager, oauth2_scheme
 from core.storage import get_storage_backend
 
 logger = logging.getLogger(__name__)
@@ -149,22 +149,64 @@ async def download_file(
     )
 
 
+@file_router.post(
+    "/{file_id}/preview-token",
+    response_model=ResponseModel,
+    summary="获取文件预览令牌",
+    dependencies=[Depends(require_permission("sys:file:list"))],
+)
+async def get_preview_token(
+    file_id: int,
+    token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_session),
+    user: SysUser = Depends(current_user),
+):
+    """换取短期（5 分钟）、绑定单文件的预览令牌。
+
+    浏览器通过 <img>/<video> src 直接访问预览时不会携带 Authorization 头，
+    前端先调用本接口换取 preview token，再以 ?token= 访问预览接口。
+    """
+    # 校验文件存在
+    await FileService.get_file(db, file_id)
+    # current_user 依赖已完成验签，这里仅取 session_id 用于令牌追溯
+    payload = JWTAuthManager.decode_token_unverified(token)
+    session_id = payload.get("session_id", "")
+    expires_seconds = 300
+    preview_token = JWTAuthManager.create_preview_token(
+        file_id=file_id,
+        user_id=user.id,
+        session_id=session_id,
+        expires_seconds=expires_seconds,
+    )
+    return ResponseModel(
+        data={"preview_token": preview_token, "expires_in": expires_seconds},
+        msg="获取预览令牌成功",
+    )
+
+
 @preview_router.get(
     "/{file_id}/preview",
     summary="在线预览文件",
 )
 async def preview_file(
     file_id: int,
-    token: str = Query(..., description="访问令牌"),
+    token: str = Query(..., description="预览令牌（由 preview-token 接口换取）"),
     request: Request = None,
     db: AsyncSession = Depends(get_session),
 ):
-    """在线预览文件（图片/视频），通过 query 参数 token 鉴权，支持 Range 请求"""
+    """在线预览文件（图片/视频），通过 query 参数传入预览令牌，支持 Range 请求。
+
+    预览令牌由 POST /{file_id}/preview-token 换取，短期（5 分钟）且绑定 file_id，
+    不再复用 access token，避免令牌进入 URL 日志/Referer 造成泄露。
+    """
     raw_token = token.removeprefix("Bearer ")
     try:
-        JWTAuthManager.decode_token(raw_token)
+        payload = JWTAuthManager.decode_preview_token(raw_token)
     except Exception:
         return Response(status_code=401, content="Unauthorized")
+    # 必须是预览专用令牌（scope=preview），且绑定当前 file_id
+    if payload.get("scope") != "preview" or str(payload.get("file_id")) != str(file_id):
+        return Response(status_code=403, content="Forbidden")
 
     sys_file = await FileService.get_file(db, file_id)
     storage = get_storage_backend()

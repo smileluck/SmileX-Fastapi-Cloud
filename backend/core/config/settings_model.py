@@ -40,6 +40,8 @@ class LocalUploadModel(BaseModel):
     ALLOWED_EXTENSIONS: Optional[List[str]] = Field(
         None, description="允许的文件扩展名"
     )
+    MAGIC_CHECK_ENABLED: bool = Field(True, description="是否启用 magic number 真实类型校验")
+    MIME_STRICT: bool = Field(True, description="声明 MIME 是否需与检测结果一致")
 
 
 class StorageModel(BaseModel):

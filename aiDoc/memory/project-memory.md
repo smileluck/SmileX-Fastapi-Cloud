@@ -10,6 +10,7 @@
 
 详细索引见 [business/README.md](./business/README.md)。近期：
 
+- [2026-07-28 后端 Web 安全加固](./business/2026-07-28_security_hardening.md) — 5 项：文件上传 magic number 三方校验 + 白名单收紧；预览改 scoped token；admin/app 补 logout + 修 App session key Bug；JWT jti 黑名单；HSTS 部署 checklist
 - [2026-07-27 NaiveUI 组件级主题配置](./business/2026-07-27_naiveui_component_theme_config.md) — 主题抽屉新增「组件」Tab：codegen 从 GlobalThemeOverrides 生成全部组件 × 属性表，每组件单独启用 + 表单/JSON5 混合编辑，localStorage 持久化（dev 也生效），合并优先级 用户组件配置 > 预设 > 自动；zh/en i18n
 
 - [2026-07-23 首页仪表盘（聚合接口 + 业务统计 + 活动流）](./business/2026-07-23_homepage_dashboard.md) — 修复空白首页：新增聚合接口 `/admin/sys/dashboard/summary`（Redis 缓存 60s）+ 业务统计卡片（用户/角色/在线/今日登录）+ 最近登录时间线 + 最新公告列表；清理 5 个模板遗留组件；更新 i18n

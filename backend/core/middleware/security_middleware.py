@@ -63,6 +63,7 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
     """基于 Content-Length 的请求体大小限制。"""
 
     # 上传接口豁免路径前缀（使用 UPLOAD_LOCAL.MAX_FILE_SIZE 单独控制）
+    # 用前缀匹配：同时覆盖 /upload 与 /upload/batch（startswith 判定）
     _UPLOAD_PATHS = ("/admin/sys/file/upload",)
 
     async def dispatch(self, request: Request, call_next: Callable):

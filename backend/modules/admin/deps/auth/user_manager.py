@@ -219,6 +219,11 @@ class UserManager(BaseUserManager):
         if not user_role:
             raise TokenError()
 
+        # jti 黑名单校验：每次直查 Redis，不进内存缓存，保证吊销即时生效
+        jti = payload.get("jti")
+        if jti and await base_user_manager.is_token_revoked(jti):
+            raise TokenError(msg="令牌已被吊销")
+
         # 混合验证：如果租户有自定义密钥，用租户密钥重新验证
         if tenant_id and _is_multi_tenant_enabled():
             payload = await self._verify_with_tenant_key(token, payload, tenant_id)

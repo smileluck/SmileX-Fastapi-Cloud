@@ -31,6 +31,10 @@ def build_session_key_legacy(role: str, user_id: int) -> str:
     return settings.JWT.SESSION_PREFIX + role + str(user_id)
 
 
+# JWT 单 token 吊销黑名单 key 前缀：JWT_JTI_BLACKLIST:{jti}
+JTI_BLACKLIST_PREFIX = "JWT_JTI_BLACKLIST:"
+
+
 class BaseUserManager:
     """
     基础用户管理器类
@@ -131,6 +135,30 @@ class BaseUserManager:
             access_lifetime=access_lifetime,
         )
         return tokens
+
+    @staticmethod
+    async def revoke_token_by_jti(jti: str, remain_seconds: int) -> None:
+        """将单个 token 的 jti 加入黑名单，剩余有效期后自动过期。
+
+        用于单 token 精细吊销（如审计发现特定令牌泄露）。
+        批量吊销某用户所有 token 请用 OnlineUserService.kick_all_sessions（删 session Hash）。
+
+        Args:
+            jti: 令牌唯一 ID（JWT claim）
+            remain_seconds: 黑名单保留秒数（应 <= token 剩余寿命）
+        """
+        if not jti or remain_seconds <= 0:
+            return
+        await get_redis_util().set(
+            f"{JTI_BLACKLIST_PREFIX}{jti}", "1", expire=remain_seconds
+        )
+
+    @staticmethod
+    async def is_token_revoked(jti: str) -> bool:
+        """检查 jti 是否在黑名单中（每次直查 Redis，不进内存缓存，保证吊销即时生效）。"""
+        if not jti:
+            return False
+        return await get_redis_util().get(f"{JTI_BLACKLIST_PREFIX}{jti}") is not None
 
 
 base_user_manager = BaseUserManager()

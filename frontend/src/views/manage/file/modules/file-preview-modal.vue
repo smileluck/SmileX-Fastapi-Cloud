@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { NImage, NModal } from 'naive-ui';
-import { getFilePreviewUrl } from '@/service/api/file';
+import { fetchGetPreviewToken, getFilePreviewUrl } from '@/service/api/file';
 import { $t } from '@/locales';
 
 defineOptions({
@@ -33,10 +33,36 @@ const isVideo = computed(() => {
   return ['mp4', 'webm', 'ogg', 'mov', 'avi'].includes(ext);
 });
 
-const previewUrl = computed(() => {
-  if (!props.file) return '';
-  return getFilePreviewUrl(props.file.id);
-});
+const previewUrl = ref('');
+const previewLoading = ref(false);
+
+// 打开预览时先换取短期、绑定单文件的预览令牌，再构造 URL
+// 不再直接使用 access token，避免令牌进入 URL 日志/Referer 造成泄露
+async function loadPreview() {
+  if (!props.file) {
+    previewUrl.value = '';
+    return;
+  }
+  previewLoading.value = true;
+  previewUrl.value = '';
+  try {
+    const { data, error } = await fetchGetPreviewToken(props.file.id);
+    if (!error && data) {
+      previewUrl.value = getFilePreviewUrl(props.file.id, data.preview_token);
+    }
+  } finally {
+    previewLoading.value = false;
+  }
+}
+
+watch(
+  () => [props.visible, props.file?.id] as const,
+  ([visible]) => {
+    if (visible) loadPreview();
+    else previewUrl.value = '';
+  },
+  { immediate: true }
+);
 </script>
 
 <template>

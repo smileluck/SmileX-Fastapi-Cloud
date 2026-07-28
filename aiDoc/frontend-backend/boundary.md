@@ -240,6 +240,25 @@ METHOD \n PATH \n timestamp \n nonce \n app_id \n sha256(body).hexdigest()
 
 ---
 
+## 文件预览鉴权（preview token）
+
+`GET /admin/sys/file/{id}/preview` 供 `<img>/<video>` 直接通过 src 访问，浏览器不会携带 `Authorization` 头，因此**不能复用 access token**（否则令牌会进入 URL 日志/Referer 造成泄露）。改为两步：
+
+1. **换令牌**：前端先调 `POST /admin/sys/file/{id}/preview-token`（需登录 + `sys:file:list` 权限），后端签发**短期（默认 5 分钟）、绑定 file_id** 的预览令牌（JWT，`scope=preview`），返回 `{ preview_token, expires_in }`。
+2. **访问预览**：前端以 `GET /admin/sys/file/{id}/preview?token=<preview_token>` 访问；后端校验 `scope=preview` 且 token 内 `file_id` 与 URL 一致，否则返回 401/403。
+
+| 项 | 值 |
+|---|---|
+| 换令牌接口 | `POST /admin/sys/file/{id}/preview-token` |
+| 响应 data | `{ preview_token: string, expires_in: number }`（默认 300） |
+| 预览接口鉴权 | query `token`，需 `scope=preview` + file_id 绑定 |
+| 前端封装 | `fetchGetPreviewToken`、`getFilePreviewUrl(fileId, previewToken)`（`src/service/api/file.ts`）；组件 `views/manage/file/modules/file-preview-modal.vue` 打开时异步换 token |
+| 已知妥协 | 预览令牌有效期内即使用户登出仍可用（短 exp 缓解；强一致需 preview_file 内查 Redis session） |
+
+前端调用点必须**先换 token 再拼 URL**，禁止直接把 access token 放进 preview URL。
+
+---
+
 ## 变更规则
 
 - 破坏性接口变更（字段名/类型/结构改变）必须记录变更说明

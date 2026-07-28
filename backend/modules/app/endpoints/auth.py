@@ -12,7 +12,7 @@ from modules.app.deps.auth.user_manager import (
     current_user,
     update_user_info,
 )
-from core.security.oauth.jwt import Token
+from core.security.oauth.jwt import Token, JWTAuthManager, oauth2_scheme
 from core.response import (
     ResponseModel,
     response_base,
@@ -287,3 +287,26 @@ async def get_sms_code(
     )
     await user_manager.get_verification_code(phone=sms_code_model.phone)
     return response_base.success(msg="短信验证码发送成功")
+
+
+@router.post(
+    "/logout",
+    response_model=ResponseModel,
+    summary="退出登录",
+    description="登出当前会话，清除服务端 session，使当前 access token 立即失效",
+)
+async def logout(
+    token: str = Depends(oauth2_scheme),
+    user: AppUser = Depends(current_user),
+    user_manager: UserManager = Depends(get_user_manager),
+):
+    """退出登录
+
+    current_user 依赖已完成验签，这里以 unverified 方式取 session_id，
+    调 UserManager.logout 删除 Redis session 并清内存缓存。
+    """
+    payload = JWTAuthManager.decode_token_unverified(token)
+    session_id = payload.get("session_id")
+    if session_id:
+        await user_manager.logout(user.id, session_id)
+    return response_base.success(msg="登出成功")

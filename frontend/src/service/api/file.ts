@@ -61,11 +61,18 @@ export async function fetchDownloadFile(fileId: number): Promise<Blob> {
   return response.data;
 }
 
-/** 获取文件预览 URL (用于 img/video src) */
-export function getFilePreviewUrl(fileId: number): string {
-  // localStg 存的是 "Bearer eyJ..."，query 参数只需传纯 token
-  const token = localStg.get('token');
-  const rawToken = token?.replace(/^Bearer\s+/i, '') || '';
+/** 换取文件预览令牌（短期 5 分钟、绑定单文件，后端 POST /preview-token） */
+export function fetchGetPreviewToken(fileId: number) {
+  return request<{ preview_token: string; expires_in: number }>({
+    url: `/admin/sys/file/${fileId}/preview-token`,
+    method: 'post'
+  });
+}
+
+/** 根据预览令牌构造预览 URL（用于 img/video src）
+ *  不再直接使用 access token，避免令牌进入 URL 日志/Referer 造成泄露 */
+export function getFilePreviewUrl(fileId: number, previewToken: string): string {
+  const rawToken = previewToken.replace(/^Bearer\s+/i, '') || '';
   return `${baseURL}/admin/sys/file/${fileId}/preview?token=${rawToken}`;
 }
 

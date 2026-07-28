@@ -20,6 +20,8 @@ from modules.admin.deps.auth.user_manager import (
     get_user_manager,
     current_user,
 )
+from core.security.oauth.jwt import JWTAuthManager, oauth2_scheme
+from modules.admin.services.sys.online_user_service import OnlineUserService
 from modules.admin.schemas.auth import (
     LoginPwdModel,
     LoginResponseData,
@@ -195,3 +197,28 @@ async def get_current_info(
         data=user_info,
         msg="获取用户信息成功",
     )
+
+
+@router.post(
+    "/logout",
+    response_model=ResponseModel,
+    summary="退出登录",
+    description="登出当前会话，清除服务端 session，使当前 access token 立即失效",
+)
+async def logout(
+    token: str = Depends(oauth2_scheme),
+    user: SysUser = Depends(current_user),
+):
+    """退出登录
+
+    current_user 依赖已完成验签，这里以 unverified 方式取 session_id/tenant_id，
+    调 OnlineUserService.kick_user 删除 Redis session 并清内存缓存。
+    """
+    payload = JWTAuthManager.decode_token_unverified(token)
+    session_id = payload.get("session_id")
+    tenant_id = int(payload.get("tenant_id", 0)) if payload.get("tenant_id") else 0
+    if session_id:
+        await OnlineUserService.kick_user(
+            user_id=user.id, session_id=session_id, role="admin", tenant_id=tenant_id
+        )
+    return response_base.success(msg="登出成功")
