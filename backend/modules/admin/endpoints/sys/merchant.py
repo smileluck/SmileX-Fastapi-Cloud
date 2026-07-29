@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from core.decorators.operation_log import log_operation
+from core.i18n import t
 from core.response.response_schema import ResponseModel, ResponsePageModel
 from database.db_manager import get_session
 from database.models.sys.user import SysUser
@@ -96,7 +97,7 @@ async def create_merchant(
     logger.info(f"创建商户成功，商户ID: {merchant.id}")
     data = SysMerchantWithSecret.model_validate(merchant)
     data.app_secret = plaintext_secret
-    return ResponseModel(data=data, msg="创建商户成功，请立即保存 AppSecret")
+    return ResponseModel(data=data, msg=t("merchant.create_success"))
 
 
 @merchant_router.put(
@@ -116,7 +117,7 @@ async def update_merchant(
     logger.info(f"更新商户请求，商户ID: {merchant_id}")
     merchant = await MerchantService.update_merchant(db, merchant_id, merchant_update)
     logger.info(f"更新商户成功，商户ID: {merchant_id}")
-    return ResponseModel(data=SysMerchantResponseData.model_validate(merchant), msg="更新商户成功")
+    return ResponseModel(data=SysMerchantResponseData.model_validate(merchant), msg=t("merchant.update_success"))
 
 
 @merchant_router.put(
@@ -144,7 +145,7 @@ async def reset_merchant_secret(
         app_secret=plaintext_secret,
         secret_updated_at=merchant.secret_updated_at,
     )
-    return ResponseModel(data=data, msg="重置密钥成功，请立即保存新 AppSecret")
+    return ResponseModel(data=data, msg=t("merchant.reset_secret_success"))
 
 
 @merchant_router.delete(
@@ -163,4 +164,4 @@ async def delete_merchant(
     logger.info(f"删除商户请求，商户ID: {merchant_id}")
     await MerchantService.delete_merchant(db, merchant_id)
     logger.info(f"删除商户成功，商户ID: {merchant_id}")
-    return ResponseModel(msg="删除商户成功")
+    return ResponseModel(msg=t("merchant.delete_success"))

@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 from core.config import settings
+from core.i18n import t
 from database.models.sys.user import SysUser
 from database import get_session
 from core.exception import CustomError, TokenError
@@ -52,7 +53,7 @@ class UserManager(BaseUserManager):
         """
         if not username or not password:
             raise CustomError(
-                msg="用户名和密码不能为空",
+                msg=t("auth.username_password_required"),
                 error=CustomErrorCode.USER_LOGIN_FAILED,
             )
         stmt = select(SysUser).where(SysUser.username == username)
@@ -60,7 +61,7 @@ class UserManager(BaseUserManager):
         user = result.scalar_one_or_none()
         if not user:
             raise CustomError(
-                msg="用户名不存在",
+                msg=t("auth.username_not_found"),
                 error=CustomErrorCode.USER_LOGIN_FAILED,
             )
 
@@ -71,14 +72,14 @@ class UserManager(BaseUserManager):
 
         if not pwd_match:
             raise CustomError(
-                msg="密码错误",
+                msg=t("auth.password_error"),
                 error=CustomErrorCode.USER_LOGIN_FAILED,
             )
 
         # 校验用户是否被禁用
         if not user.status:
             raise CustomError(
-                msg="用户已被禁用",
+                msg=t("auth.user_disabled"),
                 error=CustomErrorCode.USER_DISABLED,
             )
 
@@ -222,7 +223,7 @@ class UserManager(BaseUserManager):
         # jti 黑名单校验：每次直查 Redis，不进内存缓存，保证吊销即时生效
         jti = payload.get("jti")
         if jti and await base_user_manager.is_token_revoked(jti):
-            raise TokenError(msg="令牌已被吊销")
+            raise TokenError(msg=t("auth.token_revoked"))
 
         # 混合验证：如果租户有自定义密钥，用租户密钥重新验证
         if tenant_id and _is_multi_tenant_enabled():

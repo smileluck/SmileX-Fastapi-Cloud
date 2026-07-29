@@ -189,6 +189,16 @@ class OpenApiModel(BaseModel):
     APP_ID_PREFIX: str = Field("SMX", description="AppId 前缀")
 
 
+class I18nModel(BaseModel):
+    """国际化配置模型"""
+
+    DEFAULT_LANGUAGE: str = Field("zh-CN", description="默认语言（无 Accept-Language 时使用）")
+    SUPPORTED_LANGUAGES: List[str] = Field(
+        ["zh-CN", "en-US"], description="支持的语言列表（对应 i18n/locales/ 下的文件名）"
+    )
+    FALLBACK_LANGUAGE: str = Field("zh-CN", description="键在请求语言中缺失时的回退语言")
+
+
 class RedisPoolModel(BaseModel):
     """Redis连接池模型"""
 

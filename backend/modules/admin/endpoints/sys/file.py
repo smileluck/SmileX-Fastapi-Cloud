@@ -13,6 +13,7 @@ from fastapi.responses import StreamingResponse, FileResponse, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response.response_schema import ResponseModel, ResponsePageModel
 from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from modules.admin.deps.auth.user_manager import current_user
@@ -59,7 +60,7 @@ async def upload_file(
         created_by=user.id,
     )
     await db.commit()
-    return ResponseModel(data=SysFileUploadResponse.model_validate(sys_file), msg="上传成功")
+    return ResponseModel(data=SysFileUploadResponse.model_validate(sys_file), msg=t("file.upload_success"))
 
 
 @file_router.post(
@@ -83,7 +84,7 @@ async def upload_files(
     await db.commit()
     return ResponseModel(
         data=[SysFileUploadResponse.model_validate(f) for f in sys_files],
-        msg=f"成功上传 {len(sys_files)} 个文件",
+        msg=t("file.batch_upload_success", count=len(sys_files)),
     )
 
 
@@ -180,7 +181,7 @@ async def get_preview_token(
     )
     return ResponseModel(
         data={"preview_token": preview_token, "expires_in": expires_seconds},
-        msg="获取预览令牌成功",
+        msg=t("file.preview_token_success"),
     )
 
 
@@ -254,7 +255,7 @@ async def batch_delete_files(
     """批量软删除文件"""
     count = await FileService.batch_delete_files(db, file_ids)
     await db.commit()
-    return ResponseModel(msg=f"成功删除 {count} 个文件", data={"delete_count": count})
+    return ResponseModel(msg=t("file.batch_delete_success", count=count), data={"delete_count": count})
 
 
 @file_router.delete(
@@ -270,4 +271,4 @@ async def delete_file(
     """软删除单个文件"""
     await FileService.delete_file(db, file_id)
     await db.commit()
-    return ResponseModel(msg="删除文件成功")
+    return ResponseModel(msg=t("file.delete_success"))

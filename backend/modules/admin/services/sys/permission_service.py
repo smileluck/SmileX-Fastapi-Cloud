@@ -11,6 +11,7 @@ from typing import List, Optional
 
 from database.models.sys.permission import SysPermission
 from core.exception.errors import NotFoundError, ConflictError
+from core.i18n import t
 from modules.admin.schemas.sys.permission import (
     SysPermissionCreate,
     SysPermissionUpdate,
@@ -46,7 +47,7 @@ class PermissionService:
             select(SysPermission).where(SysPermission.code == permission_in.code)
         )
         if result.scalar_one_or_none():
-            raise ConflictError(msg="权限编码已存在")
+            raise ConflictError(msg=t("permission.code_exist"))
 
         permission = SysPermission(**permission_in.model_dump())
         db.add(permission)
@@ -65,7 +66,7 @@ class PermissionService:
         )
         existing_permission = result.scalar_one_or_none()
         if not existing_permission:
-            raise NotFoundError(f"权限 {permission_id} 不存在")
+            raise NotFoundError(msg=t("permission.not_found", id=permission_id))
 
         update_data = permission_in.model_dump(exclude_unset=True)
 
@@ -78,7 +79,7 @@ class PermissionService:
                 )
             )
             if code_result.scalar_one_or_none():
-                raise ConflictError(msg="权限编码已存在")
+                raise ConflictError(msg=t("permission.code_exist"))
 
         for key, value in update_data.items():
             setattr(existing_permission, key, value)
@@ -94,7 +95,7 @@ class PermissionService:
         )
         permission = result.scalar_one_or_none()
         if not permission:
-            raise NotFoundError(f"权限 {permission_id} 不存在")
+            raise NotFoundError(msg=t("permission.not_found", id=permission_id))
 
         await db.delete(permission)
         await db.commit()

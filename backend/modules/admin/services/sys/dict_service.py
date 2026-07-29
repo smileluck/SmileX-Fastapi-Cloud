@@ -13,6 +13,7 @@ from typing import List, Optional, Tuple
 
 from database.models.sys.dict import SysDict, SysDictItem
 from core.exception.errors import NotFoundError, ConflictError, ForbiddenError
+from core.i18n import t
 from modules.admin.schemas.sys.dict import (
     SysDictCreate,
     SysDictUpdate,
@@ -138,7 +139,7 @@ class DictService:
 
             if not dict_obj:
                 logger.warning("字典不存在，字典ID: %d", dict_id)
-                raise NotFoundError(msg=f"字典 {dict_id} 不存在")
+                raise NotFoundError(msg=t("dict.not_found", id=dict_id))
 
             logger.debug("获取字典详情成功，字典ID: %d", dict_id)
             return dict_obj
@@ -176,7 +177,7 @@ class DictService:
 
             if not dict_obj:
                 logger.warning("字典不存在，字典编码: %s", code)
-                raise NotFoundError(msg=f"字典编码 {code} 不存在")
+                raise NotFoundError(msg=t("dict.code_not_found", code=code))
 
             logger.debug("通过编码获取字典成功，字典编码: %s", code)
             return dict_obj
@@ -216,7 +217,7 @@ class DictService:
 
             if not dict_obj:
                 logger.warning("字典不存在，字典ID: %d", dict_id)
-                raise NotFoundError(msg=f"字典 {dict_id} 不存在")
+                raise NotFoundError(msg=t("dict.not_found", id=dict_id))
 
             logger.debug("获取字典及其字典项成功，字典ID: %d", dict_id)
             return dict_obj
@@ -255,7 +256,7 @@ class DictService:
             )
             if result.scalar_one_or_none():
                 logger.warning("字典编码已存在，编码: %s", dict_in.code)
-                raise ConflictError(msg="字典编码已存在")
+                raise ConflictError(msg=t("dict.code_exist"))
 
             # 创建字典对象
             dict_obj = SysDict(
@@ -322,12 +323,12 @@ class DictService:
 
             if not existing_dict:
                 logger.warning("字典不存在，字典ID: %d", dict_id)
-                raise NotFoundError(msg=f"字典 {dict_id} 不存在")
+                raise NotFoundError(msg=t("dict.not_found", id=dict_id))
 
             # 非超级管理员不能修改系统内置字典
             if existing_dict.is_system and not is_superuser:
                 logger.warning("系统内置字典禁止修改，字典ID: %d", dict_id)
-                raise ForbiddenError(msg="系统内置字典禁止修改")
+                raise ForbiddenError(msg=t("dict.cannot_modify_builtin"))
 
             # 更新字段
             update_data = dict_in.model_dump(exclude_unset=True)
@@ -433,12 +434,12 @@ class DictService:
 
             if not dict_obj:
                 logger.warning("字典不存在，字典ID: %d", dict_id)
-                raise NotFoundError(msg=f"字典 {dict_id} 不存在")
+                raise NotFoundError(msg=t("dict.not_found", id=dict_id))
 
             # 非超级管理员不能删除系统内置字典
             if dict_obj.is_system and not is_superuser:
                 logger.warning("系统内置字典禁止删除，字典ID: %d", dict_id)
-                raise ForbiddenError(msg="系统内置字典禁止删除")
+                raise ForbiddenError(msg=t("dict.cannot_delete_builtin"))
 
             await db.delete(dict_obj)
             await db.commit()
@@ -601,7 +602,7 @@ class DictService:
 
             if not dict_item:
                 logger.warning("字典项不存在，字典项ID: %d", item_id)
-                raise NotFoundError(msg=f"字典项 {item_id} 不存在")
+                raise NotFoundError(msg=t("dict.item_not_found", id=item_id))
 
             logger.debug("获取字典项详情成功，字典项ID: %d", item_id)
             return dict_item
@@ -642,7 +643,7 @@ class DictService:
             )
             if not result.scalar_one_or_none():
                 logger.warning("字典不存在，字典ID: %d", item_in.dict_id)
-                raise NotFoundError(msg=f"字典 {item_in.dict_id} 不存在")
+                raise NotFoundError(msg=t("dict.not_found", id=item_in.dict_id))
 
             # 创建字典项对象
             dict_item = SysDictItem(
@@ -705,7 +706,7 @@ class DictService:
 
             if not existing_item:
                 logger.warning("字典项不存在，字典项ID: %d", item_id)
-                raise NotFoundError(msg=f"字典项 {item_id} 不存在")
+                raise NotFoundError(msg=t("dict.item_not_found", id=item_id))
 
             # 更新字段
             update_data = item_in.model_dump(exclude_unset=True)
@@ -795,7 +796,7 @@ class DictService:
 
             if not dict_item:
                 logger.warning("字典项不存在，字典项ID: %d", item_id)
-                raise NotFoundError(msg=f"字典项 {item_id} 不存在")
+                raise NotFoundError(msg=t("dict.item_not_found", id=item_id))
 
             await db.delete(dict_item)
             await db.commit()

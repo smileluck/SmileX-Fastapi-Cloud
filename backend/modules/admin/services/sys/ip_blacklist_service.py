@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models.sys.ip_blacklist import SysIpBlacklist
 from core.exception.errors import ConflictError, NotFoundError, RequestError
+from core.i18n import t
 from core.utils.memory_cache import get_memory_cache, CacheNamespace
 from core.security.rate_limit import (
     add_ip_to_redis_blacklist,
@@ -31,7 +32,7 @@ def _validate_ip(ip: str) -> str:
     try:
         return str(ipaddress.ip_address(ip.strip()))
     except (ValueError, AttributeError) as exc:
-        raise RequestError(msg=f"非法 IP 地址: {ip}") from exc
+        raise RequestError(msg=t("ip_blacklist.invalid_ip", ip=ip)) from exc
 
 
 def _calc_remaining_ttl(expire_at: Optional[datetime]) -> Optional[int]:
@@ -70,7 +71,7 @@ class IpBlacklistService:
             await db.execute(select(SysIpBlacklist).where(SysIpBlacklist.ip == ip))
         ).scalar_one_or_none()
         if existing and existing.deleted_at is None:
-            raise ConflictError(msg=f"IP {ip} 已在黑名单中")
+            raise ConflictError(msg=t("ip_blacklist.already_in", ip=ip))
 
         expire_at: Optional[datetime] = None
         ttl_seconds: Optional[int] = None
@@ -121,7 +122,7 @@ class IpBlacklistService:
         )
         entry = result.scalar_one_or_none()
         if not entry or entry.deleted_at is not None:
-            raise NotFoundError(msg=f"黑名单 {entry_id} 不存在")
+            raise NotFoundError(msg=t("ip_blacklist.entry_not_found", id=entry_id))
         return entry
 
     @staticmethod

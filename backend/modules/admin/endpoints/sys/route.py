@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response import ResponseModel, response_base
 from modules.admin.deps.auth.user_manager import current_user
 from database.models.sys.user import SysUser
@@ -31,7 +32,7 @@ route_router = APIRouter(prefix="/route", tags=["系统管理/动态路由"])
 )
 async def get_constant_routes():
     routes = await RouteService.get_constant_routes()
-    return response_base.success(data=routes, msg="获取常量路由成功")
+    return response_base.success(data=routes, msg=t("route.constant_success"))
 
 
 @route_router.get(
@@ -45,7 +46,7 @@ async def get_permissions(
     db: AsyncSession = Depends(get_session),
 ):
     result = await RouteService.get_user_routes(db, user)
-    return response_base.success(data=result, msg="获取用户权限成功")
+    return response_base.success(data=result, msg=t("route.user_permission_success"))
 
 
 @route_router.get(

@@ -22,6 +22,7 @@ from fastapi.responses import ORJSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from core.config import settings
+from core.i18n import t
 from core.security.rate_limit import (
     RateLimitExceeded,
     enforce_ip_limit,
@@ -111,7 +112,7 @@ def _build_429_response(request_id: str, reason: str, retry_after: int) -> ORJSO
 def _build_blocked_response(request_id: str) -> ORJSONResponse:
     body = {
         "code": 429,
-        "msg": "IP 已被加入黑名单，请联系管理员",
+        "msg": t("rate_limit.ip_blocked_contact"),
         "data": None,
         "request_id": request_id,
         "err_code": 10902,

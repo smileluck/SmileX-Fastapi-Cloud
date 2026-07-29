@@ -5,97 +5,114 @@ from dataclasses import Field, dataclass
 from enum import Enum
 from typing import Any, Generic, Optional, TypeVar
 from pydantic import BaseModel
+
+from core.i18n import t
+
+
 class CustomCodeBase(Enum):
-    """自定义状态码基类"""
+    """自定义状态码基类
+
+    成员元组第二位为 i18n key（而非中文文案）。
+    .msg 按当前请求语言懒翻译；.code 为数字状态码。
+    """
     @property
     def code(self) -> int:
         """获取状态码"""
         assert isinstance(self.value[0], int), "状态码必须是整数"
         return self.value[0]
     @property
-    def msg(self) -> str:
-        """获取状态码信息"""
+    def key(self) -> str:
+        """获取 i18n 文案 key"""
         return self.value[1] if len(self.value) > 1 else ""
+    @property
+    def msg(self) -> str:
+        """获取状态码信息（按当前请求语言翻译）"""
+        key = self.key
+        return t(key) if key else ""
+
+
 class CustomResponseCode(CustomCodeBase):
     """自定义响应状态码"""
-    HTTP_200 = (200, "成功")
-    HTTP_400 = (400, "错误")
-    HTTP_401 = (401, "未认证")
-    HTTP_403 = (403, "拒绝访问")
-    HTTP_404 = (404, "找不到资源")
-    HTTP_422 = (422, "参数错误")
-    HTTP_500 = (500, "服务器内部错误")
+    HTTP_200 = (200, "response.http_200")
+    HTTP_400 = (400, "response.http_400")
+    HTTP_401 = (401, "response.http_401")
+    HTTP_403 = (403, "response.http_403")
+    HTTP_404 = (404, "response.http_404")
+    HTTP_422 = (422, "response.http_422")
+    HTTP_500 = (500, "response.http_500")
+
+
 class CustomErrorCode(CustomCodeBase):
-    SUCCESS = (0, "成功")
+    SUCCESS = (0, "common.success")
     """自定义错误状态码"""
     # 用户相关10001-10100
-    USER_NOT_FOUND = (10001, "用户不存在")
-    USER_EXIST = (10002, "用户已存在")
-    USER_NOT_LOGIN = (10003, "用户未登录")
-    USER_CAPTCHA_ERROR = (10004, "验证码错误")
-    USER_NOT_ACTIVE = (10005, "用户未激活")
-    USER_LOGIN_FAILED = (10006, "用户登录失败")
-    INVALID_REFRESH_TOKEN = (10007, "无效的刷新令牌")
-    EXPIRED_REFRESH_TOKEN = (10008, "刷新令牌已过期")
-    REFRESH_TOKEN_FAILED = (10009, "刷新令牌失败")
-    USER_PHONE_FORMAT_ERROR = (10010, "手机号格式错误")
-    USER_SMS_SEND_ERROR = (10011, "短信发送失败")
-    USER_SMS_SEND_TOO_FAST = (10012, "短信发送过于频繁")
-    USER_DISABLED = (10013, "用户已被禁用")
+    USER_NOT_FOUND = (10001, "error.user.not_found")
+    USER_EXIST = (10002, "error.user.exist")
+    USER_NOT_LOGIN = (10003, "error.user.not_login")
+    USER_CAPTCHA_ERROR = (10004, "error.user.captcha_error")
+    USER_NOT_ACTIVE = (10005, "error.user.not_active")
+    USER_LOGIN_FAILED = (10006, "error.user.login_failed")
+    INVALID_REFRESH_TOKEN = (10007, "error.user.invalid_refresh_token")
+    EXPIRED_REFRESH_TOKEN = (10008, "error.user.expired_refresh_token")
+    REFRESH_TOKEN_FAILED = (10009, "error.user.refresh_token_failed")
+    USER_PHONE_FORMAT_ERROR = (10010, "error.user.phone_format_error")
+    USER_SMS_SEND_ERROR = (10011, "error.user.sms_send_error")
+    USER_SMS_SEND_TOO_FAST = (10012, "error.user.sms_send_too_fast")
+    USER_DISABLED = (10013, "error.user.disabled")
     # 设备管理 10101-10200
-    DEVICE_NOT_FOUND = (10101, "设备不存在")
-    DEVICE_BIND_ERROR = (10102, "设备绑定错误")
-    DEVICE_BIND = (10103, "设备已绑定")
-    DEVICE_NOT_PERMISSION = (10104, "设备无权限")
+    DEVICE_NOT_FOUND = (10101, "error.device.not_found")
+    DEVICE_BIND_ERROR = (10102, "error.device.bind_error")
+    DEVICE_BIND = (10103, "error.device.bind")
+    DEVICE_NOT_PERMISSION = (10104, "error.device.not_permission")
     # 聊天管理 10201-10300
-    CHAT_NOT_FOUND = (10201, "聊天不存在")
-    CHAT_EXIST = (10202, "聊天已存在")
-    CHAT_NOT_PERMISSION = (10203, "聊天无权限")
+    CHAT_NOT_FOUND = (10201, "error.chat.not_found")
+    CHAT_EXIST = (10202, "error.chat.exist")
+    CHAT_NOT_PERMISSION = (10203, "error.chat.not_permission")
     # 机器人管理 10301-10400
-    ROBOT_NOT_FOUND = (10301, "机器人不存在")
-    ROBOT_EXIST = (10302, "机器人已存在")
-    ROBOT_NOT_PERMISSION = (10303, "无权限操作机器人")
-    ROBOT_NOT_BIND = (10304, "机器人未绑定")
-    ROBOT_BIND = (10305, "机器人已绑定")
-    ROBOT_STATUS_NOT_FOUND = (10306, "机器人状态信息不存在")
+    ROBOT_NOT_FOUND = (10301, "error.robot.not_found")
+    ROBOT_EXIST = (10302, "error.robot.exist")
+    ROBOT_NOT_PERMISSION = (10303, "error.robot.not_permission")
+    ROBOT_NOT_BIND = (10304, "error.robot.not_bind")
+    ROBOT_BIND = (10305, "error.robot.bind")
+    ROBOT_STATUS_NOT_FOUND = (10306, "error.robot.status_not_found")
     # 紧急联系人管理 10401-10500
-    EMERGENCY_CONTACT_NOT_FOUND = (10401, "紧急联系人不存在或无权限访问")
-    EMERGENCY_CONTACT_EXIST = (10402, "紧急联系人已存在")
-    EMERGENCY_CONTACT_NOT_PERMISSION = (10403, "紧急联系人无权限")
-    EMERGENCY_CONTACT_SAVE_ERROR = (10404, "紧急联系人创建失败")
-    EMERGENCY_CONTACT_UPDATE_ERROR = (10405, "紧急联系人更新失败")
-    EMERGENCY_CONTACT_DELETE_ERROR = (10406, "紧急联系人删除失败")
-    EMERGENCY_CONTACT_PHONE_DUPLICATED = (10407, "紧急联系人手机号已存在")
-    EMERGENCY_CONTACT_LIMIT_REACHED = (10408, "紧急联系人数量已达上限")
+    EMERGENCY_CONTACT_NOT_FOUND = (10401, "error.emergency_contact.not_found")
+    EMERGENCY_CONTACT_EXIST = (10402, "error.emergency_contact.exist")
+    EMERGENCY_CONTACT_NOT_PERMISSION = (10403, "error.emergency_contact.not_permission")
+    EMERGENCY_CONTACT_SAVE_ERROR = (10404, "error.emergency_contact.save_error")
+    EMERGENCY_CONTACT_UPDATE_ERROR = (10405, "error.emergency_contact.update_error")
+    EMERGENCY_CONTACT_DELETE_ERROR = (10406, "error.emergency_contact.delete_error")
+    EMERGENCY_CONTACT_PHONE_DUPLICATED = (10407, "error.emergency_contact.phone_duplicated")
+    EMERGENCY_CONTACT_LIMIT_REACHED = (10408, "error.emergency_contact.limit_reached")
     # 机器人任务 10501-10600
-    ROBOT_TASK_NOT_FOUND = (10501, "任务不存在")
-    ROBOT_TASK_EXIST = (10502, "任务已存在")
-    ROBOT_TASK_NOT_PERMISSION = (10503, "任务无权限")
-    ROBOT_TASK_STATUS_NOT_FOUND = (10504, "任务状态信息不存在")
-    ROBOT_TASK_FAILED = (10505, "任务执行失败")
-    ROBOT_TASK_NETWORK_ERROR = (10506, "任务网络错误")
-    ROBOT_TASK_RUNNING = (10507, "任务正在运行")
-    ROBOT_TASK_COMPLETED = (10508, "任务已完成")
+    ROBOT_TASK_NOT_FOUND = (10501, "error.robot_task.not_found")
+    ROBOT_TASK_EXIST = (10502, "error.robot_task.exist")
+    ROBOT_TASK_NOT_PERMISSION = (10503, "error.robot_task.not_permission")
+    ROBOT_TASK_STATUS_NOT_FOUND = (10504, "error.robot_task.status_not_found")
+    ROBOT_TASK_FAILED = (10505, "error.robot_task.failed")
+    ROBOT_TASK_NETWORK_ERROR = (10506, "error.robot_task.network_error")
+    ROBOT_TASK_RUNNING = (10507, "error.robot_task.running")
+    ROBOT_TASK_COMPLETED = (10508, "error.robot_task.completed")
     # 限流与安全 10901-11000
-    RATE_LIMIT_EXCEEDED = (10901, "请求过于频繁")
-    IP_BLOCKED = (10902, "IP 已被加入黑名单")
-    CAPTCHA_REQUIRED = (10911, "请完成滑块验证")
-    CAPTCHA_INVALID = (10912, "滑块验证码无效或已过期")
-    CAPTCHA_VERIFY_FAILED = (10913, "滑块验证失败，请重试")
+    RATE_LIMIT_EXCEEDED = (10901, "error.rate_limit_exceeded")
+    IP_BLOCKED = (10902, "error.ip_blocked")
+    CAPTCHA_REQUIRED = (10911, "error.captcha_required")
+    CAPTCHA_INVALID = (10912, "error.captcha_invalid")
+    CAPTCHA_VERIFY_FAILED = (10913, "error.captcha_verify_failed")
     # 通知管理 10601-10700
-    NOTICE_NOT_FOUND = (10601, "通知不存在")
-    NOTICE_ALREADY_PUBLISHED = (10602, "通知已发布，不可编辑")
+    NOTICE_NOT_FOUND = (10601, "error.notice.not_found")
+    NOTICE_ALREADY_PUBLISHED = (10602, "error.notice.already_published")
     # 开放API / 商户管理 11021-11040
-    OPEN_API_MISSING_HEADER = (11021, "缺少必要的签名请求头")
-    OPEN_API_TIMESTAMP_EXPIRED = (11022, "请求时间戳超出允许范围")
-    OPEN_API_INVALID_NONCE = (11023, "Nonce非法")
-    OPEN_API_NONCE_REPLAY = (11024, "请求不可重放(Nonce已被使用)")
-    OPEN_API_MERCHANT_NOT_FOUND = (11025, "AppId不存在")
-    OPEN_API_MERCHANT_DISABLED = (11026, "商户已禁用")
-    OPEN_API_SIGNATURE_INVALID = (11027, "签名校验失败")
-    MERCHANT_NOT_FOUND = (11028, "商户不存在")
-    MERCHANT_CODE_EXIST = (11029, "商户编码已存在")
-    MERCHANT_APP_ID_CONFLICT = (11030, "AppId冲突，请重试")
+    OPEN_API_MISSING_HEADER = (11021, "error.open_api.missing_header")
+    OPEN_API_TIMESTAMP_EXPIRED = (11022, "error.open_api.timestamp_expired")
+    OPEN_API_INVALID_NONCE = (11023, "error.open_api.invalid_nonce")
+    OPEN_API_NONCE_REPLAY = (11024, "error.open_api.nonce_replay")
+    OPEN_API_MERCHANT_NOT_FOUND = (11025, "error.open_api.merchant_not_found")
+    OPEN_API_MERCHANT_DISABLED = (11026, "error.open_api.merchant_disabled")
+    OPEN_API_SIGNATURE_INVALID = (11027, "error.open_api.signature_invalid")
+    MERCHANT_NOT_FOUND = (11028, "error.merchant.not_found")
+    MERCHANT_CODE_EXIST = (11029, "error.merchant.code_exist")
+    MERCHANT_APP_ID_CONFLICT = (11030, "error.merchant.app_id_conflict")
 @dataclass
 class CustomResponse:
     """

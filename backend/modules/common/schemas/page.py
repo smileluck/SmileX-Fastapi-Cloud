@@ -12,6 +12,7 @@ from typing import TypeVar, List, Optional, Tuple, Callable, Type, Any, Union, D
 from pydantic import Field, BaseModel
 from sqlalchemy.sql import func
 from core.response import ResponsePageModel, response_base, ResponsePageDataModel
+from core.i18n import t
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi import Query
 from database.models.base import Base
@@ -28,7 +29,7 @@ def _parse_page(v):
     try:
         return int(v)
     except (TypeError, ValueError):
-        raise ValueError("页码必须是有效整数")
+        raise ValueError(t("validation.page_must_be_int"))
 
 
 def _parse_page_size(v):
@@ -39,7 +40,7 @@ def _parse_page_size(v):
     try:
         return int(v)
     except (TypeError, ValueError):
-        raise ValueError("每页条数必须是有效整数")
+        raise ValueError(t("validation.page_size_must_be_int"))
 
 
 class PageRequest(BaseReqEntity):
@@ -55,15 +56,15 @@ class PageRequest(BaseReqEntity):
     @field_validator("page")
     def page_must_be_positive(cls, v):
         if v < 1:
-            raise ValueError("页码必须为正整数")
+            raise ValueError(t("validation.page_must_be_positive"))
         return v
 
     @field_validator("page_size")
     def page_size_must_be_positive(cls, v):
         if v < 1:
-            raise ValueError("每页条数必须为正整数")
+            raise ValueError(t("validation.page_size_must_be_positive"))
         if v > 200:
-            raise ValueError("每页条数最多为 200 条")
+            raise ValueError(t("validation.page_size_max"))
         return v
 
 

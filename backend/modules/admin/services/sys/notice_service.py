@@ -18,6 +18,7 @@ from database.models.sys.notice import SysNotice, NoticeType, NoticeTargetType, 
 from database.models.sys.notice_read import SysNoticeRead
 from database.models.sys.user import SysUser
 from core.exception.errors import NotFoundError, ForbiddenError, ConflictError
+from core.i18n import t
 from core.websocket.manager import ConnectionManager
 from database.utils.timezone import timezone
 from modules.admin.schemas.sys.notice import (
@@ -110,7 +111,7 @@ class NoticeService:
         )
         notice = result.scalar_one_or_none()
         if not notice:
-            raise NotFoundError(msg=f"通知 {notice_id} 不存在")
+            raise NotFoundError(msg=t("notice.not_found", id=notice_id))
         return notice
 
     @staticmethod
@@ -159,7 +160,7 @@ class NoticeService:
         notice = await NoticeService.get_notice(db, notice_id)
 
         if notice.status:
-            raise ForbiddenError(msg="通知已发布，不可编辑")
+            raise ForbiddenError(msg=t("notice.already_published"))
 
         update_dict = update_data.model_dump(exclude_unset=True)
 
@@ -169,9 +170,9 @@ class NoticeService:
         user_ids = update_dict.get("target_user_ids", notice.target_user_ids)
 
         if target_type == NoticeTargetType.ROLE and not role_ids:
-            raise ConflictError(msg="按角色推送时必须指定目标角色ID列表")
+            raise ConflictError(msg=t("notice.role_target_required"))
         if target_type == NoticeTargetType.USER and not user_ids:
-            raise ConflictError(msg="按用户推送时必须指定目标用户ID列表")
+            raise ConflictError(msg=t("notice.user_target_required"))
 
         for key, value in update_dict.items():
             if hasattr(notice, key) and value is not None:
@@ -242,7 +243,7 @@ class NoticeService:
         notice = await NoticeService.get_notice(db, notice_id)
 
         if notice.status:
-            raise ConflictError(msg="通知已是发布状态")
+            raise ConflictError(msg=t("notice.already_published_status"))
 
         notice.status = True
         notice.published_at = timezone.now()

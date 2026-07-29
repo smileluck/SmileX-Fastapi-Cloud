@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response.response_schema import (
     ResponseModel,
     ResponsePageModel,
@@ -233,7 +234,7 @@ async def create_config(
         response_data = SysConfigResponseData.model_validate(config)
 
         logger.info("创建配置接口成功，配置ID: %d", config.id)
-        return response_base.success(data=response_data, msg="创建成功")
+        return response_base.success(data=response_data, msg=t("common.create_success"))
 
     except Exception as e:
         logger.error("创建配置接口失败: %s", str(e), exc_info=True)
@@ -261,7 +262,7 @@ async def update_config(
         response_data = SysConfigResponseData.model_validate(config)
 
         logger.info("更新配置接口成功，配置ID: %d", config_id)
-        return response_base.success(data=response_data, msg="更新成功")
+        return response_base.success(data=response_data, msg=t("common.update_success"))
 
     except Exception as e:
         logger.error("更新配置接口失败: %s", str(e), exc_info=True)
@@ -287,7 +288,7 @@ async def batch_update_configs(
         )
 
         logger.info("批量更新配置接口成功，更新数量: %d", updated_count)
-        return response_base.success(msg=f"成功更新 {updated_count} 条记录")
+        return response_base.success(msg=t("common.batch_update_count", count=updated_count))
 
     except Exception as e:
         logger.error("批量更新配置接口失败: %s", str(e), exc_info=True)
@@ -313,7 +314,7 @@ async def reset_configs(
         )
 
         logger.info("重置配置接口成功，重置数量: %d", reset_count)
-        return response_base.success(msg=f"成功重置 {reset_count} 条记录")
+        return response_base.success(msg=t("config.reset_count", count=reset_count))
 
     except Exception as e:
         logger.error("重置配置接口失败: %s", str(e), exc_info=True)
@@ -339,7 +340,7 @@ async def batch_delete_configs(
         )
 
         logger.info("批量删除配置接口成功，共删除 %d 个配置", delete_count)
-        return response_base.success(msg=f"批量删除成功，共删除 {delete_count} 个配置")
+        return response_base.success(msg=t("config.batch_delete_success", count=delete_count))
 
     except Exception as e:
         logger.error("批量删除配置接口失败: %s", str(e), exc_info=True)
@@ -365,7 +366,7 @@ async def delete_config(
         )
 
         logger.info("删除配置接口成功，配置ID: %d", config_id)
-        return response_base.success(msg="删除成功")
+        return response_base.success(msg=t("common.delete_success"))
 
     except Exception as e:
         logger.error("删除配置接口失败: %s", str(e), exc_info=True)

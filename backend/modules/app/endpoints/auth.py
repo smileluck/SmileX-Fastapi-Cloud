@@ -13,6 +13,7 @@ from modules.app.deps.auth.user_manager import (
     update_user_info,
 )
 from core.security.oauth.jwt import Token, JWTAuthManager, oauth2_scheme
+from core.i18n import t
 from core.response import (
     ResponseModel,
     response_base,
@@ -83,7 +84,7 @@ async def login(
     tokens = await user_manager.login_by_phone(phone=phone, code=code)
     return response_base.success(
         data=tokens,
-        msg="登录成功",
+        msg=t("auth.login_success"),
     )
 
 
@@ -116,7 +117,7 @@ async def push(
     client_id = client_id_model.client_id
     # 绑定客户端ID到用户
     await user_manager.bind_client_id(user.id, client_id)
-    return response_base.success(msg="客户端ID绑定成功", data={"client_id": client_id})
+    return response_base.success(msg=t("auth.client_id_bind_success"), data={"client_id": client_id})
 
 
 # # 注册路由（可选，根据需求决定是否启用）
@@ -198,7 +199,7 @@ async def update_push_setting(
     """
     # 调用 user_manager 更新推送设置
     await user_manager.update_push_setting(user.id, push_setting)
-    return response_base.success(msg="推送设置已更新", data=push_setting)
+    return response_base.success(msg=t("auth.push_setting_updated"), data=push_setting)
 
 
 @router.put(
@@ -218,9 +219,9 @@ async def update_current_user_info(
         update_data = user_update.model_dump(exclude_unset=True)
         # 调用你的 user_manager 更新逻辑
         update_info = await update_user_info(db, user_id, update_data)
-        return response_base.success(msg="用户信息更新成功", data=update_info)
+        return response_base.success(msg=t("auth.user_info_update_success"), data=update_info)
     except Exception as e:
-        return ResponseModel(code=500, msg=f"更新用户信息失败: {str(e)}")
+        return ResponseModel(code=500, msg=t("auth.user_info_update_failed", error=str(e)))
 
 
 # 刷新令牌路由
@@ -248,7 +249,7 @@ async def refresh_token(
     tokens = await user_manager.refresh_token(refresh_token)
     return response_base.success(
         data=tokens,
-        msg="令牌刷新成功",
+        msg=t("auth.token_refresh_success"),
     )
 
 
@@ -286,7 +287,7 @@ async def get_sms_code(
         extra_suffix=sms_code_model.phone,
     )
     await user_manager.get_verification_code(phone=sms_code_model.phone)
-    return response_base.success(msg="短信验证码发送成功")
+    return response_base.success(msg=t("auth.sms_sent_success"))
 
 
 @router.post(
@@ -309,4 +310,4 @@ async def logout(
     session_id = payload.get("session_id")
     if session_id:
         await user_manager.logout(user.id, session_id)
-    return response_base.success(msg="登出成功")
+    return response_base.success(msg=t("auth.logout_success"))

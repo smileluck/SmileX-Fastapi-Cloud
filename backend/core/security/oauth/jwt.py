@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Dict, Any, TypeVar
+from typing import Optional, Dict, Any
 import uuid
 import jwt
 import logging
@@ -10,6 +10,7 @@ from fastapi import HTTPException, status
 from jwt.exceptions import InvalidTokenError, ExpiredSignatureError, DecodeError
 from pydantic import BaseModel
 from core.config import settings
+from core.i18n import t
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import Field
 
@@ -35,10 +36,6 @@ class Token(BaseModel):
     token_type: str = Field(..., description="令牌类型")
     expires_in: int = Field(..., description="令牌过期时间（秒）")
     refresh_token: str = Field(..., description="刷新令牌")
-
-
-# 定义用户模型类型变量
-t = TypeVar("t")
 
 
 class JWTAuthManager:
@@ -88,7 +85,7 @@ class JWTAuthManager:
         except Exception as e:
             logger.exception("创建访问令牌异常: %s", str(e))
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="令牌创建失败"
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=t("jwt.token_create_failed")
             )
 
     @classmethod
@@ -136,7 +133,7 @@ class JWTAuthManager:
             logger.exception("创建刷新令牌异常: %s", str(e))
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="刷新令牌创建失败",
+                detail=t("jwt.refresh_token_create_failed"),
             )
 
     @classmethod
@@ -171,26 +168,26 @@ class JWTAuthManager:
         except ExpiredSignatureError:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="令牌已过期",
+                detail=t("jwt.token_expired"),
                 headers={"WWW-Authenticate": token_type},
             )
         except DecodeError:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="令牌格式错误",
+                detail=t("jwt.token_format_error"),
                 headers={"WWW-Authenticate": token_type},
             )
         except InvalidTokenError:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="无效的令牌",
+                detail=t("jwt.invalid_token"),
                 headers={"WWW-Authenticate": token_type},
             )
         except Exception as e:
             logger.exception("令牌解码异常: %s", str(e))
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="令牌验证失败",
+                detail=t("jwt.token_verify_failed"),
                 headers={"WWW-Authenticate": token_type},
             )
 

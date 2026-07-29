@@ -9,6 +9,7 @@ from typing import Optional, List
 from pydantic import Field, ConfigDict, field_validator
 from datetime import datetime
 
+from core.i18n import t
 from modules.common.schemas.base import BaseRespEntity, BaseEntity, BoolField
 from modules.common.schemas.page import PageRequest
 from core.security.sanitize import sanitize_rich_text
@@ -43,7 +44,7 @@ class SysNoticeCreate(BaseEntity):
     def validate_type(cls, v):
         allowed = {"announcement", "system", "operation", "approval"}
         if v not in allowed:
-            raise ValueError(f"通知类型必须是以下之一: {allowed}")
+            raise ValueError(t("notice.type_must_be_one_of", allowed=allowed))
         return v
 
     @field_validator("content")
@@ -56,7 +57,7 @@ class SysNoticeCreate(BaseEntity):
     def validate_target_type(cls, v):
         allowed = {"all", "role", "user"}
         if v not in allowed:
-            raise ValueError(f"推送范围必须是以下之一: {allowed}")
+            raise ValueError(t("notice.scope_must_be_one_of", allowed=allowed))
         return v
 
     @field_validator("priority")
@@ -64,7 +65,7 @@ class SysNoticeCreate(BaseEntity):
     def validate_priority(cls, v):
         allowed = {"low", "normal", "high", "urgent"}
         if v not in allowed:
-            raise ValueError(f"优先级必须是以下之一: {allowed}")
+            raise ValueError(t("notice.priority_must_be_one_of", allowed=allowed))
         return v
 
     @field_validator("target_role_ids")
@@ -72,7 +73,7 @@ class SysNoticeCreate(BaseEntity):
     def validate_target_role_ids(cls, v, info):
         values = info.data
         if values.get("target_type") == "role" and not v:
-            raise ValueError("按角色推送时必须指定目标角色ID列表")
+            raise ValueError(t("notice.role_target_required"))
         return v
 
     @field_validator("target_user_ids")
@@ -80,7 +81,7 @@ class SysNoticeCreate(BaseEntity):
     def validate_target_user_ids(cls, v, info):
         values = info.data
         if values.get("target_type") == "user" and not v:
-            raise ValueError("按用户推送时必须指定目标用户ID列表")
+            raise ValueError(t("notice.user_target_required"))
         return v
 
 
@@ -104,7 +105,7 @@ class SysNoticeUpdate(BaseEntity):
             return v
         allowed = {"announcement", "system", "operation", "approval"}
         if v not in allowed:
-            raise ValueError(f"通知类型必须是以下之一: {allowed}")
+            raise ValueError(t("notice.type_must_be_one_of", allowed=allowed))
         return v
 
     @field_validator("content")
@@ -121,7 +122,7 @@ class SysNoticeUpdate(BaseEntity):
             return v
         allowed = {"all", "role", "user"}
         if v not in allowed:
-            raise ValueError(f"推送范围必须是以下之一: {allowed}")
+            raise ValueError(t("notice.scope_must_be_one_of", allowed=allowed))
         return v
 
     @field_validator("priority")
@@ -131,7 +132,7 @@ class SysNoticeUpdate(BaseEntity):
             return v
         allowed = {"low", "normal", "high", "urgent"}
         if v not in allowed:
-            raise ValueError(f"优先级必须是以下之一: {allowed}")
+            raise ValueError(t("notice.priority_must_be_one_of", allowed=allowed))
         return v
 
 

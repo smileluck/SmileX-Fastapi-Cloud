@@ -11,6 +11,7 @@ from database.models.sys.user import SysUser
 from core.config import settings
 from core.redis import get_redis_util
 from core.exception.errors import NotFoundError, ConflictError, ForbiddenError
+from core.i18n import t
 from plugins.multi_tenant.schemas.tenant import (
     TenantCreate,
     TenantUpdate,
@@ -57,7 +58,7 @@ class TenantService:
         result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
         tenant = result.scalar_one_or_none()
         if not tenant:
-            raise NotFoundError(msg=f"租户 {tenant_id} 不存在")
+            raise NotFoundError(msg=t("tenant.not_found", id=tenant_id))
         return tenant
 
     @staticmethod
@@ -70,12 +71,12 @@ class TenantService:
     async def create_tenant(db: AsyncSession, tenant_create: TenantCreate) -> Tenant:
         """创建租户"""
         if await TenantService.get_tenant_by_code(db, tenant_create.code):
-            raise ConflictError(msg="租户编码已存在")
+            raise ConflictError(msg=t("tenant.code_exist"))
 
         # 检查名称唯一
         result = await db.execute(select(Tenant).where(Tenant.name == tenant_create.name))
         if result.scalar_one_or_none():
-            raise ConflictError(msg="租户名称已存在")
+            raise ConflictError(msg=t("tenant.name_exist"))
 
         # 序列化 jwt_config 到 config JSON
         config_str = None
@@ -165,7 +166,7 @@ class TenantService:
         # 检查用户是否存在
         result = await db.execute(select(SysUser).where(SysUser.id == user_id))
         if not result.scalar_one_or_none():
-            raise NotFoundError(msg=f"用户 {user_id} 不存在")
+            raise NotFoundError(msg=t("tenant.user_not_found", id=user_id))
 
         # 检查是否已分配
         result = await db.execute(
@@ -177,7 +178,7 @@ class TenantService:
             )
         )
         if result.first():
-            raise ConflictError(msg="用户已在该租户中")
+            raise ConflictError(msg=t("tenant.user_already_in"))
 
         # 检查用户数限制
         count_result = await db.execute(
@@ -187,7 +188,7 @@ class TenantService:
         )
         current_count = len(count_result.all())
         if current_count >= tenant.max_users:
-            raise ForbiddenError(msg=f"租户用户数已达上限 ({tenant.max_users})")
+            raise ForbiddenError(msg=t("tenant.user_limit_reached", max=tenant.max_users))
 
         await db.execute(
             sys_user_tenant_association.insert().values(
@@ -216,7 +217,7 @@ class TenantService:
         )
         row = result.first()
         if not row:
-            raise NotFoundError(msg="用户不在该租户中")
+            raise NotFoundError(msg=t("tenant.user_not_in"))
         if row.role == "owner":
             # 检查是否还有其他 owner
             count_result = await db.execute(
@@ -229,7 +230,7 @@ class TenantService:
             )
             owners = count_result.all()
             if len(owners) <= 1:
-                raise ForbiddenError(msg="不能移除最后一个 owner")
+                raise ForbiddenError(msg=t("tenant.cannot_remove_last_owner"))
 
         await db.execute(
             sys_user_tenant_association.delete().where(

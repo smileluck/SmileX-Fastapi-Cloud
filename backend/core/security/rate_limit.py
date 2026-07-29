@@ -15,6 +15,7 @@ from typing import Optional
 from fastapi import HTTPException, Request
 
 from core.config import settings
+from core.i18n import t
 from core.redis import RedisPool
 from core.security.rate_limit_config import RateLimitConfigProvider
 from core.utils.ip_utils import get_real_client_ip
@@ -58,7 +59,7 @@ async def check_rate_limit(
         logger.warning("限流触发 key=%s count=%s ttl=%s", key, current, ttl)
         raise HTTPException(
             status_code=429,
-            detail=f"{block_message}，请在 {max(ttl, 1)} 秒后重试",
+            detail=t("rate_limit.blocked_retry", message=block_message, ttl=max(ttl, 1)),
         )
 
 
@@ -77,7 +78,7 @@ async def limit_by_ip(
         key=key,
         limit=limit,
         window_seconds=window_seconds,
-        block_message="请求过于频繁",
+        block_message=t("error.rate_limit_exceeded"),
     )
 
 
@@ -181,7 +182,7 @@ async def _incr_window(key: str, limit: int, window_seconds: int, dim: str) -> N
     if current > limit:
         ttl = await redis_client.ttl(key)
         logger.warning("middleware 限流 dim=%s key=%s count=%s ttl=%s", dim, key, current, ttl)
-        raise RateLimitExceeded(reason=f"{dim} 维度请求过于频繁", retry_after=ttl)
+        raise RateLimitExceeded(reason=t("rate_limit.dim_exceeded", dim=dim), retry_after=ttl)
 
 
 async def enforce_ip_limit(ip: str, limit: int, window_seconds: int = 60) -> None:

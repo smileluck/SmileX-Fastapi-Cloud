@@ -16,6 +16,7 @@ from database.models.sys.menu import SysMenu, MenuType
 from database.models.sys.user import SysUser
 from database.models.sys.role import SysRole
 from core.exception.errors import NotFoundError, ConflictError, ForbiddenError
+from core.i18n import t
 from core.utils.memory_cache import get_memory_cache, CacheNamespace
 from modules.admin.schemas.sys.menu import (
     SysMenuCreate,
@@ -255,7 +256,7 @@ class MenuService:
 
         if not menu:
             logger.warning("菜单不存在，菜单ID: %s", menu_id)
-            raise NotFoundError(msg=f"菜单 {menu_id} 不存在")
+            raise NotFoundError(msg=t("menu.not_found", id=menu_id))
 
         logger.debug("获取菜单信息成功，菜单名称: %s", menu.name)
         return menu
@@ -292,17 +293,17 @@ class MenuService:
             parent_menu = result.scalar_one_or_none()
             if not parent_menu:
                 logger.warning("创建菜单失败，父菜单不存在: %s", menu_create.parent_id)
-                raise NotFoundError(msg=f"父菜单 {menu_create.parent_id} 不存在")
+                raise NotFoundError(msg=t("menu.parent_not_found", id=menu_create.parent_id))
 
             # 按钮类型菜单的上级仅允许为菜单类型
             if menu_create.type == MenuType.BUTTON and parent_menu.type != MenuType.MENU:
                 logger.warning("创建菜单失败，按钮类型菜单的上级仅允许为菜单类型: parent_type=%s", parent_menu.type)
-                raise ConflictError(msg="按钮类型菜单的上级仅允许为菜单类型")
+                raise ConflictError(msg=t("menu.button_parent_must_be_menu"))
 
         # 按钮类型菜单必须指定上级菜单
         if menu_create.type == MenuType.BUTTON and not menu_create.parent_id:
             logger.warning("创建菜单失败，按钮类型菜单必须指定上级菜单")
-            raise ConflictError(msg="按钮类型菜单必须指定上级菜单")
+            raise ConflictError(msg=t("menu.button_must_have_parent"))
 
         # 创建菜单对象
         menu = SysMenu(
@@ -360,7 +361,7 @@ class MenuService:
         # 检查是否为系统内置菜单
         if menu.is_system and not is_superuser:
             logger.warning("更新菜单失败，不能修改系统内置菜单，菜单ID: %s", menu_id)
-            raise ForbiddenError(msg="不能修改系统内置菜单")
+            raise ForbiddenError(msg=t("menu.cannot_modify_builtin"))
 
         # 检查父菜单
         # 确定最终的菜单类型和父ID（优先使用更新值，否则用原值）
@@ -370,13 +371,13 @@ class MenuService:
         # 按钮类型菜单必须指定上级菜单
         if final_type == MenuType.BUTTON and not final_parent_id:
             logger.warning("更新菜单失败，按钮类型菜单必须指定上级菜单")
-            raise ConflictError(msg="按钮类型菜单必须指定上级菜单")
+            raise ConflictError(msg=t("menu.button_must_have_parent"))
 
         if menu_update.parent_id is not None:
             # 不能将自己设置为父菜单
             if menu_update.parent_id == menu_id:
                 logger.warning("更新菜单失败，不能将自己设置为父菜单: %s", menu_id)
-                raise ConflictError(msg="不能将自己设置为父菜单")
+                raise ConflictError(msg=t("menu.cannot_set_self_as_parent"))
 
             # 检查父菜单是否存在
             if menu_update.parent_id:
@@ -394,12 +395,12 @@ class MenuService:
                     logger.warning(
                         "更新菜单失败，父菜单不存在: %s", menu_update.parent_id,
                     )
-                    raise NotFoundError(msg=f"父菜单 {menu_update.parent_id} 不存在")
+                    raise NotFoundError(msg=t("menu.parent_not_found", id=menu_update.parent_id))
 
                 # 按钮类型菜单的上级仅允许为菜单类型
                 if final_type == MenuType.BUTTON and parent_menu.type != MenuType.MENU:
                     logger.warning("更新菜单失败，按钮类型菜单的上级仅允许为菜单类型: parent_type=%s", parent_menu.type)
-                    raise ConflictError(msg="按钮类型菜单的上级仅允许为菜单类型")
+                    raise ConflictError(msg=t("menu.button_parent_must_be_menu"))
 
                 # 检查循环引用：向上遍历目标父菜单的祖先链，确保当前菜单不在其中
                 ancestor_id = menu_update.parent_id
@@ -407,7 +408,7 @@ class MenuService:
                 while ancestor_id and ancestor_id not in checked:
                     if ancestor_id == menu_id:
                         logger.warning("更新菜单失败，循环引用: 菜单 %s 的后代不能作为父菜单", menu_id)
-                        raise ConflictError(msg="不能将自己的子菜单设置为父菜单")
+                        raise ConflictError(msg=t("menu.cannot_set_child_as_parent"))
                     checked.add(ancestor_id)
                     anc_result = await db.execute(
                         select(SysMenu.parent_id).where(SysMenu.id == ancestor_id)
@@ -481,7 +482,7 @@ class MenuService:
         # 检查是否为系统内置菜单
         if menu.is_system and not is_superuser:
             logger.warning("删除菜单失败，不能删除系统内置菜单，菜单ID: %s", menu_id)
-            raise ForbiddenError(msg="不能删除系统内置菜单")
+            raise ForbiddenError(msg=t("menu.cannot_delete_builtin"))
 
         await db.delete(menu)
         await db.commit()

@@ -12,6 +12,7 @@ from typing import List, Optional, Tuple
 
 from database.models.sys.dept import SysDept
 from core.exception.errors import NotFoundError, ConflictError, ValidationError
+from core.i18n import t
 from core.utils.memory_cache import get_memory_cache, CacheNamespace
 from modules.admin.schemas.sys.dept import (
     SysDeptCreate,
@@ -136,7 +137,7 @@ class DeptService:
         dept = result.scalar_one_or_none()
         if not dept:
             logger.warning("部门不存在，部门ID: %s", dept_id)
-            raise NotFoundError(msg=f"部门 {dept_id} 不存在")
+            raise NotFoundError(msg=t("dept.not_found", id=dept_id))
         return dept
 
     @staticmethod
@@ -148,7 +149,7 @@ class DeptService:
                 select(SysDept).where(SysDept.code == dept_create.code)
             )
             if existing.scalar_one_or_none():
-                raise ConflictError(msg="部门编码已存在")
+                raise ConflictError(msg=t("dept.code_exist"))
 
         if dept_create.parent_id:
             await DeptService.get_dept(db, dept_create.parent_id)
@@ -177,7 +178,7 @@ class DeptService:
         dept = await DeptService.get_dept(db, dept_id)
 
         if dept_update.parent_id is not None and dept_update.parent_id == dept_id:
-            raise ValidationError(msg="不能将自身的父部门设为自己")
+            raise ValidationError(msg=t("dept.cannot_set_self_parent"))
 
         if dept_update.code is not None and dept_update.code != dept.code:
             existing = await db.execute(
@@ -186,7 +187,7 @@ class DeptService:
                 )
             )
             if existing.scalar_one_or_none():
-                raise ConflictError(msg="部门编码已存在")
+                raise ConflictError(msg=t("dept.code_exist"))
 
         update_data = dept_update.model_dump(exclude_unset=True)
         for key, value in update_data.items():
@@ -210,14 +211,14 @@ class DeptService:
             select(SysDept.id).where(SysDept.parent_id == dept_id).limit(1)
         )
         if children_result.scalar_one_or_none() is not None:
-            raise ValidationError(msg="存在子部门，不能删除")
+            raise ValidationError(msg=t("dept.has_children"))
 
         from database.models.sys.user import SysUser
         users_result = await db.execute(
             select(SysUser.id).where(SysUser.dept_id == dept_id).limit(1)
         )
         if users_result.scalar_one_or_none() is not None:
-            raise ValidationError(msg="部门下存在用户，不能删除")
+            raise ValidationError(msg=t("dept.has_users"))
 
         await db.delete(dept)
         await db.commit()

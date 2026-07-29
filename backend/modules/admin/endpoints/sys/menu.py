@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response.response_schema import (
     ResponseModel,
     ResponsePageModel,
@@ -202,7 +203,7 @@ async def create_menu(
     menu_response = SysMenuResponseData.model_validate(menu)
 
     logger.info(f"创建菜单成功，菜单ID: {menu.id}")
-    return ResponseModel(data=menu_response, msg="创建菜单成功")
+    return ResponseModel(data=menu_response, msg=t("menu.create_success"))
 
 
 @menu_router.put("/{menu_id}", response_model=ResponseModel[SysMenuResponseData], dependencies=[Depends(require_permission("sys:menu:edit"))])
@@ -223,7 +224,7 @@ async def update_menu(
     menu_response = SysMenuResponseData.model_validate(menu)
 
     logger.info(f"更新菜单成功，菜单ID: {menu_id}")
-    return ResponseModel(data=menu_response, msg="更新菜单成功")
+    return ResponseModel(data=menu_response, msg=t("menu.update_success"))
 
 
 @menu_router.delete("/batch/delete", response_model=ResponseModel, dependencies=[Depends(require_permission("sys:menu:delete"))])
@@ -243,7 +244,7 @@ async def batch_delete_menus(
 
     logger.info(f"批量删除菜单成功，共删除 {delete_count} 个菜单")
     return ResponseModel(
-        msg=f"批量删除成功，共删除 {delete_count} 个菜单",
+        msg=t("menu.batch_delete_success", count=delete_count),
         data={"delete_count": delete_count},
     )
 
@@ -267,10 +268,10 @@ async def batch_update_menus_status(
         db, batch_update.menu_ids, batch_update.status, is_superuser=user.is_superuser
     )
 
-    status_text = "启用" if batch_update.status else "禁用"
+    status_text = t("common.enable") if batch_update.status else t("common.disable")
     logger.info(f"批量更新菜单状态成功，共 {update_count} 个菜单被{status_text}")
     return ResponseModel(
-        msg=f"批量{status_text}成功，共 {update_count} 个菜单",
+        msg=t("menu.batch_status_success", action=status_text, count=update_count),
         data={"update_count": update_count},
     )
 
@@ -291,4 +292,4 @@ async def delete_menu(
     await MenuService.delete_menu(db, menu_id, is_superuser=user.is_superuser)
 
     logger.info(f"删除菜单成功，菜单ID: {menu_id}")
-    return ResponseModel(msg="删除菜单成功")
+    return ResponseModel(msg=t("menu.delete_success"))

@@ -7,6 +7,7 @@ from sqlalchemy import select, and_, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.exception.errors import NotFoundError
+from core.i18n import t
 from database.models.sys.task_log import SysScheduledTaskLog
 from modules.scheduler.schemas.task_log import TaskLogQueryParams
 
@@ -57,7 +58,7 @@ class TaskLogService:
         result = await db.execute(stmt)
         log = result.scalar_one_or_none()
         if not log:
-            raise NotFoundError(msg=f"任务日志 {log_id} 不存在")
+            raise NotFoundError(msg=t("scheduler.log_not_found", id=log_id))
         return log
 
     @staticmethod

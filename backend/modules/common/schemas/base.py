@@ -10,6 +10,8 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from typing import ClassVar, Type, TypeVar, Optional, Annotated, Any
 
+from core.i18n import t
+
 T = TypeVar("T")
 
 
@@ -71,7 +73,7 @@ class BaseRespEntity(BaseEntity):
     @field_serializer("id", check_fields=False)
     def serialize_id_output(self, value: int):
         if isinstance(value, int) and value >= self.JS_MAX_SAFE_INTEGER:
-            raise ValueError(f"ID {value} 超出JavaScript安全整数范围，请运行迁移修复")
+            raise ValueError(t("validation.id_js_safe", value=value))
         return value
 
 
@@ -109,7 +111,7 @@ def parse_bool(value):
     if isinstance(value, bool):
         return value
 
-    raise ValueError(f"非法值: {value}，只能是 1/true 或 2/false 或为空")
+    raise ValueError(t("validation.status_invalid_value", value=value))
 
 
 BoolField = Annotated[Optional[bool], BeforeValidator(parse_bool)]
@@ -123,7 +125,7 @@ def parse_optional_int(value):
     try:
         return int(value)
     except (TypeError, ValueError):
-        raise ValueError("请输入有效的整数")
+        raise ValueError(t("common.invalid_integer"))
 
 
 OptionalIntField = Annotated[Optional[int], BeforeValidator(parse_optional_int)]

@@ -5,6 +5,7 @@ from typing import Optional, List, Union
 from pydantic import Field, ConfigDict, field_validator, model_validator
 from datetime import datetime
 import re
+from core.i18n import t
 from modules.common.schemas.base import BaseRespEntity, BaseEntity, BoolField
 from modules.common.schemas.page import PageRequest
 
@@ -15,7 +16,7 @@ PASSWORD_PATTERN = re.compile(r"^(?=.*[A-Za-z])(?=.*\d)\w{6,20}$")
 def validate_password_complexity(value: str) -> str:
     """校验密码复杂度：6-20 位，且必须同时包含字母和数字"""
     if not PASSWORD_PATTERN.match(value or ""):
-        raise ValueError("密码需6-20位，且至少包含字母和数字")
+        raise ValueError(t("validation.password_complexity"))
     return value
 
 
@@ -75,7 +76,7 @@ class SysUserCreate(BaseEntity):
         if v:
             email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
             if not re.match(email_pattern, v):
-                raise ValueError("邮箱格式不正确")
+                raise ValueError(t("validation.email_format"))
         return v
 
     @field_validator("phone")
@@ -87,7 +88,7 @@ class SysUserCreate(BaseEntity):
         if v:
             phone_pattern = r"^1[3-9]\d{9}$"
             if not re.match(phone_pattern, v):
-                raise ValueError("手机号格式不正确")
+                raise ValueError(t("validation.phone_format"))
         return v
 
     @field_validator("password")
@@ -123,7 +124,7 @@ class SysUserUpdate(BaseEntity):
         if v:
             email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
             if not re.match(email_pattern, v):
-                raise ValueError("邮箱格式不正确")
+                raise ValueError(t("validation.email_format"))
         return v
 
     @field_validator("phone")
@@ -135,7 +136,7 @@ class SysUserUpdate(BaseEntity):
         if v:
             phone_pattern = r"^1[3-9]\d{9}$"
             if not re.match(phone_pattern, v):
-                raise ValueError("手机号格式不正确")
+                raise ValueError(t("validation.phone_format"))
         return v
 
 

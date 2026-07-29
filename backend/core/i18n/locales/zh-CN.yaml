@@ -1,0 +1,413 @@
+# 后端响应文案中文目录（唯一真源）
+# 命名空间约定：
+#   response.*  对应 CustomResponseCode
+#   error.*     对应 CustomErrorCode（按领域分组）+ 异常处理器兜底
+#   pydantic.*  对应 PYDANTIC_ERROR_MSG_MAP
+#   common.*    跨模块通用成功 / 批量操作模板
+#   validation.* Pydantic 校验器 ValueError 文案
+#   <模块>.*    各业务模块专属文案
+# 动态字段用 {name} 命名占位符。en-US.yaml 的 key 必须与本文件 1:1 对齐。
+
+common:
+  success: "成功"
+  create_success: "创建成功"
+  update_success: "更新成功"
+  delete_success: "删除成功"
+  operate_success: "操作成功"
+  save_success: "保存成功"
+  get_success: "获取成功"
+  status_update_success: "状态更新成功"
+  enable: "启用"
+  disable: "禁用"
+  batch_delete_plain: "批量删除成功"
+  batch_update_count: "成功更新 {count} 条记录"
+  invalid_integer: "请输入有效的整数"
+
+response:
+  http_200: "成功"
+  http_400: "错误"
+  http_401: "未认证"
+  http_403: "拒绝访问"
+  http_404: "找不到资源"
+  http_422: "参数错误"
+  http_500: "服务器内部错误"
+
+error:
+  request_exception: "请求异常"
+  bad_request: "请求错误"
+  bad_gateway: "网关错误"
+  permission_denied: "没有权限"
+  unauthorized: "未授权"
+  conflict: "资源冲突"
+  server_error: "服务器发生异常"
+  http_exception: "HTTP异常"
+  route_not_found: "请求的路由不存在"
+  validation_failed: "数据验证失败"
+  validation_error: "验证错误"
+  user:
+    not_found: "用户不存在"
+    exist: "用户已存在"
+    not_login: "用户未登录"
+    captcha_error: "验证码错误"
+    not_active: "用户未激活"
+    login_failed: "用户登录失败"
+    invalid_refresh_token: "无效的刷新令牌"
+    expired_refresh_token: "刷新令牌已过期"
+    refresh_token_failed: "刷新令牌失败"
+    phone_format_error: "手机号格式错误"
+    sms_send_error: "短信发送失败"
+    sms_send_too_fast: "短信发送过于频繁"
+    disabled: "用户已被禁用"
+  device:
+    not_found: "设备不存在"
+    bind_error: "设备绑定错误"
+    bind: "设备已绑定"
+    not_permission: "设备无权限"
+  chat:
+    not_found: "聊天不存在"
+    exist: "聊天已存在"
+    not_permission: "聊天无权限"
+  robot:
+    not_found: "机器人不存在"
+    exist: "机器人已存在"
+    not_permission: "无权限操作机器人"
+    not_bind: "机器人未绑定"
+    bind: "机器人已绑定"
+    status_not_found: "机器人状态信息不存在"
+  emergency_contact:
+    not_found: "紧急联系人不存在或无权限访问"
+    exist: "紧急联系人已存在"
+    not_permission: "紧急联系人无权限"
+    save_error: "紧急联系人创建失败"
+    update_error: "紧急联系人更新失败"
+    delete_error: "紧急联系人删除失败"
+    phone_duplicated: "紧急联系人手机号已存在"
+    limit_reached: "紧急联系人数量已达上限"
+  robot_task:
+    not_found: "任务不存在"
+    exist: "任务已存在"
+    not_permission: "任务无权限"
+    status_not_found: "任务状态信息不存在"
+    failed: "任务执行失败"
+    network_error: "任务网络错误"
+    running: "任务正在运行"
+    completed: "任务已完成"
+  rate_limit_exceeded: "请求过于频繁"
+  ip_blocked: "IP 已被加入黑名单"
+  captcha_required: "请完成滑块验证"
+  captcha_invalid: "滑块验证码无效或已过期"
+  captcha_verify_failed: "滑块验证失败，请重试"
+  notice:
+    not_found: "通知不存在"
+    already_published: "通知已发布，不可编辑"
+  open_api:
+    missing_header: "缺少必要的签名请求头"
+    timestamp_expired: "请求时间戳超出允许范围"
+    invalid_nonce: "Nonce非法"
+    nonce_replay: "请求不可重放(Nonce已被使用)"
+    merchant_not_found: "AppId不存在"
+    merchant_disabled: "商户已禁用"
+    signature_invalid: "签名校验失败"
+  merchant:
+    not_found: "商户不存在"
+    code_exist: "商户编码已存在"
+    app_id_conflict: "AppId冲突，请重试"
+
+pydantic:
+  int_parsing: "请输入有效的整数"
+  missing: "缺少必填参数"
+  string_too_long: "内容长度超过限制"
+  string_too_short: "内容长度不足"
+  validation_failed: "请求参数验证失败"
+
+validation:
+  page_must_be_int: "页码必须是有效整数"
+  page_size_must_be_int: "每页条数必须是有效整数"
+  page_must_be_positive: "页码必须为正整数"
+  page_size_must_be_positive: "每页条数必须为正整数"
+  page_size_max: "每页条数最多为 200 条"
+  id_js_safe: "ID {value} 超出JavaScript安全整数范围，请运行迁移修复"
+  status_invalid_value: "非法值: {value}，只能是 1/true 或 2/false 或为空"
+  email_format: "邮箱格式不正确"
+  phone_format: "手机号格式不正确"
+  password_complexity: "密码需6-20位，且至少包含字母和数字"
+  must_specify_one_trigger: "必须指定 cron、interval 或 date 之一"
+  only_one_trigger: "cron、interval、date 只能指定一个"
+  unregistered_export_module: "未注册的导出模块: {module_key}"
+  dict_ext_info_json: "ext_info 必须为合法 JSON 字符串"
+  ip_blacklist_type: "type 仅支持 permanent / temporary"
+
+auth:
+  captcha_success: "获取验证码成功"
+  verify_success: "验证成功"
+  login_success: "登录成功"
+  user_info_success: "获取用户信息成功"
+  logout_success: "登出成功"
+  username_password_required: "用户名和密码不能为空"
+  username_not_found: "用户名不存在"
+  password_error: "密码错误"
+  user_disabled: "用户已被禁用"
+  token_revoked: "令牌已被吊销"
+  no_permission_code: "没有操作权限: {code}"
+  client_id_bind_success: "客户端ID绑定成功"
+  push_setting_updated: "推送设置已更新"
+  user_info_update_success: "用户信息更新成功"
+  user_info_update_failed: "更新用户信息失败: {error}"
+  token_refresh_success: "令牌刷新成功"
+  sms_sent_success: "短信验证码发送成功"
+  phone_captcha_required: "手机号和验证码不能为空"
+  account_disabled_contact: "账号已被禁用，请联系管理员"
+  account_disabled: "账号已被禁用"
+  phone_cn_invalid: "请输入有效的中国大陆手机号"
+  sms_code_invalid: "请输入6位数字的短信验证码"
+  refresh_token_required: "刷新token不能为空"
+
+user:
+  create_success: "创建用户成功"
+  update_success: "更新用户成功"
+  assign_roles_success: "分配角色成功"
+  delete_success: "删除用户成功"
+  password_change_success: "密码修改成功"
+  batch_delete_success: "批量删除成功，共删除 {count} 个用户"
+  batch_status_success: "批量{action}成功，共 {count} 个用户"
+  not_found: "用户 {id} 不存在"
+  username_exist: "用户名已存在"
+  email_exist: "邮箱已存在"
+  phone_exist: "手机号已存在"
+  cannot_disable_superadmin: "不能禁用超级管理员账号"
+  username_used_by_other: "用户名已被其他用户使用"
+  email_used_by_other: "邮箱已被其他用户使用"
+  phone_used_by_other: "手机号已被其他用户使用"
+  cannot_delete_superadmin: "不能删除超级管理员"
+  cannot_delete_superadmin_account: "不能删除超级管理员账号"
+  no_permission_change_superadmin_password: "无权限修改超级管理员密码"
+  old_password_error: "旧密码错误"
+
+app_user:
+  create_success: "创建应用用户成功"
+  update_success: "更新应用用户成功"
+  delete_success: "删除应用用户成功"
+  password_reset_success: "密码重置成功"
+  batch_delete_success: "批量删除成功，共删除 {count} 个应用用户"
+  batch_status_success: "批量{action}成功，共 {count} 个应用用户"
+  not_found: "应用用户 {id} 不存在"
+  phone_exist: "该手机号已存在"
+  email_exist: "该邮箱已存在"
+  phone_used_by_other: "该手机号已被其他用户使用"
+  email_used_by_other: "该邮箱已被其他用户使用"
+
+role:
+  create_success: "创建角色成功"
+  update_success: "更新角色成功"
+  assign_menus_success: "分配菜单权限成功"
+  delete_success: "删除角色成功"
+  batch_delete_success: "批量删除成功，共删除 {count} 个角色"
+  batch_status_success: "批量{action}成功，共 {count} 个角色"
+  not_found: "角色 {id} 不存在"
+  name_exist: "角色名称已存在"
+  cannot_modify_builtin: "不能修改系统内置角色"
+  cannot_assign_unowned_menus: "不能分配自身没有的菜单权限"
+  cannot_delete_builtin: "不能删除系统内置角色"
+  cannot_delete_default: "不能删除默认角色"
+
+menu:
+  create_success: "创建菜单成功"
+  update_success: "更新菜单成功"
+  delete_success: "删除菜单成功"
+  batch_delete_success: "批量删除成功，共删除 {count} 个菜单"
+  batch_status_success: "批量{action}成功，共 {count} 个菜单"
+  not_found: "菜单 {id} 不存在"
+  parent_not_found: "父菜单 {id} 不存在"
+  button_parent_must_be_menu: "按钮类型菜单的上级仅允许为菜单类型"
+  button_must_have_parent: "按钮类型菜单必须指定上级菜单"
+  cannot_modify_builtin: "不能修改系统内置菜单"
+  cannot_set_self_as_parent: "不能将自己设置为父菜单"
+  cannot_set_child_as_parent: "不能将自己的子菜单设置为父菜单"
+  cannot_delete_builtin: "不能删除系统内置菜单"
+
+dept:
+  create_success: "创建部门成功"
+  update_success: "更新部门成功"
+  delete_success: "删除部门成功"
+  batch_delete_success: "批量删除成功，共删除 {count} 个部门"
+  batch_status_success: "批量{action}成功，共 {count} 个部门"
+  not_found: "部门 {id} 不存在"
+  code_exist: "部门编码已存在"
+  cannot_set_self_parent: "不能将自身的父部门设为自己"
+  has_children: "存在子部门，不能删除"
+  has_users: "部门下存在用户，不能删除"
+
+dict:
+  not_found: "字典 {id} 不存在"
+  code_not_found: "字典编码 {code} 不存在"
+  code_exist: "字典编码已存在"
+  cannot_modify_builtin: "系统内置字典禁止修改"
+  cannot_delete_builtin: "系统内置字典禁止删除"
+  item_not_found: "字典项 {id} 不存在"
+  batch_delete_success: "批量删除成功，共删除 {count} 个字典"
+  item_batch_delete_success: "批量删除成功，共删除 {count} 个字典项"
+
+config:
+  not_found: "配置 {id} 不存在"
+  not_found_by_key: "配置 {key} 不存在"
+  type_mismatch: "配置值不符合 {type} 类型要求"
+  cannot_create_builtin: "非超级管理员不能创建系统内置配置"
+  key_exist: "配置键已存在"
+  cannot_modify_builtin: "系统内置配置禁止修改"
+  cannot_delete_builtin: "系统内置配置禁止删除"
+  reset_count: "成功重置 {count} 条记录"
+  batch_delete_success: "批量删除成功，共删除 {count} 个配置"
+
+notice:
+  create_success: "创建通知成功"
+  update_success: "更新通知成功"
+  delete_success: "删除通知成功"
+  publish_success: "发布通知成功"
+  mark_read_success: "标记已读成功"
+  already_read_or_not_found: "通知已是已读状态或不存在"
+  marked_read_count: "已标记 {count} 条通知为已读"
+  batch_delete_success: "批量删除成功，共删除 {count} 条通知"
+  not_found: "通知 {id} 不存在"
+  already_published: "通知已发布，不可编辑"
+  role_target_required: "按角色推送时必须指定目标角色ID列表"
+  user_target_required: "按用户推送时必须指定目标用户ID列表"
+  already_published_status: "通知已是发布状态"
+  server_error_no_manager: "服务器错误，连接管理器未初始化"
+  type_must_be_one_of: "通知类型必须是以下之一: {allowed}"
+  scope_must_be_one_of: "推送范围必须是以下之一: {allowed}"
+  priority_must_be_one_of: "优先级必须是以下之一: {allowed}"
+
+permission:
+  code_exist: "权限编码已存在"
+  not_found: "权限 {id} 不存在"
+
+route:
+  constant_success: "获取常量路由成功"
+  user_permission_success: "获取用户权限成功"
+
+merchant:
+  create_success: "创建商户成功，请立即保存 AppSecret"
+  update_success: "更新商户成功"
+  reset_secret_success: "重置密钥成功，请立即保存新 AppSecret"
+  delete_success: "删除商户成功"
+  not_found: "商户 {id} 不存在"
+  code_exist: "商户编码 {code} 已存在"
+  app_id_conflict: "AppId 生成冲突，请重试"
+  app_id_conflict_short: "AppId 冲突，请重试"
+
+file:
+  upload_success: "上传成功"
+  batch_upload_success: "成功上传 {count} 个文件"
+  preview_token_success: "获取预览令牌成功"
+  batch_delete_success: "成功删除 {count} 个文件"
+  delete_success: "删除文件成功"
+  not_found: "文件 {id} 不存在"
+
+ip_blacklist:
+  added: "已加入黑名单"
+  removed: "已移除"
+  invalid_ip: "非法 IP 地址: {ip}"
+  already_in: "IP {ip} 已在黑名单中"
+  entry_not_found: "黑名单 {id} 不存在"
+
+online_user:
+  session_not_found: "会话不存在或已过期"
+  kicked: "已将用户踢下线"
+  kicked_count: "已踢除 {count} 个在线会话"
+
+login_log:
+  batch_delete_success: "批量删除成功"
+  cleaned_before_days: "已清理 {days} 天前的日志"
+  detail_success: "获取登录日志详情成功"
+  delete_success: "删除成功"
+  not_found: "登录日志 {id} 不存在"
+
+operation_log:
+  batch_delete_success: "批量删除成功"
+  cleaned_before_days: "已清理 {days} 天前的日志"
+  detail_success: "获取操作日志详情成功"
+  delete_success: "删除成功"
+  not_found: "操作日志 {id} 不存在"
+
+openapi_log:
+  batch_delete_count: "批量删除成功，共删除 {count} 条"
+  delete_success: "删除成功"
+  not_found: "开放API调用日志 {id} 不存在"
+
+export_task:
+  submitted: "导出任务已提交"
+  cleaned_expired: "已清理 {count} 个过期导出任务"
+  module_or_template_required: "module_key 和 template_id 至少传一个"
+  template_not_found: "导出模板 {id} 不存在"
+  table_not_in_metadata: "表 {table} 不存在于模型元数据中"
+  column_not_found: "字段 {table}.{column} 不存在"
+  not_found: "导出任务 {id} 不存在"
+  cannot_download_status: "任务状态为 {status}，无法下载"
+  file_not_found: "导出文件不存在，可能已被清理"
+
+export_template:
+  not_found: "导出模板 {id} 不存在"
+
+mcp:
+  tool_create_success: "MCP 工具创建成功"
+  service_start_success: "MCP 服务启动成功"
+  service_stop_success: "MCP 服务已停止"
+
+scheduler:
+  task_not_in_registry: "任务 '{key}' 未在注册表中找到，无法创建"
+  task_no_params: "任务 '{key}' 不接受参数"
+  task_param_validate_failed: "任务参数校验失败: {error}"
+  task_not_found: "定时任务 {id} 不存在"
+  task_key_exist: "任务标识 '{key}' 已存在"
+  system_task_no_delete: "系统任务不可删除"
+  task_triggered: "任务已触发执行"
+  synced_count: "已同步 {count} 个任务"
+  log_not_found: "任务日志 {id} 不存在"
+  cleaned_logs: "已清理 {count} 条日志"
+
+tenant:
+  create_success: "创建租户成功"
+  update_success: "更新租户成功"
+  delete_success: "删除租户成功"
+  update_status_success: "更新状态成功"
+  config_update_success: "更新租户配置成功"
+  assign_users_success: "分配用户成功"
+  remove_users_success: "移除用户成功"
+  not_belong: "您不属于该租户"
+  disabled: "该租户已被禁用"
+  switched: "已切换到租户: {name}"
+  not_found: "租户 {id} 不存在"
+  code_exist: "租户编码已存在"
+  name_exist: "租户名称已存在"
+  user_not_found: "用户 {id} 不存在"
+  user_already_in: "用户已在该租户中"
+  user_limit_reached: "租户用户数已达上限 ({max})"
+  user_not_in: "用户不在该租户中"
+  cannot_remove_last_owner: "不能移除最后一个 owner"
+
+storage:
+  unsupported_platform: "不支持的存储平台: {platform}"
+  file_no_extension: "文件缺少扩展名"
+  unsupported_file_type: "不支持的文件类型: .{ext}，允许的类型: {allowed}"
+  file_too_large: "文件大小超过限制，最大允许 {max}MB"
+  cannot_detect_real_type: "无法识别文件真实类型: .{ext}"
+  ext_mismatch: "文件扩展名 .{declared} 与真实类型 .{real} 不一致"
+  mime_mismatch: "文件 MIME 类型与内容不匹配"
+  file_not_found: "文件不存在"
+
+jwt:
+  token_create_failed: "令牌创建失败"
+  refresh_token_create_failed: "刷新令牌创建失败"
+  token_expired: "令牌已过期"
+  token_format_error: "令牌格式错误"
+  invalid_token: "无效的令牌"
+  token_verify_failed: "令牌验证失败"
+
+rate_limit:
+  blocked_retry: "{message}，请在 {ttl} 秒后重试"
+  ip_blocked_contact: "IP 已被加入黑名单，请联系管理员"
+  dim_exceeded: "{dim} 维度请求过于频繁"
+
+security:
+  request_too_large: "请求体过大"
+  invalid_content_length: "非法 Content-Length"

@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
+from core.i18n import t
 from core.response.response_schema import ResponseModel, ResponsePageModel
 from database.db_manager import get_session
 from database.models.sys.user import SysUser
@@ -77,7 +78,7 @@ async def batch_delete_openapi_logs(
 ):
     """批量删除开放API调用日志"""
     count = await OpenapiLogService.batch_delete_logs(db, log_ids)
-    return ResponseModel(msg=f"批量删除成功，共删除 {count} 条", data={"delete_count": count})
+    return ResponseModel(msg=t("openapi_log.batch_delete_count", count=count), data={"delete_count": count})
 
 
 @openapi_log_router.delete(
@@ -94,4 +95,4 @@ async def delete_openapi_log(
     """删除单条开放API调用日志"""
     await OpenapiLogService.get_log(db, log_id)
     await OpenapiLogService.batch_delete_logs(db, [log_id])
-    return ResponseModel(msg="删除成功")
+    return ResponseModel(msg=t("common.delete_success"))

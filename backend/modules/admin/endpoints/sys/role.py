@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response.response_schema import (
     ResponseModel,
     ResponsePageModel,
@@ -154,7 +155,7 @@ async def create_role(
     role_response = _build_role_response(role)
 
     logger.info(f"创建角色成功，角色ID: {role.id}")
-    return ResponseModel(data=role_response, msg="创建角色成功")
+    return ResponseModel(data=role_response, msg=t("role.create_success"))
 
 
 @role_router.put("/{role_id}", response_model=ResponseModel[SysRoleResponseData], dependencies=[Depends(require_permission("sys:role:edit"))])
@@ -177,7 +178,7 @@ async def update_role(
     role_response = _build_role_response(role)
 
     logger.info(f"更新角色成功，角色ID: {role_id}")
-    return ResponseModel(data=role_response, msg="更新角色成功")
+    return ResponseModel(data=role_response, msg=t("role.update_success"))
 
 
 @role_router.post("/{role_id}/menus", response_model=ResponseModel[SysRoleResponseData], dependencies=[Depends(require_permission("sys:role:edit"))])
@@ -207,7 +208,7 @@ async def assign_menu_to_role(
     role_response = _build_role_response(role)
 
     logger.info(f"为角色分配菜单权限成功，角色ID: {role_id}")
-    return ResponseModel(data=role_response, msg="分配菜单权限成功")
+    return ResponseModel(data=role_response, msg=t("role.assign_menus_success"))
 
 
 @role_router.delete("/batch", response_model=ResponseModel, dependencies=[Depends(require_permission("sys:role:delete"))])
@@ -229,7 +230,7 @@ async def batch_delete_roles(
 
     logger.info(f"批量删除角色成功，共删除 {delete_count} 个角色")
     return ResponseModel(
-        msg=f"批量删除成功，共删除 {delete_count} 个角色",
+        msg=t("role.batch_delete_success", count=delete_count),
         data={"delete_count": delete_count},
     )
 
@@ -253,10 +254,10 @@ async def batch_update_roles_status(
         db, batch_update.role_ids, batch_update.status, is_superuser=user.is_superuser
     )
 
-    status_text = "启用" if batch_update.status else "禁用"
+    status_text = t("common.enable") if batch_update.status else t("common.disable")
     logger.info(f"批量更新角色状态成功，共 {update_count} 个角色被{status_text}")
     return ResponseModel(
-        msg=f"批量{status_text}成功，共 {update_count} 个角色",
+        msg=t("role.batch_status_success", action=status_text, count=update_count),
         data={"update_count": update_count},
     )
 
@@ -277,4 +278,4 @@ async def delete_role(
     await RoleService.delete_role(db, role_id, is_superuser=user.is_superuser)
 
     logger.info(f"删除角色成功，角色ID: {role_id}")
-    return ResponseModel(msg="删除角色成功")
+    return ResponseModel(msg=t("role.delete_success"))

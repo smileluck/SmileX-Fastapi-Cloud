@@ -14,6 +14,7 @@ from typing import List, Optional, Tuple
 from database.models.sys.user import SysUser
 from database.models.sys.role import SysRole, DataScopeEnum
 from core.exception.errors import NotFoundError, ConflictError, ForbiddenError
+from core.i18n import t
 from core.utils.memory_cache import get_memory_cache, CacheNamespace
 from core.security.oauth.jwt import JWTAuthManager
 from core.security.password import PasswordHasher
@@ -227,7 +228,7 @@ class UserService:
 
         if not user:
             logger.warning("用户不存在，用户ID: %s", user_id)
-            raise NotFoundError(msg=f"用户 {user_id} 不存在")
+            raise NotFoundError(msg=t("user.not_found", id=user_id))
 
         logger.debug("获取用户信息成功，用户名: %s", user.username)
         return user
@@ -269,7 +270,7 @@ class UserService:
         # 检查用户名是否已存在
         if await UserService.get_user_by_username(db, user_create.username):
             logger.warning("创建用户失败，用户名已存在: %s", user_create.username)
-            raise ConflictError(msg="用户名已存在")
+            raise ConflictError(msg=t("user.username_exist"))
 
         # 检查邮箱是否已存在
         if user_create.email and user_create.email.strip():
@@ -278,7 +279,7 @@ class UserService:
             )
             if result.scalar_one_or_none():
                 logger.warning("创建用户失败，邮箱已存在: %s", user_create.email)
-                raise ConflictError(msg="邮箱已存在")
+                raise ConflictError(msg=t("user.email_exist"))
 
         # 检查手机号是否已存在
         if user_create.phone and user_create.phone.strip():
@@ -287,7 +288,7 @@ class UserService:
             )
             if result.scalar_one_or_none():
                 logger.warning("创建用户失败，手机号已存在: %s", user_create.phone)
-                raise ConflictError(msg="手机号已存在")
+                raise ConflictError(msg=t("user.phone_exist"))
 
         # 加密密码
         user = SysUser(
@@ -352,7 +353,7 @@ class UserService:
         # 保护超级管理员账号不被禁用
         if user.username == SUPER_ADMIN_USERNAME and user_update.status is False:
             logger.warning("更新用户失败，不能禁用超级管理员账号，用户ID: %s", user_id)
-            raise ForbiddenError(msg="不能禁用超级管理员账号")
+            raise ForbiddenError(msg=t("user.cannot_disable_superadmin"))
 
         # 检查用户名是否已被其他用户使用
         if (
@@ -369,7 +370,7 @@ class UserService:
                 logger.warning(
                     "更新用户失败，用户名已被其他用户使用: %s", user_update.username
                 )
-                raise ConflictError(msg="用户名已被其他用户使用")
+                raise ConflictError(msg=t("user.username_used_by_other"))
 
         # 检查邮箱是否已被其他用户使用
         if (
@@ -386,7 +387,7 @@ class UserService:
                 logger.warning(
                     "更新用户失败，邮箱已被其他用户使用: %s", user_update.email
                 )
-                raise ConflictError(msg="邮箱已被其他用户使用")
+                raise ConflictError(msg=t("user.email_used_by_other"))
 
         # 检查手机号是否已被其他用户使用
         if (
@@ -403,7 +404,7 @@ class UserService:
                 logger.warning(
                     "更新用户失败，手机号已被其他用户使用: %s", user_update.phone
                 )
-                raise ConflictError(msg="手机号已被其他用户使用")
+                raise ConflictError(msg=t("user.phone_used_by_other"))
 
         # 更新用户信息
         update_data = user_update.model_dump(exclude_unset=True)
@@ -499,12 +500,12 @@ class UserService:
         # 检查是否为超级管理员
         if user.is_superuser:
             logger.warning("删除用户失败，不能删除超级管理员，用户ID: %s", user_id)
-            raise ForbiddenError(msg="不能删除超级管理员")
+            raise ForbiddenError(msg=t("user.cannot_delete_superadmin"))
 
         # 基于用户名的额外保护
         if user.username == SUPER_ADMIN_USERNAME:
             logger.warning("删除用户失败，不能删除超级管理员账号，用户ID: %s", user_id)
-            raise ForbiddenError(msg="不能删除超级管理员账号")
+            raise ForbiddenError(msg=t("user.cannot_delete_superadmin_account"))
 
         await db.delete(user)
         await db.commit()
@@ -573,7 +574,7 @@ class UserService:
         # 检查是否为超级管理员（只有超级管理员自己可以修改自己的密码）
         if user.is_superuser and (not current_user or current_user.id != user_id):
             logger.warning("修改密码失败，无权限修改超级管理员密码，用户ID: %s", user_id)
-            raise ForbiddenError(msg="无权限修改超级管理员密码")
+            raise ForbiddenError(msg=t("user.no_permission_change_superadmin_password"))
 
         # 如果提供了旧密码，需要验证
         if password_update.old_password:
@@ -581,7 +582,7 @@ class UserService:
                 password_update.old_password, user.password
             ):
                 logger.warning("修改密码失败，旧密码错误，用户ID: %s", user_id)
-                raise ForbiddenError(msg="旧密码错误")
+                raise ForbiddenError(msg=t("user.old_password_error"))
 
         # 加密新密码
         user.password = PasswordHasher.hash(password_update.new_password)

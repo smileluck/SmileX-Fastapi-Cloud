@@ -6,13 +6,19 @@ from typing import Any
 from fastapi import HTTPException
 from enum import Enum
 from core.response import StandardResponseCode, CustomErrorCode
+from core.i18n import t
 
 
 class BaseExceptionMixin(Exception):
-    """基础异常混入类"""
+    """基础异常混入类
+
+    每个异常子类通过 default_msg_key 声明默认文案的 i18n key。
+    未显式传 msg 时在构造期按当前请求语言翻译（构造发生在请求任务内）。
+    """
 
     code: int
     err_code: CustomErrorCode
+    default_msg_key: str = "error.request_exception"
 
     def __init__(
         self,
@@ -20,12 +26,14 @@ class BaseExceptionMixin(Exception):
         msg: str = None,
         data: Any = None,
     ):
-        self.msg = msg
+        self.msg = msg if msg is not None else t(self.default_msg_key)
         self.data = data
 
 
 class HTTPError(HTTPException):
     """HTTP 异常"""
+
+    default_msg_key: str = "error.http_exception"
 
     def __init__(
         self, *, code: int, msg: Any = None, headers: dict[str, Any] | None = None
@@ -44,7 +52,9 @@ class CustomError(BaseExceptionMixin):
         data: Any = None,
     ):
         self.code = error.code
-        super().__init__(msg=msg or error.msg, data=data)
+        self.err_code = error
+        self.default_msg_key = error.key
+        super().__init__(msg=msg, data=data)
 
 
 class OpenApiError(BaseExceptionMixin):
@@ -74,17 +84,21 @@ class OpenApiError(BaseExceptionMixin):
         self.err_code = error
         self.http_status = self._STATUS_MAP.get(error, 401)
         self.code = self.http_status
-        super().__init__(msg=msg or error.msg, data=data)
+        self.default_msg_key = error.key
+        super().__init__(msg=msg, data=data)
 
 
 class RequestError(BaseExceptionMixin):
     """请求异常"""
 
+    code = StandardResponseCode.HTTP_400
+    default_msg_key = "error.bad_request"
+
     def __init__(
         self,
         *,
         code: int = StandardResponseCode.HTTP_400,
-        msg: str = "Bad Request",
+        msg: str = None,
         data: Any = None,
     ):
         self.code = code
@@ -95,8 +109,9 @@ class ForbiddenError(BaseExceptionMixin):
     """禁止访问异常"""
 
     code = StandardResponseCode.HTTP_403
+    default_msg_key = "response.http_403"
 
-    def __init__(self, *, msg: str = "Forbidden", data: Any = None):
+    def __init__(self, *, msg: str = None, data: Any = None):
         super().__init__(msg=msg, data=data)
 
 
@@ -104,8 +119,9 @@ class NotFoundError(BaseExceptionMixin):
     """资源不存在异常"""
 
     code = StandardResponseCode.HTTP_404
+    default_msg_key = "response.http_404"
 
-    def __init__(self, *, msg: str = "Not Found", data: Any = None):
+    def __init__(self, *, msg: str = None, data: Any = None):
         super().__init__(msg=msg, data=data)
 
 
@@ -113,11 +129,12 @@ class ServerError(BaseExceptionMixin):
     """服务器异常"""
 
     code = StandardResponseCode.HTTP_500
+    default_msg_key = "response.http_500"
 
     def __init__(
         self,
         *,
-        msg: str = "Internal Server Error",
+        msg: str = None,
         data: Any = None,
     ):
         super().__init__(msg=msg, data=data)
@@ -127,11 +144,12 @@ class GatewayError(BaseExceptionMixin):
     """网关异常"""
 
     code = StandardResponseCode.HTTP_502
+    default_msg_key = "error.bad_gateway"
 
     def __init__(
         self,
         *,
-        msg: str = "Bad Gateway",
+        msg: str = None,
         data: Any = None,
     ):
         super().__init__(msg=msg, data=data)
@@ -141,11 +159,12 @@ class AuthorizationError(BaseExceptionMixin):
     """授权异常"""
 
     code = StandardResponseCode.HTTP_403
+    default_msg_key = "error.permission_denied"
 
     def __init__(
         self,
         *,
-        msg: str = "Permission Denied",
+        msg: str = None,
         data: Any = None,
     ):
         super().__init__(msg=msg, data=data)
@@ -155,12 +174,14 @@ class TokenError(HTTPError):
     """Token 异常"""
 
     code = StandardResponseCode.HTTP_401
+    default_msg_key = "error.unauthorized"
 
     def __init__(
-        self, *, msg: str = "Not Authenticated", headers: dict[str, Any] | None = None
+        self, *, msg: str = None, headers: dict[str, Any] | None = None
     ):
+        resolved = msg if msg is not None else t(self.default_msg_key)
         super().__init__(
-            code=self.code, msg=msg, headers=headers or {"WWW-Authenticate": "Bearer"}
+            code=self.code, msg=resolved, headers=headers or {"WWW-Authenticate": "Bearer"}
         )
 
 
@@ -168,11 +189,12 @@ class ConflictError(BaseExceptionMixin):
     """资源冲突异常"""
 
     code = StandardResponseCode.HTTP_409
+    default_msg_key = "error.conflict"
 
     def __init__(
         self,
         *,
-        msg: str = "Conflict",
+        msg: str = None,
         data: Any = None,
     ):
         super().__init__(msg=msg, data=data)
@@ -182,11 +204,12 @@ class ValidationError(BaseExceptionMixin):
     """验证异常"""
 
     code = StandardResponseCode.HTTP_422
+    default_msg_key = "error.validation_failed"
 
     def __init__(
         self,
         *,
-        msg: str = "Validation Error",
+        msg: str = None,
         data: Any = None,
     ):
         super().__init__(msg=msg, data=data)

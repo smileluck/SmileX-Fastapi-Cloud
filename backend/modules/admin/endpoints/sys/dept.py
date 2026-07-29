@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response.response_schema import ResponseModel, ResponsePageModel, ResponsePageDataModel
 from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from core.decorators.operation_log import log_operation
@@ -120,7 +121,7 @@ async def create_dept(
     logger.info(f"创建部门请求，部门名: {dept_create.name}")
     dept = await DeptService.create_dept(db, dept_create)
     logger.info(f"创建部门成功，部门ID: {dept.id}")
-    return ResponseModel(data=SysDeptResponseData.model_validate(dept), msg="创建部门成功")
+    return ResponseModel(data=SysDeptResponseData.model_validate(dept), msg=t("dept.create_success"))
 
 
 @dept_router.put(
@@ -140,7 +141,7 @@ async def update_dept(
     logger.info(f"更新部门请求，部门ID: {dept_id}")
     dept = await DeptService.update_dept(db, dept_id, dept_update)
     logger.info(f"更新部门成功，部门ID: {dept_id}")
-    return ResponseModel(data=SysDeptResponseData.model_validate(dept), msg="更新部门成功")
+    return ResponseModel(data=SysDeptResponseData.model_validate(dept), msg=t("dept.update_success"))
 
 
 @dept_router.delete(
@@ -160,7 +161,7 @@ async def batch_delete_depts(
     delete_count = await DeptService.batch_delete_depts(db, dept_ids)
     logger.info(f"批量删除部门成功，共删除 {delete_count} 个部门")
     return ResponseModel(
-        msg=f"批量删除成功，共删除 {delete_count} 个部门",
+        msg=t("dept.batch_delete_success", count=delete_count),
         data={"delete_count": delete_count},
     )
 
@@ -184,10 +185,10 @@ async def batch_update_depts_status(
     update_count = await DeptService.batch_update_depts_status(
         db, batch_update.dept_ids, batch_update.status
     )
-    status_text = "启用" if batch_update.status else "禁用"
+    status_text = t("common.enable") if batch_update.status else t("common.disable")
     logger.info(f"批量更新部门状态成功，共 {update_count} 个部门被{status_text}")
     return ResponseModel(
-        msg=f"批量{status_text}成功，共 {update_count} 个部门",
+        msg=t("dept.batch_status_success", action=status_text, count=update_count),
         data={"update_count": update_count},
     )
 
@@ -208,4 +209,4 @@ async def delete_dept(
     logger.info(f"删除部门请求，部门ID: {dept_id}")
     await DeptService.delete_dept(db, dept_id)
     logger.info(f"删除部门成功，部门ID: {dept_id}")
-    return ResponseModel(msg="删除部门成功")
+    return ResponseModel(msg=t("dept.delete_success"))

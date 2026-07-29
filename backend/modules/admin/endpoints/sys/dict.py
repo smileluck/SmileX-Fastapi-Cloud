@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response.response_schema import (
     ResponseModel,
     ResponsePageModel,
@@ -239,7 +240,7 @@ async def create_dict(
         response_data = SysDictResponseData.model_validate(dict_obj)
 
         logger.info("创建字典接口成功，字典ID: %d", dict_obj.id)
-        return response_base.success(data=response_data, msg="创建成功")
+        return response_base.success(data=response_data, msg=t("common.create_success"))
 
     except Exception as e:
         logger.error("创建字典接口失败: %s", str(e), exc_info=True)
@@ -267,7 +268,7 @@ async def update_dict(
         response_data = SysDictResponseData.model_validate(dict_obj)
 
         logger.info("更新字典接口成功，字典ID: %d", dict_id)
-        return response_base.success(data=response_data, msg="更新成功")
+        return response_base.success(data=response_data, msg=t("common.update_success"))
 
     except Exception as e:
         logger.error("更新字典接口失败: %s", str(e), exc_info=True)
@@ -293,7 +294,7 @@ async def batch_update_dict_status(
         )
 
         logger.info("批量更新字典状态接口成功，更新数量: %d", updated_count)
-        return response_base.success(msg=f"成功更新 {updated_count} 条记录")
+        return response_base.success(msg=t("common.batch_update_count", count=updated_count))
 
     except Exception as e:
         logger.error("批量更新字典状态接口失败: %s", str(e), exc_info=True)
@@ -317,7 +318,7 @@ async def batch_delete_dicts(
         delete_count = await DictService.batch_delete_dicts(db, dict_ids)
 
         logger.info("批量删除字典接口成功，共删除 %d 个字典", delete_count)
-        return response_base.success(msg=f"批量删除成功，共删除 {delete_count} 个字典")
+        return response_base.success(msg=t("dict.batch_delete_success", count=delete_count))
 
     except Exception as e:
         logger.error("批量删除字典接口失败: %s", str(e), exc_info=True)
@@ -341,7 +342,7 @@ async def delete_dict(
         await DictService.delete_dict(db, dict_id, is_superuser=user.is_superuser)
 
         logger.info("删除字典接口成功，字典ID: %d", dict_id)
-        return response_base.success(msg="删除成功")
+        return response_base.success(msg=t("common.delete_success"))
 
     except Exception as e:
         logger.error("删除字典接口失败: %s", str(e), exc_info=True)
@@ -464,7 +465,7 @@ async def create_dict_item(
         response_data = SysDictItemResponseData.model_validate(dict_item)
 
         logger.info("创建字典项接口成功，字典项ID: %d", dict_item.id)
-        return response_base.success(data=response_data, msg="创建成功")
+        return response_base.success(data=response_data, msg=t("common.create_success"))
 
     except Exception as e:
         logger.error("创建字典项接口失败: %s", str(e), exc_info=True)
@@ -493,7 +494,7 @@ async def update_dict_item(
         response_data = SysDictItemResponseData.model_validate(dict_item)
 
         logger.info("更新字典项接口成功，字典项ID: %d", item_id)
-        return response_base.success(data=response_data, msg="更新成功")
+        return response_base.success(data=response_data, msg=t("common.update_success"))
 
     except Exception as e:
         logger.error("更新字典项接口失败: %s", str(e), exc_info=True)
@@ -517,7 +518,7 @@ async def batch_update_dict_item_status(
         updated_count = await DictService.batch_update_dict_item_status(db, batch_in)
 
         logger.info("批量更新字典项状态接口成功，更新数量: %d", updated_count)
-        return response_base.success(msg=f"成功更新 {updated_count} 条记录")
+        return response_base.success(msg=t("common.batch_update_count", count=updated_count))
 
     except Exception as e:
         logger.error("批量更新字典项状态接口失败: %s", str(e), exc_info=True)
@@ -541,7 +542,7 @@ async def batch_delete_dict_items(
         delete_count = await DictService.batch_delete_dict_items(db, item_ids)
 
         logger.info("批量删除字典项接口成功，共删除 %d 个字典项", delete_count)
-        return response_base.success(msg=f"批量删除成功，共删除 {delete_count} 个字典项")
+        return response_base.success(msg=t("dict.item_batch_delete_success", count=delete_count))
 
     except Exception as e:
         logger.error("批量删除字典项接口失败: %s", str(e), exc_info=True)
@@ -565,7 +566,7 @@ async def delete_dict_item(
         await DictService.delete_dict_item(db, item_id)
 
         logger.info("删除字典项接口成功，字典项ID: %d", item_id)
-        return response_base.success(msg="删除成功")
+        return response_base.success(msg=t("common.delete_success"))
 
     except Exception as e:
         logger.error("删除字典项接口失败: %s", str(e), exc_info=True)

@@ -3,7 +3,7 @@ import { BACKEND_ERROR_CODE, BACKEND_REQUEST_ERROR_CODE, createFlatRequest, crea
 import { useAuthStore } from '@/store/modules/auth';
 import { localStg } from '@/utils/storage';
 import { getServiceBaseURL } from '@/utils/service';
-import { $t } from '@/locales';
+import { $t, getLocale } from '@/locales';
 import { getAuthorization, handleExpiredRequest, showErrorMsg } from './shared';
 import type { RequestInstanceState } from './type';
 
@@ -29,7 +29,8 @@ export const request = createFlatRequest(
     },
     async onRequest(config) {
       const Authorization = getAuthorization();
-      Object.assign(config.headers, { Authorization });
+      // 按前端当前语言通知后端返回对应语言的 msg（后端按 Accept-Language 解析）
+      Object.assign(config.headers, { Authorization, 'Accept-Language': getLocale() });
 
       return config;
     },

@@ -5,6 +5,7 @@
 存储后端工厂
 """
 from core.config import settings
+from core.i18n import t
 from .base import StorageBackend
 from .local import LocalStorageBackend
 
@@ -21,4 +22,4 @@ def get_storage_backend() -> StorageBackend:
     if platform == "local":
         return LocalStorageBackend(base_dir=settings.UPLOAD_LOCAL.BASE_DIR)
 
-    raise ValueError(f"不支持的存储平台: {platform}")
+    raise ValueError(t("storage.unsupported_platform", platform=platform))

@@ -5,6 +5,7 @@ from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.exception.errors import NotFoundError, ConflictError, ValidationError
+from core.i18n import t
 from database.models.sys.scheduled_task import SysScheduledTask
 from modules.scheduler.schemas.scheduled_task import (
     ScheduledTaskCreate,
@@ -29,15 +30,15 @@ def _validate_task_params(task_key: str, function_path: str | None, params: dict
     """根据注册表的 params_schema 校验参数，返回 JSON-safe dict 或 None"""
     definition = _resolve_definition(task_key, function_path)
     if definition is None:
-        raise ValidationError(msg=f"任务 '{task_key}' 未在注册表中找到，无法创建")
+        raise ValidationError(msg=t("scheduler.task_not_in_registry", key=task_key))
     if definition.params_schema is None:
         if params:
-            raise ValidationError(msg=f"任务 '{task_key}' 不接受参数")
+            raise ValidationError(msg=t("scheduler.task_no_params", key=task_key))
         return None
     try:
         validated = definition.params_schema.model_validate(params or {})
     except Exception as exc:
-        raise ValidationError(msg=f"任务参数校验失败: {exc}")
+        raise ValidationError(msg=t("scheduler.task_param_validate_failed", error=exc))
     return validated.model_dump(mode="json")
 
 
@@ -73,7 +74,7 @@ class SchedulerService:
         result = await db.execute(stmt)
         task = result.scalar_one_or_none()
         if not task:
-            raise NotFoundError(msg=f"定时任务 {task_id} 不存在")
+            raise NotFoundError(msg=t("scheduler.task_not_found", id=task_id))
         return task
 
     @staticmethod
@@ -91,11 +92,11 @@ class SchedulerService:
         """创建定时任务"""
         existing = await SchedulerService.get_task_by_key(db, task_create.task_key)
         if existing:
-            raise ConflictError(msg=f"任务标识 '{task_create.task_key}' 已存在")
+            raise ConflictError(msg=t("scheduler.task_key_exist", key=task_create.task_key))
 
         definition = _resolve_definition(task_create.task_key, task_create.function_path)
         if definition is None:
-            raise ValidationError(msg=f"任务 '{task_create.task_key}' 未在注册表中找到，无法创建")
+            raise ValidationError(msg=t("scheduler.task_not_in_registry", key=task_create.task_key))
 
         params_json = _validate_task_params(task_create.task_key, task_create.function_path, task_create.params)
 
@@ -142,7 +143,7 @@ class SchedulerService:
         """删除定时任务"""
         task = await SchedulerService.get_task(db, task_id)
         if task.is_system:
-            raise ConflictError(msg="系统任务不可删除")
+            raise ConflictError(msg=t("scheduler.system_task_no_delete"))
 
         from database.utils.timezone import timezone
 

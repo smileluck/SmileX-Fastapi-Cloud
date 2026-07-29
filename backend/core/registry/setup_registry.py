@@ -48,6 +48,11 @@ def setup_app(app: FastAPI, settings: GlobalSetting):
     setup_soft_delete_plug()
     # 注册日志
     setup_logging()
+    # 预加载 i18n 文案目录（启动时加载一次，避免首请求时延迟）
+    from core.i18n import load_catalogs, supported_locales
+
+    load_catalogs()
+    print(f"[OK] i18n 文案目录加载完成 | 支持语言: {supported_locales()}")
     # 加载插件
     if settings.PLUGINS.ENABLED:
         from plugins import load_plugins

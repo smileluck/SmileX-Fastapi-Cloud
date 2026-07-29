@@ -10,6 +10,7 @@ from typing import Optional, List
 from pydantic import Field, ConfigDict, field_validator
 from datetime import datetime
 
+from core.i18n import t
 from modules.common.schemas.base import BaseEntity, BaseRespEntity, BoolField
 from modules.common.schemas.page import PageRequest
 from modules.admin.schemas.sys.user import validate_password_complexity
@@ -52,14 +53,14 @@ class AppUserCreate(BaseEntity):
     @classmethod
     def validate_email(cls, v):
         if v and not re.match(_EMAIL_PATTERN, v):
-            raise ValueError("邮箱格式不正确")
+            raise ValueError(t("validation.email_format"))
         return v
 
     @field_validator("phone")
     @classmethod
     def validate_phone(cls, v):
         if v and not re.match(_PHONE_PATTERN, v):
-            raise ValueError("手机号格式不正确")
+            raise ValueError(t("validation.phone_format"))
         return v
 
     @field_validator("password")
@@ -88,14 +89,14 @@ class AppUserUpdate(BaseEntity):
     @classmethod
     def validate_email(cls, v):
         if v and not re.match(_EMAIL_PATTERN, v):
-            raise ValueError("邮箱格式不正确")
+            raise ValueError(t("validation.email_format"))
         return v
 
     @field_validator("phone")
     @classmethod
     def validate_phone(cls, v):
         if v and not re.match(_PHONE_PATTERN, v):
-            raise ValueError("手机号格式不正确")
+            raise ValueError(t("validation.phone_format"))
         return v
 
 

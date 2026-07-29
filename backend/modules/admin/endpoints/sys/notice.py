@@ -12,6 +12,7 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response.response_schema import (
     ResponseModel,
     ResponsePageModel,
@@ -115,7 +116,7 @@ async def create_notice(
     notice_response = SysNoticeResponse.model_validate(notice)
 
     logger.info(f"创建通知成功，通知ID: {notice.id}")
-    return ResponseModel(data=notice_response, msg="创建通知成功")
+    return ResponseModel(data=notice_response, msg=t("notice.create_success"))
 
 
 @notice_router.put(
@@ -140,7 +141,7 @@ async def update_notice(
     notice_response = SysNoticeResponse.model_validate(notice)
 
     logger.info(f"更新通知成功，通知ID: {notice_id}")
-    return ResponseModel(data=notice_response, msg="更新通知成功")
+    return ResponseModel(data=notice_response, msg=t("notice.update_success"))
 
 
 @notice_router.delete(
@@ -164,7 +165,7 @@ async def batch_delete_notices(
 
     logger.info(f"批量删除通知成功，共删除 {delete_count} 条")
     return ResponseModel(
-        msg=f"批量删除成功，共删除 {delete_count} 条通知",
+        msg=t("notice.batch_delete_success", count=delete_count),
         data={"delete_count": delete_count},
     )
 
@@ -189,7 +190,7 @@ async def delete_notice(
     await NoticeService.delete_notice(db, notice_id)
 
     logger.info(f"删除通知成功，通知ID: {notice_id}")
-    return ResponseModel(msg="删除通知成功")
+    return ResponseModel(msg=t("notice.delete_success"))
 
 
 @notice_router.post(
@@ -212,13 +213,13 @@ async def publish_notice(
     connection_manager = getattr(request.app.state, "connection_manager", None)
     if connection_manager is None:
         logger.error("发布通知失败: connection_manager 未初始化")
-        return ResponseModel(msg="服务器错误，连接管理器未初始化", code=500)
+        return ResponseModel(msg=t("notice.server_error_no_manager"), code=500)
 
     notice = await NoticeService.publish_notice(db, notice_id, connection_manager)
     notice_response = SysNoticeResponse.model_validate(notice)
 
     logger.info(f"发布通知成功，通知ID: {notice_id}")
-    return ResponseModel(data=notice_response, msg="发布通知成功")
+    return ResponseModel(data=notice_response, msg=t("notice.publish_success"))
 
 
 # ==================== 我的通知（接收端） ====================
@@ -284,8 +285,8 @@ async def mark_as_read(
     """
     success = await NoticeService.mark_as_read(db, user.id, notice_id)
     if success:
-        return ResponseModel(msg="标记已读成功")
-    return ResponseModel(msg="通知已是已读状态或不存在")
+        return ResponseModel(msg=t("notice.mark_read_success"))
+    return ResponseModel(msg=t("notice.already_read_or_not_found"))
 
 
 @notice_router.put(
@@ -300,4 +301,4 @@ async def mark_all_as_read(
     标记所有通知为已读
     """
     count = await NoticeService.mark_all_as_read(db, user.id)
-    return ResponseModel(msg=f"已标记 {count} 条通知为已读", data={"count": count})
+    return ResponseModel(msg=t("notice.marked_read_count", count=count), data={"count": count})

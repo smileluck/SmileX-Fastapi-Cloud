@@ -24,6 +24,7 @@ from .settings_model import (
     RateLimitModel,
     PluginModel,
     OpenApiModel,
+    I18nModel,
 )
 
 
@@ -67,3 +68,5 @@ class GlobalSetting(BaseSettings):
     PLUGINS: PluginModel = PluginModel()
     # 开放API（商户 HMAC 签名鉴权）配置
     OPEN_API: OpenApiModel = OpenApiModel()
+    # 国际化配置
+    I18N: I18nModel = I18nModel()

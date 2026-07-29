@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response.response_schema import (
     ResponseModel,
     ResponsePageModel,
@@ -141,7 +142,7 @@ async def create_user(
     user_response = SysUserResponseData.model_validate(user)
 
     logger.info(f"创建用户成功，用户ID: {user.id}")
-    return ResponseModel(data=user_response, msg="创建用户成功")
+    return ResponseModel(data=user_response, msg=t("user.create_success"))
 
 
 @user_router.put("/{user_id}", response_model=ResponseModel[SysUserResponseData], dependencies=[Depends(require_permission("sys:user:edit"))])
@@ -162,7 +163,7 @@ async def update_user(
     user_response = SysUserResponseData.model_validate(user)
 
     logger.info(f"更新用户成功，用户ID: {user_id}")
-    return ResponseModel(data=user_response, msg="更新用户成功")
+    return ResponseModel(data=user_response, msg=t("user.update_success"))
 
 
 @user_router.post("/{user_id}/roles", response_model=ResponseModel[SysUserResponseData], dependencies=[Depends(require_permission("sys:user:edit"))])
@@ -181,7 +182,7 @@ async def assign_roles_to_user(
     user_response = SysUserResponseData.model_validate(user)
 
     logger.info(f"为用户分配角色成功，用户ID: {user_id}")
-    return ResponseModel(data=user_response, msg="分配角色成功")
+    return ResponseModel(data=user_response, msg=t("user.assign_roles_success"))
 
 
 @user_router.delete("/batch", response_model=ResponseModel, dependencies=[Depends(require_permission("sys:user:delete"))])
@@ -201,7 +202,7 @@ async def batch_delete_users(
 
     logger.info(f"批量删除用户成功，共删除 {delete_count} 个用户")
     return ResponseModel(
-        msg=f"批量删除成功，共删除 {delete_count} 个用户",
+        msg=t("user.batch_delete_success", count=delete_count),
         data={"delete_count": delete_count},
     )
 
@@ -225,10 +226,10 @@ async def batch_update_users_status(
         db, batch_update.user_ids, batch_update.status
     )
 
-    status_text = "启用" if batch_update.status else "禁用"
+    status_text = t("common.enable") if batch_update.status else t("common.disable")
     logger.info(f"批量更新用户状态成功，共 {update_count} 个用户被{status_text}")
     return ResponseModel(
-        msg=f"批量{status_text}成功，共 {update_count} 个用户",
+        msg=t("user.batch_status_success", action=status_text, count=update_count),
         data={"update_count": update_count},
     )
 
@@ -249,7 +250,7 @@ async def delete_user(
     await UserService.delete_user(db, user_id)
 
     logger.info(f"删除用户成功，用户ID: {user_id}")
-    return ResponseModel(msg="删除用户成功")
+    return ResponseModel(msg=t("user.delete_success"))
 
 
 @user_router.put("/{user_id}/password", response_model=ResponseModel, dependencies=[Depends(require_permission("sys:user:edit"))])
@@ -269,4 +270,4 @@ async def change_user_password(
     await UserService.update_user_password(db, user_id, password_update)
 
     logger.info(f"修改用户密码成功，用户ID: {user_id}")
-    return ResponseModel(msg="密码修改成功")
+    return ResponseModel(msg=t("user.password_change_success"))

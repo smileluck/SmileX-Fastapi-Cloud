@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 
 from database.models.sys.operation_log import SysOperationLog
 from core.exception.errors import NotFoundError
+from core.i18n import t
 from modules.admin.schemas.sys.operation_log import OperationLogQueryParams
 
 logger = logging.getLogger(__name__)
@@ -66,7 +67,7 @@ class OperationLogService:
         )
         log = result.scalar_one_or_none()
         if not log:
-            raise NotFoundError(msg=f"操作日志 {log_id} 不存在")
+            raise NotFoundError(msg=t("operation_log.not_found", id=log_id))
         return log
 
     @staticmethod

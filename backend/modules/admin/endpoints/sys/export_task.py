@@ -12,6 +12,7 @@ from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response import ResponseModel, response_base
 from modules.admin.deps.auth.user_manager import current_user
 from database.models.sys.user import SysUser
@@ -39,7 +40,7 @@ async def create_export_task(
     task = await ExportTaskService.submit_task(db, user.id, submit)
     return response_base.success(
         data=ExportTaskResponse.from_orm_with_format(task),
-        msg="导出任务已提交",
+        msg=t("export_task.submitted"),
     )
 
 
@@ -116,5 +117,5 @@ async def cleanup_export_tasks(
     count = await ExportTaskService.cleanup_old_tasks(db, days)
     return response_base.success(
         data={"deleted": count},
-        msg=f"已清理 {count} 个过期导出任务",
+        msg=t("export_task.cleaned_expired", count=count),
     )

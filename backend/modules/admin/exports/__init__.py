@@ -11,6 +11,7 @@ from typing import Callable, Dict, Sequence, Type
 from pydantic import BaseModel
 
 from core.utils.excel_export import ExportColumn
+from core.i18n import t
 
 
 @dataclass
@@ -31,7 +32,7 @@ def register_export(config: ModuleExportConfig):
 
 def get_export_config(module_key: str) -> ModuleExportConfig:
     if module_key not in EXPORT_REGISTRY:
-        raise ValueError(f"未注册的导出模块: {module_key}")
+        raise ValueError(t("validation.unregistered_export_module", module_key=module_key))
     return EXPORT_REGISTRY[module_key]
 
 

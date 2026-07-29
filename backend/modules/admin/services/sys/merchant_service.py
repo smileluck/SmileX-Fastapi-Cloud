@@ -12,6 +12,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.exception.errors import CustomError, NotFoundError
+from core.i18n import t
 from core.response.response_code import CustomErrorCode
 from core.security.openapi import encrypt_secret, generate_app_id, generate_app_secret
 from core.utils.memory_cache import CacheNamespace, get_memory_cache
@@ -64,7 +65,7 @@ class MerchantService:
         result = await db.execute(select(SysMerchant).where(SysMerchant.id == merchant_id))
         merchant = result.scalar_one_or_none()
         if not merchant:
-            raise NotFoundError(msg=f"商户 {merchant_id} 不存在")
+            raise NotFoundError(msg=t("merchant.not_found", id=merchant_id))
         return merchant
 
     @staticmethod
@@ -118,7 +119,7 @@ class MerchantService:
             if existing.scalar_one_or_none():
                 raise CustomError(
                     error=CustomErrorCode.MERCHANT_CODE_EXIST,
-                    msg=f"商户编码 {payload.code} 已存在",
+                    msg=t("merchant.code_exist", code=payload.code),
                 )
 
         # 生成 app_id（极小概率冲突，冲突则重试）
@@ -130,7 +131,7 @@ class MerchantService:
         else:
             raise CustomError(
                 error=CustomErrorCode.MERCHANT_APP_ID_CONFLICT,
-                msg="AppId 生成冲突，请重试",
+                msg=t("merchant.app_id_conflict"),
             )
 
         plaintext_secret = generate_app_secret()
@@ -154,7 +155,7 @@ class MerchantService:
             await db.rollback()
             raise CustomError(
                 error=CustomErrorCode.MERCHANT_APP_ID_CONFLICT,
-                msg="AppId 冲突，请重试",
+                msg=t("merchant.app_id_conflict_short"),
             ) from exc
         await db.refresh(merchant)
 
@@ -178,7 +179,7 @@ class MerchantService:
             if existing.scalar_one_or_none():
                 raise CustomError(
                     error=CustomErrorCode.MERCHANT_CODE_EXIST,
-                    msg=f"商户编码 {payload.code} 已存在",
+                    msg=t("merchant.code_exist", code=payload.code),
                 )
 
         update_data = payload.model_dump(exclude_unset=True)

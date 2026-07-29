@@ -14,6 +14,7 @@ from typing import List, Optional, Tuple
 
 from database.models.business.user import AppUser
 from core.exception.errors import NotFoundError, ConflictError
+from core.i18n import t
 from core.security.password import PasswordHasher
 from modules.admin.services.sys.online_user_service import OnlineUserService
 from modules.admin.schemas.sys.app_user import (
@@ -95,7 +96,7 @@ class AppUserService:
 
         if not user:
             logger.warning("应用用户不存在，用户ID: %s", user_id)
-            raise NotFoundError(msg=f"应用用户 {user_id} 不存在")
+            raise NotFoundError(msg=t("app_user.not_found", id=user_id))
 
         return user
 
@@ -123,14 +124,14 @@ class AppUserService:
         # (phone_code, phone) 组合查重
         if await AppUserService.get_app_user_by_phone(db, user_create.phone_code, user_create.phone):
             logger.warning("创建应用用户失败，手机号已存在: %s", user_create.phone)
-            raise ConflictError(msg="该手机号已存在")
+            raise ConflictError(msg=t("app_user.phone_exist"))
 
         # email 非空时查重
         if user_create.email and user_create.email.strip():
             existing = await db.execute(select(AppUser).where(AppUser.email == user_create.email))
             if existing.scalar_one_or_none():
                 logger.warning("创建应用用户失败，邮箱已存在: %s", user_create.email)
-                raise ConflictError(msg="该邮箱已存在")
+                raise ConflictError(msg=t("app_user.email_exist"))
 
         # password 选填：留空则只允许短信登录
         user = AppUser(
@@ -181,7 +182,7 @@ class AppUserService:
             )
             if existing.scalar_one_or_none():
                 logger.warning("更新应用用户失败，手机号已被其他用户使用: %s", target_phone)
-                raise ConflictError(msg="该手机号已被其他用户使用")
+                raise ConflictError(msg=t("app_user.phone_used_by_other"))
 
         # email 查重（排除自身）
         if user_update.email and user_update.email.strip() and user_update.email != user.email:
@@ -192,7 +193,7 @@ class AppUserService:
             )
             if existing.scalar_one_or_none():
                 logger.warning("更新应用用户失败，邮箱已被其他用户使用: %s", user_update.email)
-                raise ConflictError(msg="该邮箱已被其他用户使用")
+                raise ConflictError(msg=t("app_user.email_used_by_other"))
 
         update_data = user_update.model_dump(exclude_unset=True)
 

@@ -259,6 +259,39 @@ METHOD \n PATH \n timestamp \n nonce \n app_id \n sha256(body).hexdigest()
 
 ---
 
+## 国际化（i18n / `Accept-Language`）
+
+后端响应消息（统一返回结构里的 `msg`、异常消息、Pydantic 校验消息）支持多语言，按请求头 `Accept-Language` 决定返回语言。
+
+### 契约
+
+| 侧 | 职责 |
+|---|---|
+| 前端 | 每个后端请求带 `Accept-Language: <locale>` 头，取值来自 vue-i18n 当前 locale（`getLocale()`，值为 `zh-CN` / `en-US`），在 `src/service/request/index.ts` 的 `onRequest` 拦截器统一注入 |
+| 后端 | 最外层纯 ASGI 中间件 `RequestContextMiddleware` 解析 `Accept-Language`（支持 RFC 质量值与语言前缀匹配，如 `zh`↔`zh-CN`），写入请求级语言 ContextVar；未传或无匹配走 `I18N.DEFAULT_LANGUAGE`（默认 `zh-CN`） |
+| 前端 | 后端 `msg` 已按请求语言返回，前端**原样展示**（`$dialog`/`$message` 直接用 `response.data.msg`），无需前端再翻译后端消息 |
+
+### 支持语言与扩展
+
+- 当前支持 `zh-CN`、`en-US`，文案目录为 `backend/core/i18n/locales/<locale>.yaml`（嵌套 YAML，加载时拍平为 dotted key）
+- 新增语言：在 `locales/` 下新增 `<locale>.yaml`（key 与 `zh-CN.yaml` 1:1 对齐），并把该 locale 追加到配置 `I18N.SUPPORTED_LANGUAGES`，无需改代码
+- 默认/回退语言由 `I18N.DEFAULT_LANGUAGE` / `I18N.FALLBACK_LANGUAGE` 控制（`.env` 用 `I18N__DEFAULT_LANGUAGE` 等覆盖）
+
+### 新增/修改一条后端消息
+
+1. 在 `zh-CN.yaml` 与 `en-US.yaml` 同步增删 key（两文件 key 必须一致）
+2. 代码中用 `from core.i18n import t` 后 `t("ns.key")` 或带占位符 `t("ns.key", name=value)`（模板用 `{name}` 命名占位符）
+3. `CustomResponseCode` / `CustomErrorCode` 枚举成员元组第二位即 i18n key，`.msg` 自动按当前请求语言翻译；`.code` 数字不变
+4. 异常类用 `default_msg_key` 声明默认文案 key，未显式传 `msg` 时按当前请求语言翻译
+
+### 明确不翻译（保持原文）
+
+- `logger.xxx("...")` 日志串（运维侧诊断，翻译会割裂日志检索）
+- Pydantic `Field(description=...)`、FastAPI `summary=`（仅 Swagger 展示）
+- 启动/基础设施层错误（DB 连接池、URL 构建器、雪花 ID、配置加载器等 `RuntimeError`/启动期 `ValueError`）——多由 `generic_exception_handler` 兜底为固定文案，不会把中文原文透传到响应体
+
+---
+
 ## 变更规则
 
 - 破坏性接口变更（字段名/类型/结构改变）必须记录变更说明

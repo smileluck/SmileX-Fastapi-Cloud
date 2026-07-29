@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response import ResponseModel, ResponsePageModel, response_base
 from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from core.utils.excel_export import build_excel_bytes, SYNC_EXPORT_MAX_ROWS
@@ -103,7 +104,7 @@ async def batch_delete_logs(
 ):
     """批量删除操作日志"""
     count = await OperationLogService.batch_delete_logs(db, log_ids)
-    return response_base.success(data={"deleted": count}, msg="批量删除成功")
+    return response_base.success(data={"deleted": count}, msg=t("common.batch_delete_plain"))
 
 
 @operation_log_router.delete(
@@ -120,7 +121,7 @@ async def clear_logs(
     """清理指定天数前的操作日志"""
     count = await OperationLogService.clear_logs(db, days)
     return response_base.success(
-        data={"deleted": count}, msg=f"已清理 {days} 天前的日志"
+        data={"deleted": count}, msg=t("operation_log.cleaned_before_days", days=days)
     )
 
 
@@ -138,7 +139,7 @@ async def get_log_detail(
     log = await OperationLogService.get_log(db, log_id)
     return response_base.success(
         data=OperationLogDetailResponse.model_validate(log),
-        msg="获取操作日志详情成功",
+        msg=t("operation_log.detail_success"),
     )
 
 
@@ -156,4 +157,4 @@ async def delete_log(
     """删除单条操作日志"""
     ids = [log_id]
     count = await OperationLogService.batch_delete_logs(db, ids)
-    return response_base.success(data={"deleted": count}, msg="删除成功")
+    return response_base.success(data={"deleted": count}, msg=t("common.delete_success"))

@@ -12,6 +12,7 @@ from datetime import datetime, timezone, timedelta
 
 from database.models.sys.login_log import SysLoginLog
 from core.exception.errors import NotFoundError
+from core.i18n import t
 from modules.admin.schemas.sys.login_log import LoginLogQueryParams
 
 logger = logging.getLogger(__name__)
@@ -84,7 +85,7 @@ class LoginLogService:
         )
         log = result.scalar_one_or_none()
         if not log:
-            raise NotFoundError(msg=f"登录日志 {log_id} 不存在")
+            raise NotFoundError(msg=t("login_log.not_found", id=log_id))
         return log
 
     @staticmethod

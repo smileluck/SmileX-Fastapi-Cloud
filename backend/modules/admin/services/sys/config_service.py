@@ -19,6 +19,7 @@ from core.exception.errors import (
     ForbiddenError,
     ValidationError,
 )
+from core.i18n import t
 from modules.admin.schemas.sys.config import (
     SysConfigCreate,
     SysConfigUpdate,
@@ -150,7 +151,7 @@ class ConfigService:
 
             if not config:
                 logger.warning("配置不存在，配置ID: %d", config_id)
-                raise NotFoundError(msg=f"配置 {config_id} 不存在")
+                raise NotFoundError(msg=t("config.not_found", id=config_id))
 
             logger.info("获取配置详情成功，配置ID: %d", config_id)
             return config
@@ -186,7 +187,7 @@ class ConfigService:
 
             if not config:
                 logger.warning("配置不存在，配置键名: %s", config_key)
-                raise NotFoundError(msg=f"配置 {config_key} 不存在")
+                raise NotFoundError(msg=t("config.not_found_by_key", key=config_key))
 
             logger.info("获取配置详情成功，配置键名: %s", config_key)
             return config
@@ -382,13 +383,13 @@ class ConfigService:
                     "配置值无效，类型: %s, 值: %s", config_in.type, config_in.value
                 )
                 raise ValidationError(
-                    msg=f"配置值不符合 {config_in.type.value} 类型要求"
+                    msg=t("config.type_mismatch", type=config_in.type.value)
                 )
 
             # 非超级管理员不能创建系统内置配置
             if config_in.is_system and not is_superuser:
                 logger.warning("非超级管理员不能创建系统内置配置")
-                raise ForbiddenError(msg="非超级管理员不能创建系统内置配置")
+                raise ForbiddenError(msg=t("config.cannot_create_builtin"))
 
             # 检查配置键是否已存在
             result = await db.execute(
@@ -396,7 +397,7 @@ class ConfigService:
             )
             if result.scalar_one_or_none():
                 logger.warning("配置键已存在，键名: %s", config_in.key)
-                raise ConflictError(msg="配置键已存在")
+                raise ConflictError(msg=t("config.key_exist"))
 
             # 创建配置对象
             config = SysConfig(
@@ -464,12 +465,12 @@ class ConfigService:
 
             if not existing_config:
                 logger.warning("配置不存在，配置ID: %d", config_id)
-                raise NotFoundError(msg=f"配置 {config_id} 不存在")
+                raise NotFoundError(msg=t("config.not_found", id=config_id))
 
             # 非超级管理员不能修改系统内置配置
             if existing_config.is_system and not is_superuser:
                 logger.warning("系统内置配置禁止修改，配置ID: %d", config_id)
-                raise ForbiddenError(msg="系统内置配置禁止修改")
+                raise ForbiddenError(msg=t("config.cannot_modify_builtin"))
 
             # 验证值（如果提供了新值）
             update_data = config_in.model_dump(exclude_unset=True)
@@ -482,7 +483,7 @@ class ConfigService:
                         update_data["value"],
                     )
                     raise ValidationError(
-                        msg=f"配置值不符合 {config_type.value} 类型要求"
+                        msg=t("config.type_mismatch", type=config_type.value)
                     )
 
             # 更新字段
@@ -633,12 +634,12 @@ class ConfigService:
 
             if not config:
                 logger.warning("配置不存在，配置ID: %d", config_id)
-                raise NotFoundError(msg=f"配置 {config_id} 不存在")
+                raise NotFoundError(msg=t("config.not_found", id=config_id))
 
             # 非超级管理员不能删除系统内置配置
             if config.is_system and not is_superuser:
                 logger.warning("系统内置配置禁止删除，配置ID: %d", config_id)
-                raise ForbiddenError(msg="系统内置配置禁止删除")
+                raise ForbiddenError(msg=t("config.cannot_delete_builtin"))
 
             await db.delete(config)
             await db.commit()

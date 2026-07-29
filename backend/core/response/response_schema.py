@@ -35,7 +35,7 @@ class ResponseModel(BaseModel,Generic[SchemaT]):
     """
 
     code: int = Field(CustomResponseCode.HTTP_200.code, description="返回状态码")
-    msg: str = Field(CustomResponseCode.HTTP_200.msg, description="返回信息")
+    msg: str = Field("", description="返回信息")
     data: SchemaT = Field(None, description="返回数据")
 
     # 请求唯一标识（方便分布式系统追踪问题）

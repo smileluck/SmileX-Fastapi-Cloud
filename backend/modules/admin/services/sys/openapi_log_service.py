@@ -12,6 +12,7 @@ from sqlalchemy import and_, delete, select, Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.exception.errors import NotFoundError
+from core.i18n import t
 from database.models.sys.openapi_log import SysOpenapiLog
 from modules.admin.schemas.sys.openapi_log import OpenapiLogQueryParams
 
@@ -67,7 +68,7 @@ class OpenapiLogService:
         result = await db.execute(select(SysOpenapiLog).where(SysOpenapiLog.id == log_id))
         log = result.scalar_one_or_none()
         if not log:
-            raise NotFoundError(msg=f"开放API调用日志 {log_id} 不存在")
+            raise NotFoundError(msg=t("openapi_log.not_found", id=log_id))
         return log
 
     @staticmethod

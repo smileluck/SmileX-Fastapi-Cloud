@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_manager import get_session
 from core.response import ResponseModel, ResponsePageModel, response_base
+from core.i18n import t
 from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from modules.admin.deps.auth.user_manager import current_user
 from modules.admin.deps.auth.permission import require_permission
@@ -76,7 +77,7 @@ async def batch_delete_logs(
 ):
     """批量删除任务执行日志"""
     count = await TaskLogService.batch_delete_logs(db, log_ids)
-    return response_base.success(data={"deleted": count}, msg="删除成功")
+    return response_base.success(data={"deleted": count}, msg=t("common.delete_success"))
 
 
 @scheduler_log_router.delete(
@@ -92,4 +93,4 @@ async def clear_logs(
 ):
     """清理指定天数前的任务执行日志"""
     count = await TaskLogService.clear_logs(db, days)
-    return response_base.success(data={"deleted": count}, msg=f"已清理 {count} 条日志")
+    return response_base.success(data={"deleted": count}, msg=t("scheduler.cleaned_logs", count=count))

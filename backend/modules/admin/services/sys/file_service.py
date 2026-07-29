@@ -13,6 +13,7 @@ from sqlalchemy import select, and_, Select
 from database.models.sys.file import SysFile
 from core.config import settings
 from core.exception.errors import NotFoundError
+from core.i18n import t
 from core.storage import (
     get_storage_backend,
     validate_file_content,
@@ -118,7 +119,7 @@ class FileService:
         )
         sys_file = result.scalar_one_or_none()
         if not sys_file:
-            raise NotFoundError(msg=f"文件 {file_id} 不存在")
+            raise NotFoundError(msg=t("file.not_found", id=file_id))
         return sys_file
 
     @staticmethod

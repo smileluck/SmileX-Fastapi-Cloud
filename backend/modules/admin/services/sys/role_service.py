@@ -14,6 +14,7 @@ from typing import List, Optional, Tuple
 from database.models.sys.role import SysRole
 from database.models.sys.menu import SysMenu
 from core.exception.errors import NotFoundError, ConflictError, ForbiddenError
+from core.i18n import t
 from core.utils.memory_cache import get_memory_cache, CacheNamespace
 from modules.admin.schemas.sys.role import (
     SysRoleCreate,
@@ -128,7 +129,7 @@ class RoleService:
 
         if not role:
             logger.warning("角色不存在，角色ID: %s", role_id)
-            raise NotFoundError(msg=f"角色 {role_id} 不存在")
+            raise NotFoundError(msg=t("role.not_found", id=role_id))
 
         logger.debug("获取角色信息成功，角色名: %s", role.name)
         return role
@@ -158,7 +159,7 @@ class RoleService:
         )
         if existing.scalar_one_or_none():
             logger.warning("创建角色失败，角色名称已存在: %s", role_create.name)
-            raise ConflictError(msg="角色名称已存在")
+            raise ConflictError(msg=t("role.name_exist"))
 
         # 创建角色对象
         role = SysRole(
@@ -230,7 +231,7 @@ class RoleService:
         # 检查是否为系统内置角色
         if role.is_system and not is_superuser:
             logger.warning("更新角色失败，不能修改系统内置角色，角色ID: %s", role_id)
-            raise ForbiddenError(msg="不能修改系统内置角色")
+            raise ForbiddenError(msg=t("role.cannot_modify_builtin"))
 
         # 检查角色名称是否与其他角色重复
         if role_update.name and role_update.name != role.name:
@@ -244,7 +245,7 @@ class RoleService:
                 logger.warning(
                     "更新角色失败，角色名称已存在: %s", role_update.name
                 )
-                raise ConflictError(msg="角色名称已存在")
+                raise ConflictError(msg=t("role.name_exist"))
 
         # 更新角色信息
         update_data = role_update.model_dump(exclude_unset=True)
@@ -319,14 +320,14 @@ class RoleService:
         # 检查是否为系统内置角色
         if role.is_system and not is_superuser:
             logger.warning("分配菜单失败，不能修改系统内置角色，角色ID: %s", role_id)
-            raise ForbiddenError(msg="不能修改系统内置角色")
+            raise ForbiddenError(msg=t("role.cannot_modify_builtin"))
 
         # 校验越权：非超管只能分配自身拥有的菜单
         if permitted_menu_ids is not None and menu_ids:
             unauthorized = set(menu_ids) - permitted_menu_ids
             if unauthorized:
                 logger.warning("分配菜单失败，越权分配菜单ID: %s", unauthorized)
-                raise ForbiddenError(msg="不能分配自身没有的菜单权限")
+                raise ForbiddenError(msg=t("role.cannot_assign_unowned_menus"))
 
         # 获取菜单
         if menu_ids:
@@ -384,11 +385,11 @@ class RoleService:
         # 检查是否为系统内置角色或默认角色
         if role.is_system and not is_superuser:
             logger.warning("删除角色失败，不能删除系统内置角色，角色ID: %s", role_id)
-            raise ForbiddenError(msg="不能删除系统内置角色")
+            raise ForbiddenError(msg=t("role.cannot_delete_builtin"))
 
         if role.is_default:
             logger.warning("删除角色失败，不能删除默认角色，角色ID: %s", role_id)
-            raise ForbiddenError(msg="不能删除默认角色")
+            raise ForbiddenError(msg=t("role.cannot_delete_default"))
 
         await db.delete(role)
         await db.commit()

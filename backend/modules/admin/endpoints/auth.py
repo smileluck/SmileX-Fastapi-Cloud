@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 from redis import Redis
 from database.models.sys.user import SysUser
 from core.config import settings
+from core.i18n import t
 from core.response import (
     ResponseModel,
     response_base,
@@ -77,7 +78,7 @@ async def _write_login_log(username: str, ip: str | None, status: bool, detail: 
 async def get_captcha(request: Request):
     await limit_by_ip(request=request, action="captcha", limit=10, window_seconds=60, scope="admin")
     data = await CaptchaService.generate_captcha()
-    return response_base.success(data=data, msg="获取验证码成功")
+    return response_base.success(data=data, msg=t("auth.captcha_success"))
 
 
 @router.post(
@@ -91,7 +92,7 @@ async def verify_captcha(request: Request, req: CaptchaVerifyRequest = Body(...)
     token = await CaptchaService.verify_captcha(req.captcha_id, req.slide_x)
     return response_base.success(
         data=CaptchaVerifyResponse(captcha_token=token),
-        msg="验证成功",
+        msg=t("auth.verify_success"),
     )
 
 
@@ -172,7 +173,7 @@ async def login(
         asyncio.create_task(RateLimitService.clear_login_failure(ip))
         return response_base.success(
             data=tokens,
-            msg="登录成功",
+            msg=t("auth.login_success"),
         )
     except CustomError as e:
         asyncio.create_task(
@@ -195,7 +196,7 @@ async def get_current_info(
     user_info = await user_manager.get_user_info(user.id)
     return response_base.success(
         data=user_info,
-        msg="获取用户信息成功",
+        msg=t("auth.user_info_success"),
     )
 
 
@@ -221,4 +222,4 @@ async def logout(
         await OnlineUserService.kick_user(
             user_id=user.id, session_id=session_id, role="admin", tenant_id=tenant_id
         )
-    return response_base.success(msg="登出成功")
+    return response_base.success(msg=t("auth.logout_success"))

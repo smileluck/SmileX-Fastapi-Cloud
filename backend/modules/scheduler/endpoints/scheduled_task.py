@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_manager import get_session
 from core.response import ResponseModel, ResponsePageModel, response_base
+from core.i18n import t
 from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from modules.admin.deps.auth.user_manager import current_user
 from modules.admin.deps.auth.permission import require_permission
@@ -87,7 +88,7 @@ async def create_task(
     task = await SchedulerService.create_task(db, task_create)
     await db.commit()
     await db.refresh(task)
-    return response_base.success(data=ScheduledTaskResponse.model_validate(task), msg="创建成功")
+    return response_base.success(data=ScheduledTaskResponse.model_validate(task), msg=t("common.create_success"))
 
 
 @scheduler_task_router.put(
@@ -106,7 +107,7 @@ async def update_task(
     task = await SchedulerService.update_task(db, task_id, task_update)
     await db.commit()
     await db.refresh(task)
-    return response_base.success(data=ScheduledTaskResponse.model_validate(task), msg="更新成功")
+    return response_base.success(data=ScheduledTaskResponse.model_validate(task), msg=t("common.update_success"))
 
 
 @scheduler_task_router.delete(
@@ -123,7 +124,7 @@ async def delete_task(
     """删除定时任务"""
     await SchedulerService.delete_task(db, task_id)
     await db.commit()
-    return response_base.success(msg="删除成功")
+    return response_base.success(msg=t("common.delete_success"))
 
 
 @scheduler_task_router.delete(
@@ -146,7 +147,7 @@ async def batch_delete_tasks(
         except Exception:
             pass
     await db.commit()
-    return response_base.success(data={"deleted": count}, msg="删除成功")
+    return response_base.success(data={"deleted": count}, msg=t("common.delete_success"))
 
 
 @scheduler_task_router.put(
@@ -165,7 +166,7 @@ async def toggle_task_status(
     task = await SchedulerService.toggle_status(db, task_id, status)
     await db.commit()
     await db.refresh(task)
-    return response_base.success(data=ScheduledTaskResponse.model_validate(task), msg="状态更新成功")
+    return response_base.success(data=ScheduledTaskResponse.model_validate(task), msg=t("common.status_update_success"))
 
 
 @scheduler_task_router.post(
@@ -182,7 +183,7 @@ async def manual_trigger_task(
     """手动触发定时任务"""
     await SchedulerService.manual_trigger(db, task_id)
     await db.commit()
-    return response_base.success(msg="任务已触发执行")
+    return response_base.success(msg=t("scheduler.task_triggered"))
 
 
 @scheduler_task_router.post(
@@ -261,4 +262,4 @@ async def sync_registry(
     """将装饰器注册的任务同步到数据库"""
     synced = await SchedulerService.sync_registry_to_db(db)
     await db.commit()
-    return response_base.success(data={"synced": synced}, msg=f"已同步 {len(synced)} 个任务")
+    return response_base.success(data={"synced": synced}, msg=t("scheduler.synced_count", count=len(synced)))

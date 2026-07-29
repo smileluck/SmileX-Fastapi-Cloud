@@ -6,6 +6,7 @@ from typing import List, Optional
 
 from pydantic import Field, field_validator
 
+from core.i18n import t
 from modules.common.schemas.base import BaseEntity
 
 
@@ -36,7 +37,7 @@ class IpBlacklistCreateRequest(BaseEntity):
     @classmethod
     def _check_type(cls, v: str) -> str:
         if v not in ("permanent", "temporary"):
-            raise ValueError("type 仅支持 permanent / temporary")
+            raise ValueError(t("validation.ip_blacklist_type"))
         return v
 
 

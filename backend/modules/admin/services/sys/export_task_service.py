@@ -17,6 +17,7 @@ from database.models.sys.export_task import SysExportTask
 from database.models.sys.export_template import SysExportTemplate
 from core.config import settings
 from core.exception.errors import NotFoundError, CustomError
+from core.i18n import t
 from core.response import CustomErrorCode
 from core.utils.excel_export import build_excel_bytes, ExportColumn
 from modules.admin.exports import get_export_config
@@ -70,7 +71,7 @@ class ExportTaskService:
     ) -> SysExportTask:
         if not submit.module_key and not submit.template_id:
             raise CustomError(
-                msg="module_key 和 template_id 至少传一个",
+                msg=t("export_task.module_or_template_required"),
                 error=CustomErrorCode.BAD_REQUEST,
             )
 
@@ -78,7 +79,7 @@ class ExportTaskService:
         if submit.template_id:
             template = await db.get(SysExportTemplate, submit.template_id)
             if not template:
-                raise NotFoundError(msg=f"导出模板 {submit.template_id} 不存在")
+                raise NotFoundError(msg=t("export_task.template_not_found", id=submit.template_id))
             module_key = template.module_key
             task_name = template.name
             template_id = submit.template_id
@@ -228,7 +229,7 @@ class ExportTaskService:
         tables: dict[str, Table] = {}
         for table_name in involved_tables:
             if table_name not in metadata.tables:
-                raise ValueError(f"表 {table_name} 不存在于模型元数据中")
+                raise ValueError(t("export_task.table_not_in_metadata", table=table_name))
             tables[table_name] = metadata.tables[table_name]
 
         # 构建 SELECT 列表
@@ -240,7 +241,7 @@ class ExportTaskService:
                 if col.field in tbl.c:
                     select_cols.append(tbl.c[col.field].label(f"{tbl_name}.{col.field}"))
                 else:
-                    raise ValueError(f"字段 {tbl_name}.{col.field} 不存在")
+                    raise ValueError(t("export_task.column_not_found", table=tbl_name, column=col.field))
 
         # 从第一个列的表作为主表开始构建查询
         base_table_name = columns[0].table or list(involved_tables)[0]
@@ -298,7 +299,7 @@ class ExportTaskService:
         )
         task = result.scalar_one_or_none()
         if not task:
-            raise NotFoundError(msg=f"导出任务 {task_id} 不存在")
+            raise NotFoundError(msg=t("export_task.not_found", id=task_id))
         return task
 
     @staticmethod
@@ -332,11 +333,11 @@ class ExportTaskService:
         task = await ExportTaskService.get_task(db, task_id)
         if task.status != "completed":
             raise CustomError(
-                msg=f"任务状态为 {task.status}，无法下载",
+                msg=t("export_task.cannot_download_status", status=task.status),
                 error=CustomErrorCode.BAD_REQUEST,
             )
         if not task.file_path or not os.path.exists(task.file_path):
-            raise NotFoundError(msg="导出文件不存在，可能已被清理")
+            raise NotFoundError(msg=t("export_task.file_not_found"))
         return task.file_path
 
     @staticmethod

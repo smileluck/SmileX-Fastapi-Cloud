@@ -27,32 +27,33 @@ from core.response.response_code import (
     CustomResponseCode,
     StandardResponseCode,
 )
+from core.i18n import t
 from logging import getLogger
 from core.utils.track_id import get_request_trace_id
 
 logger = getLogger(__name__)
 
-# Pydantic V2 常见错误类型到中文提示的映射
+# Pydantic V2 常见错误类型到 i18n key 的映射
 PYDANTIC_ERROR_MSG_MAP = {
-    "int_parsing": "请输入有效的整数",
-    "int_type": "请输入有效的整数",
-    "missing": "缺少必填参数",
-    "string_too_long": "内容长度超过限制",
-    "string_too_short": "内容长度不足",
-    "value_error": None,  # 使用原始 msg
+    "int_parsing": "pydantic.int_parsing",
+    "int_type": "pydantic.int_parsing",
+    "missing": "pydantic.missing",
+    "string_too_long": "pydantic.string_too_long",
+    "string_too_short": "pydantic.string_too_short",
+    "value_error": None,  # 使用原始 msg（校验器已自行翻译）
 }
 
 
 def _translate_pydantic_msg(error: dict) -> str:
-    """把 Pydantic 默认英文错误翻译为中文；无法识别时返回原始 msg"""
+    """把 Pydantic 默认英文错误翻译为当前请求语言；无法识别时返回原始 msg"""
     error_type = error.get("type")
     mapped = PYDANTIC_ERROR_MSG_MAP.get(error_type)
     if mapped is not None:
-        return mapped
-    # 兜底：优先使用 ctx.error 里的自定义中文错误
+        return t(mapped)
+    # 兜底：优先使用 ctx.error 里的自定义错误（校验器已自行翻译）
     if "ctx" in error and "error" in error["ctx"]:
         return str(error["ctx"]["error"])
-    return error.get("msg", "请求参数验证失败")
+    return error.get("msg") or t("pydantic.validation_failed")
 
 
 def setup_exception_global_handlers(app: FastAPI) -> None:
@@ -63,7 +64,7 @@ def setup_exception_global_handlers(app: FastAPI) -> None:
     ) -> ORJSONResponse:
         """\处理路由未找到的情况"""
         return await not_found_error_handler(
-            request, NotFoundError(msg="请求的路由不存在")
+            request, NotFoundError(msg=t("error.route_not_found"))
         )
 
     # 自定义Pydantic验证异常处理器
@@ -142,7 +143,7 @@ async def base_exception_handler(
     response = ResponseModel(
         code=exc.code,
         err_code=exc.err_code.code if hasattr(exc, "err_code") else None,
-        msg=exc.msg or "请求异常",
+        msg=exc.msg or t(getattr(exc, "default_msg_key", "error.request_exception")),
         data=exc.data,
         request_id=request_id,
     )
@@ -185,7 +186,7 @@ async def server_error_handler(request: Request, exc: ServerError) -> ORJSONResp
         f"msg={exc.msg}, request_id={request_id}\n{traceback.format_exc()}"
     )
     err_code = None
-    msg = exc.msg or "服务器内部错误"
+    msg = exc.msg or t("response.http_500")
     if hasattr(exc, "err_code"):
         err_code = exc.err_code.code
         msg = exc.err_code.msg or msg
@@ -222,7 +223,7 @@ async def token_error_handler(request: Request, exc: TokenError) -> ORJSONRespon
     # 构建响应
     response = ResponseModel(
         code=StandardResponseCode.HTTP_401,
-        msg=exc.detail or "未授权",
+        msg=exc.detail or t("error.unauthorized"),
         request_id=request_id,
     )
     return ORJSONResponse(
@@ -266,7 +267,7 @@ async def custom_error_handler(request: Request, exc: CustomError) -> ORJSONResp
     response = ResponseModel(
         code=CustomResponseCode.HTTP_500.code,
         err_code=exc.code,
-        msg=exc.msg or "服务器发生异常",
+        msg=exc.msg or t("error.server_error"),
         data=data,
         request_id=request_id,
     )
@@ -318,7 +319,7 @@ async def http_exception_handler(
     response = ResponseModel(
         code=exc.status_code,
         err_code=exc.status_code,
-        msg=str(exc.detail) if exc.detail else "HTTP异常",
+        msg=str(exc.detail) if exc.detail else t("error.http_exception"),
         request_id=request_id,
     )
     return ORJSONResponse(
@@ -348,7 +349,7 @@ async def validation_exception_handler(
     # 构建响应
     response = ResponseModel(
         code=StandardResponseCode.HTTP_422,
-        msg=errors[0] or "请求参数验证失败",
+        msg=errors[0] or t("pydantic.validation_failed"),
         request_id=request_id,
     )
     return ORJSONResponse(
@@ -367,7 +368,7 @@ async def pydantic_validation_error_handler(
     errors = []
     for error in exc.errors():
         field = ".".join(str(loc) for loc in error.get("loc", []))
-        message = error.get("msg", "验证错误")
+        message = error.get("msg") or t("error.validation_error")
         errors.append(f"{field}: {message}")
     # 记录日志
     logger.warning(
@@ -377,7 +378,7 @@ async def pydantic_validation_error_handler(
     # 构建响应
     response = ResponseModel(
         code=StandardResponseCode.HTTP_422,
-        msg="数据验证失败",
+        msg=t("error.validation_failed"),
         data={"errors": errors},
         request_id=request_id,
     )
@@ -400,7 +401,7 @@ async def generic_exception_handler(request: Request, exc: Exception) -> ORJSONR
     # 构建响应
     response = ResponseModel(
         code=StandardResponseCode.HTTP_500,
-        msg="服务器内部错误",
+        msg=t("response.http_500"),
         request_id=request_id,
     )
     return ORJSONResponse(

@@ -10,6 +10,7 @@ from core.config import settings
 from database import get_session
 from core.exception import CustomError, TokenError
 from core.response import CustomErrorCode
+from core.i18n import t
 from logging import getLogger
 from core.security.oauth.jwt import JWTAuthManager, Token, oauth2_scheme
 from core.redis import get_redis_util
@@ -209,7 +210,7 @@ class UserManager:
         """
         if not phone or not code:
             raise CustomError(
-                msg="手机号和验证码不能为空",
+                msg=t("auth.phone_captcha_required"),
                 error=CustomErrorCode.USER_LOGIN_FAILED,
             )
         # 验证密码
@@ -225,7 +226,7 @@ class UserManager:
         # 禁用账号拦截：后台禁用后不允许登录
         if not user.status:
             raise CustomError(
-                msg="账号已被禁用，请联系管理员",
+                msg=t("auth.account_disabled_contact"),
                 error=CustomErrorCode.USER_LOGIN_FAILED,
             )
         tokens = await base_user_manager.create_token(user_id=user.id, user_role="app", username=user.username)
@@ -286,7 +287,7 @@ class UserManager:
         # jti 黑名单校验：每次直查 Redis，不进内存缓存，保证吊销即时生效
         jti = payload.get("jti")
         if jti and await base_user_manager.is_token_revoked(jti):
-            raise TokenError(msg="令牌已被吊销")
+            raise TokenError(msg=t("auth.token_revoked"))
         cache_key = build_session_key(user_role, int(user_id))
         # 检查内存缓存
         _cache = get_memory_cache()
@@ -346,7 +347,7 @@ class UserManager:
             raise TokenError()
         # 账号已被后台禁用：即便 session 仍在，也拒绝鉴权
         if not user.status:
-            raise TokenError(msg="账号已被禁用")
+            raise TokenError(msg=t("auth.account_disabled"))
         return user
 
     async def get_verification_code(self, phone: str) -> None:

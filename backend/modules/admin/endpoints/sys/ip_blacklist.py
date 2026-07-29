@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from database.models.sys.user import SysUser
+from core.i18n import t
 from core.response import ResponseModel, ResponsePageModel, response_base
 from database.db_manager import get_session
 from modules.admin.deps.auth.permission import require_permission
@@ -66,7 +67,7 @@ async def add_blacklist(
     entry = await IpBlacklistService.create(db=db, req=req, creator_id=user.id)
     return response_base.success(
         data=IpBlacklistResponse.model_validate(entry),
-        msg="已加入黑名单",
+        msg=t("ip_blacklist.added"),
     )
 
 
@@ -83,7 +84,7 @@ async def batch_remove(
 ):
     """批量软删除并同步移除 Redis"""
     count = await IpBlacklistService.delete_by_ids(db, req.ids)
-    return response_base.success(data={"deleted": count}, msg="已移除")
+    return response_base.success(data={"deleted": count}, msg=t("ip_blacklist.removed"))
 
 
 @ip_blacklist_router.delete(
@@ -98,4 +99,4 @@ async def remove_one(
     db: AsyncSession = Depends(get_session),
 ):
     count = await IpBlacklistService.delete_by_ids(db, [entry_id])
-    return response_base.success(data={"deleted": count}, msg="已移除")
+    return response_base.success(data={"deleted": count}, msg=t("ip_blacklist.removed"))

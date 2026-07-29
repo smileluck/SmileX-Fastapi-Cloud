@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.db_manager import get_session
 from core.response.response_schema import ResponseModel
 from core.exception.errors import ForbiddenError
+from core.i18n import t
 from core.security.oauth.user_manager import base_user_manager
 from plugins.multi_tenant.services.tenant_service import TenantService
 from plugins.multi_tenant.schemas.tenant import SelectTenantRequest
@@ -42,10 +43,10 @@ async def select_tenant(
             break
 
     if not target:
-        raise ForbiddenError(msg="您不属于该租户")
+        raise ForbiddenError(msg=t("tenant.not_belong"))
 
     if not target.status:
-        raise ForbiddenError(msg="该租户已被禁用")
+        raise ForbiddenError(msg=t("tenant.disabled"))
 
     # 查找租户 JWT 配置
     jwt_config = await TenantService.get_tenant_jwt_config_cached(target.id)
@@ -79,5 +80,5 @@ async def select_tenant(
             "tenant_id": target.id,
             "tenants": tenant_list,
         },
-        msg=f"已切换到租户: {target.name}",
+        msg=t("tenant.switched", name=target.name),
     )

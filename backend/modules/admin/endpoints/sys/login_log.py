@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response import ResponseModel, ResponsePageModel, response_base
 from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from modules.admin.deps.auth.user_manager import current_user
@@ -63,7 +64,7 @@ async def batch_delete_logs(
 ):
     """批量软删除登录日志"""
     count = await LoginLogService.batch_delete_logs(db, log_ids)
-    return response_base.success(data={"deleted": count}, msg="批量删除成功")
+    return response_base.success(data={"deleted": count}, msg=t("common.batch_delete_plain"))
 
 
 @login_log_router.delete(
@@ -80,7 +81,7 @@ async def clear_logs(
     """清理指定天数前的登录日志"""
     count = await LoginLogService.clear_logs(db, days)
     return response_base.success(
-        data={"deleted": count}, msg=f"已清理 {days} 天前的日志"
+        data={"deleted": count}, msg=t("login_log.cleaned_before_days", days=days)
     )
 
 
@@ -98,7 +99,7 @@ async def get_log_detail(
     log = await LoginLogService.get_log(db, log_id)
     return response_base.success(
         data=LoginLogDetailResponse.model_validate(log),
-        msg="获取登录日志详情成功",
+        msg=t("login_log.detail_success"),
     )
 
 
@@ -115,4 +116,4 @@ async def delete_log(
 ):
     """软删除单条登录日志"""
     count = await LoginLogService.batch_delete_logs(db, [log_id])
-    return response_base.success(data={"deleted": count}, msg="删除成功")
+    return response_base.success(data={"deleted": count}, msg=t("common.delete_success"))

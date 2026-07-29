@@ -12,6 +12,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response import ResponseModel, response_base
 from core.decorators.operation_log import log_operation
 from core.exception.errors import NotFoundError
@@ -99,7 +100,7 @@ async def get_template(
     )
     template = result.scalar_one_or_none()
     if not template:
-        raise NotFoundError(msg=f"导出模板 {template_id} 不存在")
+        raise NotFoundError(msg=t("export_template.not_found", id=template_id))
     return response_base.success(data=ExportTemplateResponse.from_orm_with_format(template))
 
 
@@ -138,7 +139,7 @@ async def create_template(
     await db.refresh(template)
     return response_base.success(
         data=ExportTemplateResponse.from_orm_with_format(template),
-        msg="创建成功",
+        msg=t("common.create_success"),
     )
 
 
@@ -160,7 +161,7 @@ async def update_template(
     )
     template = result.scalar_one_or_none()
     if not template:
-        raise NotFoundError(msg=f"导出模板 {template_id} 不存在")
+        raise NotFoundError(msg=t("export_template.not_found", id=template_id))
 
     if template_in.name is not None:
         template.name = template_in.name
@@ -181,7 +182,7 @@ async def update_template(
     await db.refresh(template)
     return response_base.success(
         data=ExportTemplateResponse.from_orm_with_format(template),
-        msg="更新成功",
+        msg=t("common.update_success"),
     )
 
 
@@ -202,8 +203,8 @@ async def delete_template(
     )
     template = result.scalar_one_or_none()
     if not template:
-        raise NotFoundError(msg=f"导出模板 {template_id} 不存在")
+        raise NotFoundError(msg=t("export_template.not_found", id=template_id))
 
     await db.delete(template)
     await db.commit()
-    return response_base.success(msg="删除成功")
+    return response_base.success(msg=t("common.delete_success"))

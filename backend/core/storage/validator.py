@@ -11,6 +11,7 @@ from typing import Optional, Tuple
 import filetype
 
 from core.exception.errors import RequestError
+from core.i18n import t
 
 
 def validate_file_extension(
@@ -32,10 +33,10 @@ def validate_file_extension(
     """
     ext = os.path.splitext(filename)[1].lstrip(".").lower()
     if not ext:
-        raise RequestError(msg="文件缺少扩展名")
+        raise RequestError(msg=t("storage.file_no_extension"))
     if allowed_extensions and ext not in [e.lower() for e in allowed_extensions]:
         raise RequestError(
-            msg=f"不支持的文件类型: .{ext}，允许的类型: {', '.join(allowed_extensions)}"
+            msg=t("storage.unsupported_file_type", ext=ext, allowed=", ".join(allowed_extensions))
         )
     return ext
 
@@ -53,7 +54,7 @@ def validate_file_size(size_bytes: int, max_size: int) -> None:
     """
     if size_bytes > max_size:
         max_mb = max_size / (1024 * 1024)
-        raise RequestError(msg=f"文件大小超过限制，最大允许 {max_mb:.1f}MB")
+        raise RequestError(msg=t("storage.file_too_large", max=f"{max_mb:.1f}"))
 
 
 def generate_stored_name(extension: str) -> str:
@@ -127,10 +128,10 @@ def validate_file_content(
         # 文本/容器类无法用 magic bytes 判定，退化为信任扩展名白名单
         if declared_ext in _TEXT_FALLBACK_EXTS:
             return declared_mime or "application/octet-stream"
-        raise RequestError(msg=f"无法识别文件真实类型: .{declared_ext}")
+        raise RequestError(msg=t("storage.cannot_detect_real_type", ext=declared_ext))
     if real_ext != declared_ext:
         raise RequestError(
-            msg=f"文件扩展名 .{declared_ext} 与真实类型 .{real_ext} 不一致"
+            msg=t("storage.ext_mismatch", declared=declared_ext, real=real_ext)
         )
     if (
         strict_mime
@@ -138,5 +139,5 @@ def validate_file_content(
         and real_mime
         and not _mime_compatible(declared_mime, real_mime)
     ):
-        raise RequestError(msg="文件 MIME 类型与内容不匹配")
+        raise RequestError(msg=t("storage.mime_mismatch"))
     return real_mime or declared_mime or "application/octet-stream"

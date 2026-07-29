@@ -10,6 +10,7 @@ from collections.abc import AsyncGenerator
 import aiofiles
 
 from core.exception.errors import NotFoundError
+from core.i18n import t
 from .base import StorageBackend
 
 _DEFAULT_CHUNK_SIZE = 64 * 1024  # 64 KB
@@ -24,7 +25,7 @@ class LocalStorageBackend(StorageBackend):
     def _resolve(self, file_path: str) -> str:
         full_path = os.path.join(self._base_dir, file_path)
         if not os.path.exists(full_path):
-            raise NotFoundError(msg="文件不存在")
+            raise NotFoundError(msg=t("storage.file_not_found"))
         return full_path
 
     async def save(self, file_data: bytes, stored_name: str, path_prefix: str) -> str:

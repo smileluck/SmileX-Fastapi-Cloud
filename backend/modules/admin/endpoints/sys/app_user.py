@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response.response_schema import ResponseModel, ResponsePageModel
 from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from core.decorators.operation_log import log_operation
@@ -109,7 +110,7 @@ async def create_app_user(
     user_response = AppUserResponseData.model_validate(app_user)
 
     logger.info("创建应用用户成功，用户ID: %s", app_user.id)
-    return ResponseModel(data=user_response, msg="创建应用用户成功")
+    return ResponseModel(data=user_response, msg=t("app_user.create_success"))
 
 
 @app_user_router.put(
@@ -134,7 +135,7 @@ async def update_app_user(
     user_response = AppUserResponseData.model_validate(app_user)
 
     logger.info("更新应用用户成功，用户ID: %s", user_id)
-    return ResponseModel(data=user_response, msg="更新应用用户成功")
+    return ResponseModel(data=user_response, msg=t("app_user.update_success"))
 
 
 @app_user_router.delete(
@@ -158,7 +159,7 @@ async def batch_delete_app_users(
 
     logger.info("批量删除应用用户成功，共删除 %s 个", delete_count)
     return ResponseModel(
-        msg=f"批量删除成功，共删除 {delete_count} 个应用用户",
+        msg=t("app_user.batch_delete_success", count=delete_count),
         data={"delete_count": delete_count},
     )
 
@@ -188,10 +189,10 @@ async def batch_update_app_users_status(
         db, batch_update.user_ids, batch_update.status
     )
 
-    status_text = "启用" if batch_update.status else "禁用"
+    status_text = t("common.enable") if batch_update.status else t("common.disable")
     logger.info("批量更新应用用户状态成功，共 %s 个被%s", update_count, status_text)
     return ResponseModel(
-        msg=f"批量{status_text}成功，共 {update_count} 个应用用户",
+        msg=t("app_user.batch_status_success", action=status_text, count=update_count),
         data={"update_count": update_count},
     )
 
@@ -216,7 +217,7 @@ async def delete_app_user(
     await AppUserService.delete_app_user(db, user_id)
 
     logger.info("删除应用用户成功，用户ID: %s", user_id)
-    return ResponseModel(msg="删除应用用户成功")
+    return ResponseModel(msg=t("app_user.delete_success"))
 
 
 @app_user_router.put(
@@ -240,4 +241,4 @@ async def change_app_user_password(
     await AppUserService.update_app_user_password(db, user_id, password_update)
 
     logger.info("重置应用用户密码成功，用户ID: %s", user_id)
-    return ResponseModel(msg="密码重置成功")
+    return ResponseModel(msg=t("app_user.password_reset_success"))

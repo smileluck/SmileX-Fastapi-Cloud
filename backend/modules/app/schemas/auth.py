@@ -5,6 +5,7 @@ from typing import Optional
 from pydantic import BaseModel, field_validator, Field
 import re
 from core.security.oauth.jwt import Token
+from core.i18n import t
 
 
 class LoginModel(BaseModel):
@@ -17,14 +18,14 @@ class LoginModel(BaseModel):
     def phone_validator(cls, v):
         """验证手机号，示例：验证是否为中国大陆手机号"""
         if not re.match(r"^1[3-9]\d{9}$", v):
-            raise ValueError("请输入有效的中国大陆手机号")
+            raise ValueError(t("auth.phone_cn_invalid"))
         return v
 
     @field_validator("code")
     def code_validator(cls, v):
         """验证短信验证码，示例：验证是否为6位数字"""
         if not re.match(r"^\d{6}$", v):
-            raise ValueError("请输入6位数字的短信验证码")
+            raise ValueError(t("auth.sms_code_invalid"))
         return v
 
 
@@ -37,7 +38,7 @@ class RefreshTokenModel(BaseModel):
     def refresh_token_validator(cls, v):
         """验证刷新token是否为空"""
         if not v.strip():
-            raise ValueError("刷新token不能为空")
+            raise ValueError(t("auth.refresh_token_required"))
         return v
 
 
@@ -50,7 +51,7 @@ class SmsCodeModel(BaseModel):
     def phone_validator(cls, v):
         """验证手机号，示例：验证是否为中国大陆手机号"""
         if not re.match(r"^1[3-9]\d{9}$", v):
-            raise ValueError("请输入有效的中国大陆手机号")
+            raise ValueError(t("auth.phone_cn_invalid"))
         return v
 
 

@@ -5,6 +5,7 @@ from typing import Optional, List
 from pydantic import Field, ConfigDict, field_validator
 import json
 from datetime import datetime
+from core.i18n import t
 from modules.common.schemas.base import BaseRespEntity, BaseReqEntity, BaseEntity, BoolField
 from modules.common.schemas.page import PageRequest
 
@@ -147,7 +148,7 @@ class SysDictItemCreate(BaseReqEntity):
         try:
             json.loads(value)
         except json.JSONDecodeError as exc:
-            raise ValueError("ext_info 必须为合法 JSON 字符串") from exc
+            raise ValueError(t("validation.dict_ext_info_json")) from exc
         return value
 
 
@@ -172,7 +173,7 @@ class SysDictItemUpdate(BaseReqEntity):
         try:
             json.loads(value)
         except json.JSONDecodeError as exc:
-            raise ValueError("ext_info 必须为合法 JSON 字符串") from exc
+            raise ValueError(t("validation.dict_ext_info_json")) from exc
         return value
 
 

@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_manager import get_session
+from core.i18n import t
 from core.response import ResponseModel, ResponsePageModel, response_base
 from modules.common.schemas.page import PageRequest, get_page_params
 from modules.admin.deps.auth.user_manager import current_user
@@ -76,8 +77,8 @@ async def kick_user(
         session_id=kick_req.session_id,
     )
     if not success:
-        return response_base.success(msg="会话不存在或已过期")
-    return response_base.success(msg="已将用户踢下线")
+        return response_base.success(msg=t("online_user.session_not_found"))
+    return response_base.success(msg=t("online_user.kicked"))
 
 
 @online_user_router.post(
@@ -96,7 +97,7 @@ async def kick_all_sessions(
     )
     return response_base.success(
         data={"sessions_removed": count},
-        msg=f"已踢除 {count} 个在线会话",
+        msg=t("online_user.kicked_count", count=count),
     )
 
 
@@ -113,7 +114,7 @@ async def kick_all_online_users(
     count = await OnlineUserService.kick_all_online_users()
     return response_base.success(
         data={"sessions_removed": count},
-        msg=f"已踢除 {count} 个在线会话",
+        msg=t("online_user.kicked_count", count=count),
     )
 
 

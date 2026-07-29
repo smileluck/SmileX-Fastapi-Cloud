@@ -12,6 +12,7 @@ from starlette.background import BackgroundTask
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from core.config import settings
+from core.i18n import t
 from core.utils.ip_utils import get_real_client_ip
 from core.log.request_id_filter import set_request_id
 
@@ -79,7 +80,7 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
                         status_code=413,
                         content={
                             "code": 413,
-                            "msg": "请求体过大",
+                            "msg": t("security.request_too_large"),
                         },
                     )
             except ValueError:
@@ -87,7 +88,7 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
                     status_code=400,
                     content={
                         "code": 400,
-                        "msg": "非法 Content-Length",
+                        "msg": t("security.invalid_content_length"),
                     },
                 )
         return await call_next(request)

@@ -13,6 +13,8 @@ from typing import Any, Callable
 
 from pydantic import BaseModel
 
+from core.i18n import t
+
 logger = logging.getLogger(__name__)
 
 _TASK_REGISTRY: dict[str, "TaskDefinition"] = {}
@@ -127,9 +129,9 @@ def _resolve_trigger(
     """解析触发器参数，返回 (trigger_type, trigger_params, cron_expression)"""
     provided = sum(x is not None for x in [cron, interval, date])
     if provided == 0:
-        raise ValueError("必须指定 cron、interval 或 date 之一")
+        raise ValueError(t("validation.must_specify_one_trigger"))
     if provided > 1:
-        raise ValueError("cron、interval、date 只能指定一个")
+        raise ValueError(t("validation.only_one_trigger"))
 
     if cron is not None:
         return "cron", {}, cron

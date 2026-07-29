@@ -10,6 +10,7 @@ from typing import List
 
 from database.db_manager import get_session
 from core.response.response_schema import ResponseModel, ResponsePageModel
+from core.i18n import t
 from modules.common.schemas.page import get_page_params, get_paginated_results, PageRequest
 from modules.admin.deps.auth.user_manager import current_user
 from modules.admin.deps.auth.permission import require_permission
@@ -96,7 +97,7 @@ async def create_tenant(
 ):
     """创建租户"""
     tenant = await TenantService.create_tenant(db, tenant_create)
-    return ResponseModel(data=TenantResponse.model_validate(tenant), msg="创建租户成功")
+    return ResponseModel(data=TenantResponse.model_validate(tenant), msg=t("tenant.create_success"))
 
 
 @tenant_router.put(
@@ -111,7 +112,7 @@ async def update_tenant(
 ):
     """更新租户"""
     tenant = await TenantService.update_tenant(db, tenant_id, tenant_update)
-    return ResponseModel(data=TenantResponse.model_validate(tenant), msg="更新租户成功")
+    return ResponseModel(data=TenantResponse.model_validate(tenant), msg=t("tenant.update_success"))
 
 
 @tenant_router.delete(
@@ -125,7 +126,7 @@ async def delete_tenant(
 ):
     """删除租户"""
     await TenantService.delete_tenant(db, tenant_id)
-    return ResponseModel(msg="删除租户成功")
+    return ResponseModel(msg=t("tenant.delete_success"))
 
 
 @tenant_router.put(
@@ -140,7 +141,7 @@ async def update_tenant_status(
 ):
     """更新租户状态"""
     tenant = await TenantService.update_status(db, tenant_id, status)
-    return ResponseModel(data=TenantResponse.model_validate(tenant), msg="更新状态成功")
+    return ResponseModel(data=TenantResponse.model_validate(tenant), msg=t("tenant.update_status_success"))
 
 
 @tenant_router.get(
@@ -169,7 +170,7 @@ async def update_tenant_config(
 ):
     """更新租户配置"""
     config = await TenantService.update_tenant_config(db, tenant_id, config_update)
-    return ResponseModel(data=config, msg="更新租户配置成功")
+    return ResponseModel(data=config, msg=t("tenant.config_update_success"))
 
 
 @tenant_router.get(
@@ -198,7 +199,7 @@ async def assign_user_to_tenant(
 ):
     """分配用户到租户"""
     await TenantService.assign_user(db, tenant_id, assign_in.user_id, assign_in.role)
-    return ResponseModel(msg="分配用户成功")
+    return ResponseModel(msg=t("tenant.assign_users_success"))
 
 
 @tenant_router.delete(
@@ -213,4 +214,4 @@ async def remove_user_from_tenant(
 ):
     """从租户移除用户"""
     await TenantService.remove_user(db, tenant_id, user_id)
-    return ResponseModel(msg="移除用户成功")
+    return ResponseModel(msg=t("tenant.remove_users_success"))
