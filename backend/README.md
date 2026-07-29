@@ -1,198 +1,135 @@
-# SmileX_Cloud
+# SmileX Cloud · Backend
 
-一个基于 FastAPI 构建的现代化云服务平台后端系统，提供完整的用户认证、权限管理、数据处理和API服务能力。
+基于 FastAPI 构建的云服务平台后端，提供认证授权、权限菜单、系统配置、调度任务、多租户、开放 API 等能力。对应前端见 [`../frontend`](../frontend)，独立 MCP 服务见 [`../mcp-platform`](../mcp-platform)。
 
-## 🌟 功能特点
+## 技术栈
 
-### 核心功能
-- **用户认证系统**：基于 JWT 的安全认证机制，支持多端认证
-- **权限管理**：细粒度的角色权限控制（RBAC）
-- **数据管理**：完整的数据库操作支持，包含连接池管理
-- **缓存系统**：Redis 集成，支持高效缓存策略
-- **模块化设计**：清晰的模块划分，便于扩展和维护
-- **环境配置**：支持多环境（开发、测试、生产）配置管理
+| 类别 | 选型 |
+|---|---|
+| 语言 / 框架 | Python **3.11+** / FastAPI |
+| 包管理 | uv |
+| ORM / 迁移 | SQLAlchemy 2.0（async）/ Alembic |
+| 数据库 | PostgreSQL（asyncpg）/ 也支持 MySQL（aiomysql） |
+| 缓存 / 限流 | Redis |
+| 认证 | PyJWT（JWT access + refresh） |
+| 调度 | APScheduler |
+| 校验 / 配置 | Pydantic v2 / pydantic-settings |
+| 文案目录 | PyYAML（i18n） |
+| 服务器 | Uvicorn（开发）/ Gunicorn（生产） |
 
-### 技术特性
-- **异步处理**：基于 Python 异步特性，提供高性能服务
-- **类型安全**：全面使用 Pydantic 进行数据验证和类型检查
-- **ORM 支持**：SQLAlchemy 2.0 集成，支持复杂数据库操作
-- **数据库迁移**：Alembic 支持，方便数据库结构变更管理
-- **日志系统**：完善的日志记录，支持不同环境的日志配置
-- **CORS 支持**：跨域资源共享配置，便于前端集成
+## 目录结构
 
-## 🛠️ 技术栈
-
-| 技术/框架 | 版本 | 用途 |
-|---------|------|------|
-| Python | 3.11+ | 开发语言 |
-| FastAPI | 0.127+ | Web 框架 |
-| SQLAlchemy | 2.0.45+ | ORM 框架 |
-| Alembic | 1.17.2+ | 数据库迁移 |
-| asyncpg | 0.31.0+ | PostgreSQL 异步驱动 |
-| Redis | 7.1.0+ | 缓存系统 |
-| PyJWT | 2.10.1+ | JWT 认证 |
-| Pydantic | 2.x | 数据验证 |
-| Uvicorn | 0.40.0+ | ASGI 服务器 |
-| Gunicorn | 23.0.0+ | 生产环境服务器 |
-| mcp | 1.0+ | MCP SDK（FastMCP） |
-| httpx | 0.27+ | 异步 HTTP 客户端 |
-
-## 🚀 快速开始
-
-### 环境要求
-- Python 3.11 或更高版本
-- PostgreSQL 14 或更高版本
-- Redis 6.2 或更高版本
-
-### 安装步骤
-
-1. **克隆项目**
-```bash
-git clone <repository-url>
-cd SmileX-Fastapi-Cloud
+```
+backend/
+├── alembic/                # 数据库迁移脚本
+├── config/                 # 日志配置（logging_dev.ini / logging_prod.ini）
+├── core/                   # 核心基础设施
+│   ├── config/             #   配置加载（pydantic-settings，多环境）
+│   ├── exception/          #   统一异常类与全局异常处理器
+│   ├── health/             #   健康探针（/health /ready）
+│   ├── i18n/               #   国际化（Accept-Language + YAML 文案目录）
+│   ├── log/                #   日志（request_id 过滤、按日期滚动）
+│   ├── middleware/         #   中间件（上下文 / 限流 / 审计 / 操作日志 / 安全头 …）
+│   ├── models/             #   基础模型 mixin
+│   ├── redis/              #   Redis 连接池
+│   ├── registry/           #   应用装配（中间件 / 异常 / 插件注册）
+│   ├── response/           #   统一响应结构与状态码枚举
+│   ├── security/           #   JWT / 限流 / 开放 API HMAC 签名
+│   ├── storage/            #   文件存储（local / oss）
+│   └── utils/              #   工具函数
+├── database/               # 数据库层
+│   ├── models/             #   ORM 模型（sys / business）
+│   ├── manager/            #   同步 / 异步连接池
+│   └── utils/              #   雪花 ID / URL 构建等
+├── modules/                # 业务模块
+│   ├── admin/              #   后台管理（endpoints / services / schemas / deps）
+│   ├── app/                #   移动端 C 端
+│   ├── common/             #   公共（分页 / 基类 schema）
+│   ├── openapi/            #   开放 API 示例
+│   └── scheduler/          #   定时任务
+├── plugins/                # 可选插件（multi_tenant 多租户）
+├── scripts/                # 运维脚本（create_superuser / reset_admin_password …）
+├── static/                 # 静态资源
+├── uploads/                # 本地上传目录
+├── main.py                 # 应用入口
+├── gunicorn.conf.py        # Gunicorn 生产配置
+├── pyproject.toml          # 依赖配置
+└── .env / .env.dev / .env.test / .env.prod
 ```
 
-2. **安装依赖**
+模块分层统一遵循 **`Endpoint -> Service -> Model`**：Endpoint 处理 HTTP 与参数，Service 承载业务逻辑（不依赖 FastAPI 请求对象），Model 定义数据。
+
+## 快速开始
+
+> 依赖：Python 3.11+、uv、PostgreSQL、Redis。
+
 ```bash
-# 使用 uv 包管理器（推荐）
-uv install
+# 1. 进入目录、创建虚拟环境、安装依赖
+cd backend
+uv venv
+uv sync                      # Windows 激活: .venv\Scripts\activate
 
-# 或使用 pip
-pip install -r requirements.txt
-```
+# 2. 配置环境变量（加载顺序 .env -> .env.{ENVIR}，默认 ENVIR=dev）
+cp .env.dev .env             # 按需修改 DB / Redis / JWT 等
 
-3. **配置环境变量**
-```bash
-# 复制环境配置文件
-cp .env.dev .env
-
-# 根据实际情况修改 .env 文件中的配置（数据库连接、Redis 连接等）
-```
-
-4. **数据库初始化**
-```bash
-# 创建数据库迁移
-alembic revision --autogenerate -m "Initial migration"
-
-# 应用迁移
+# 3. 数据库迁移 + 创建超管
 alembic upgrade head
-```
-
-5. **创建超级管理员**
-```bash
 python scripts/create_superuser.py
+# 忘记密码: python scripts/reset_admin_password.py
+
+# 4. 启动
+python main.py               # 或 uvicorn main:app --reload --port 8000
 ```
 
-6. **启动开发服务器**
-```bash
-# 使用 uvicorn 直接运行
-uvicorn main:app --reload
+启动后：
+- Swagger：`http://localhost:8000/docs`
+- ReDoc：`http://localhost:8000/redoc`
+- 健康探针：`GET /health`（liveness）、`GET /ready`（readiness，检查 DB+Redis）
 
-# 或使用 Python 运行
-python main.py
-```
+## 核心能力
 
-7. **访问 API 文档**
-   - Swagger UI: http://localhost:8000/docs
-   - ReDoc: http://localhost:8000/redoc
+### 统一响应与错误码
+- 普通响应：`{ code, msg, data, request_id, err_code }`；分页：`{ records, page, page_size, total, total_pages }`
+- 用 `response_base.success / fail / page(...)` 构建；业务码集中在 `core/response/response_code.py`（`CustomResponseCode` / `CustomErrorCode`），完整码表见 [`../error_codes.md`](../error_codes.md)
 
-## 📁 目录结构
+### 国际化（i18n）
+- 响应消息按请求头 `Accept-Language` 返回中英文；前端拦截器自动注入
+- 文案目录：`core/i18n/locales/{zh-CN,en-US}.yaml`，代码用 `t("ns.key", **kwargs)`（支持 `{name}` 占位符）
+- 新增语言：加 `<locale>.yaml` + 追加 `I18N.SUPPORTED_LANGUAGES`
 
-```
-├── app/                  # 应用相关模型
-│   ├── models/           # 业务模型定义
-│   └── asr/              # ASR 相关功能
-├── core/                 # 核心功能模块
-│   ├── config/           # 配置管理
-│   ├── database/         # 数据库连接与管理
-│   ├── exception/        # 异常处理
-│   ├── log/              # 日志系统
-│   ├── models/           # 基础模型定义
-│   ├── redis/            # Redis 连接与管理
-│   ├── response/         # 统一响应格式
-│   ├── security/         # 安全相关功能
-│   └── utils/            # 工具函数
-├── mcp/                  # MCP 工具模块
-│   ├── registry.py       # 工具注册表与 @register_tool 装饰器
-│   ├── server.py         # FastMCP 服务器创建与 ASGI 挂载
-│   ├── template.py       # 工具代码模板生成器
-│   ├── standalone.py     # 独立进程管理（启动/停止/状态）
-│   ├── context.py        # MCP 鉴权上下文
-│   ├── http_client.py    # 上游 HTTP 客户端
-│   ├── result.py         # 结果辅助函数
-│   └── tools/            # 自动发现的工具目录
-├── modules/              # 业务模块
-│   ├── admin/            # 后台管理模块
-│   │   ├── deps/         # 依赖注入
-│   │   ├── endpoints/    # API 端点
-│   │   ├── models/       # 模块模型
-│   │   └── router.py     # 路由定义
-│   └── app/              # 应用模块
-│       ├── deps/         # 依赖注入
-│       ├── endpoints/    # API 端点
-│       ├── models/       # 模块模型
-│       └── router.py     # 路由定义
-├── scripts/              # 工具脚本
-├── alembic/              # 数据库迁移文件
-├── .env.*                # 环境配置文件
-├── alembic.ini           # Alembic 配置
-├── logging.ini           # 日志配置
-├── main.py               # 应用入口
-├── pyproject.toml        # 项目配置
-└── README.md             # 项目文档
-```
+### 调度任务
+- 基于 APScheduler 的可视化定时任务（cron / interval / date），`modules/scheduler/` 提供 REST 管理与注册表自动发现
 
-## 🎯 核心功能
+### 多租户（可选插件）
+- `plugins/multi_tenant/`：JWT 识别租户，strict / optional / 全局三级行级隔离；在 `.env` 通过 `PLUGINS.ENABLED` 启用
 
-### 1. 用户认证系统
-- JWT 令牌生成与验证
-- 用户名/密码登录
-- 令牌刷新机制
-- 多端登录支持
+### 开放 API
+- `/open/*` 面向第三方，商户 HMAC-SHA256 签名 + Nonce 防重放（`core/security/openapi/`）；后台商户管理在 `/admin/sys/merchant/*`
 
-### 2. 权限管理
-- 角色定义与分配
-- 权限控制与验证
-- 细粒度的 API 访问控制
+### 安全
+- 多维度限流（IP / 用户 / 路径）+ IP 黑名单自动拉黑、文件上传 magic number 校验、scoped 预览令牌、安全响应头
 
-### 3. 数据管理
-- 数据库连接池管理
-- 异步数据库操作
-- 事务支持
-- 数据迁移与版本控制
+## MCP 工具平台（可选）
 
-### 4. 缓存系统
-- Redis 连接池管理
-- 高效缓存操作
-- 缓存失效策略
+内置 MCP（Model Context Protocol）模块，支持工具注册、自动发现、在线创建与测试。
 
-### 5. 日志系统
-- 多环境日志配置
-- 结构化日志格式
-- 日志级别控制
-- 日志文件轮转
+- **内嵌模式（默认）**：随主应用启动，挂在 `/mcp`，无需额外操作
+- **独立模式**：[`../mcp-platform`](../mcp-platform)，默认 `http://127.0.0.1:9001`
 
-### 6. MCP 工具平台
-- 基于 Python `mcp` SDK (FastMCP) 的 MCP 服务器
-- Streamable HTTP 传输，挂载在 `/mcp` 路径下
-- `@register_tool` 装饰器 + `pkgutil` 自动发现工具
-- 管理后台支持在线创建工具（自动生成代码）、测试调用
-- 支持独立进程部署（通过管理 API 启动/停止）
-
-MCP 环境变量配置（在 `.env` 中设置，使用 `MCP__` 前缀）：
+`.env` 配置（`MCP__` 前缀）：
 
 ```bash
-MCP__ENABLED=true                # 是否启用 MCP
-MCP__NAME=SmileX MCP Server      # 服务器名称
-MCP__HOST=127.0.0.1              # 独立服务地址
-MCP__PORT=9000                   # 独立服务端口
-MCP__UPSTREAM_BASE_URL=http://127.0.0.1:8000  # 上游应用 URL
+MCP__ENABLED=true
+MCP__NAME=SmileX MCP Server
+MCP__HOST=127.0.0.1
+MCP__PORT=9000                          # 后端 MCP 模块独立服务端口
+MCP__UPSTREAM_BASE_URL=http://127.0.0.1:8000
 ```
 
-管理 API 端点：
+管理 API：
 
 | 方法 | 路径 | 说明 |
-|------|------|------|
+|---|---|---|
 | POST | `/admin/sys/mcp/add` | 创建 MCP 工具 |
 | POST | `/admin/sys/mcp/list` | 获取已注册工具列表 |
 | POST | `/admin/sys/mcp/test` | 测试工具调用 |
@@ -201,151 +138,41 @@ MCP__UPSTREAM_BASE_URL=http://127.0.0.1:8000  # 上游应用 URL
 | POST | `/admin/sys/mcp/start` | 启动独立 MCP 服务 |
 | POST | `/admin/sys/mcp/stop` | 停止独立 MCP 服务 |
 
-## 📚 API 文档
+## 数据库迁移
 
-项目集成了自动生成的 API 文档，提供两种查看方式：
-
-- **Swagger UI**: 提供交互式的 API 文档，支持在线测试 API
-  - 访问地址: http://localhost:8000/docs
-
-- **ReDoc**: 提供更简洁的 API 文档展示
-  - 访问地址: http://localhost:8000/redoc
-
-## 🚀 部署说明
-
-### 开发环境
-```bash
-# 使用 uvicorn 运行
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### 生产环境
-
-1. **使用 Gunicorn + Uvicorn**
-```bash
-gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
-```
-
-2. **Docker 部署**
-```dockerfile
-# 示例 Dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-CMD ["gunicorn", "main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
-```
-
-## 🔧 开发指南
-
-### 数据库迁移
-> 如果使用 `uv` 需在前面加上 `uv run`
-```bash
-# 创建新的迁移文件
-alembic revision --autogenerate -m "描述信息"
-
-# 应用所有迁移
-alembic upgrade head
-
-# 回退到上一个版本
-alembic downgrade -1
-
-# 查看迁移历史
-alembic history
-```
-
-### 代码规范
-
-项目使用标准的 Python 代码规范，建议使用以下工具进行代码检查：
+> 使用 `uv` 时在命令前加 `uv run`。
 
 ```bash
-# 代码格式化
-black .
-
-# 代码检查
-flake8 .
-
-# 类型检查
-mypy .
+alembic revision --autogenerate -m "描述"   # 生成迁移
+alembic upgrade head                        # 应用
+alembic downgrade -1                        # 回退一版
+alembic history                             # 历史
 ```
 
-## 📈 接下来的发展方向
+## 部署
 
-基于现有功能，以下是推荐的发展方向：
+```bash
+# 生产（Gunicorn，配置见 gunicorn.conf.py）
+gunicorn -c gunicorn.conf.py main:app
+```
 
-### 1. 完善 API 端点
-- 扩展用户管理功能（创建、更新、删除用户）
-- 实现角色权限管理的完整 API
-- 添加更多业务模块的 API 端点
-- 实现数据统计和报表功能
+环境：`ENVIR=prod` + `.env.prod`，先 `alembic upgrade head` 再启动。
 
-### 2. 增强数据验证和错误处理
-- 完善输入数据验证
-- 提供更详细的错误信息
-- 实现自定义异常类
-- 添加请求参数验证中间件
+## 配置
 
-### 3. 增加测试用例
-- 单元测试：测试核心功能模块
-- 集成测试：测试模块间的交互
-- API 测试：测试 API 端点的功能和性能
-- 负载测试：测试系统在高负载下的表现
+- 环境变量：`.env`（基础）+ `.env.dev` / `.env.test` / `.env.prod`（按 `ENVIR` 覆盖）
+- 嵌套项用 `__` 分隔覆盖，如 `I18N__DEFAULT_LANGUAGE=en-US`、`MCP__ENABLED=false`
+- 关键配置组：`DATABASE` / `REDIS` / `JWT` / `SECURITY` / `RATE_LIMIT` / `PLUGINS` / `I18N` / `MCP` / `OPEN_API`
 
-### 4. 完善文档
-- 补充 API 接口文档
-- 编写模块功能说明文档
-- 增加开发和部署指南
-- 提供示例代码和使用教程
+## 开发规范
 
-### 5. 增强监控和日志
-- 添加性能监控指标
-- 实现分布式追踪
-- 增加日志分析工具集成
-- 实现异常报警机制
+- 遵循 PEP 8；类名大驼峰，函数 / 变量小写下划线
+- 对外接口 Swagger 注释必须与真实行为一致；Service 不依赖 FastAPI 请求对象
+- 关键操作记录日志（含 `request_id`）；异常通过统一异常类 + 全局处理器返回
+- 业务消息走 `t("ns.key")`，避免硬编码中文；跨栈字段 `snake_case`，`status` 字段 `bool ↔ "1"/"2"` 桥接
 
-### 6. 性能优化
-- 数据库查询优化
-- 实现更高效的缓存策略
-- 优化 API 响应时间
-- 实现异步任务处理
+更多分层、命名、契约约束见 [`../AGENTS.md`](../AGENTS.md) 与 [`../aiDoc/`](../aiDoc)。
 
-### 7. 扩展业务功能
-- 根据项目需求添加新的业务模块
-- 实现数据导入导出功能
-- 增加文件上传下载功能
-- 集成第三方服务
+## 许可证
 
-### 8. 完善部署流程
-- 实现 CI/CD 流水线
-- 容器化部署（Docker、Kubernetes）
-- 自动化测试和部署
-- 实现灰度发布机制
-
-## 🤝 贡献指南
-
-欢迎提交 Issue 和 Pull Request 来帮助改进项目！
-
-### 提交 Pull Request 前请确保：
-1. 代码符合项目的代码规范
-2. 所有测试用例通过
-3. 添加了适当的文档
-4. 提交信息清晰明了
-
-## 📄 许可证
-
-本项目采用 MIT 许可证，详情请查看 [LICENSE](LICENSE) 文件。
-
-## 📧 联系方式
-
-如有任何问题或建议，欢迎通过以下方式联系我们：
-
-- GitHub Issues：[https://github.com/smileluck/SmileX-Fastapi-Cloud]
-
----
-
-感谢您使用 SmileX_Cloud！ 🎉
+MIT，详见 [LICENSE](LICENSE)。
