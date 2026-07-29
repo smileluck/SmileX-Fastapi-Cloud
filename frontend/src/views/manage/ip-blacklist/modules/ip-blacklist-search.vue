@@ -2,6 +2,7 @@
 import { toRaw } from 'vue';
 import { jsonClone } from '@sa/utils';
 import { $t } from '@/locales';
+import { getGridActionSpan } from '@/utils/common';
 
 defineOptions({
   name: 'IpBlacklistSearch'
@@ -17,6 +18,9 @@ const emit = defineEmits<Emits>();
 const model = defineModel<Api.SystemManage.IpBlacklistSearchParams>('model', { required: true });
 
 const defaultModel = jsonClone(toRaw(model.value));
+
+/** 搜索/重置按钮所在网格项的响应式 span：填满末行剩余宽度，使按钮固定在右下角 */
+const actionSpan = getGridActionSpan(2);
 
 const typeOptions = [
   { label: $t('page.manage.ipBlacklist.typePermanent'), value: 'permanent' },
@@ -50,7 +54,7 @@ function search() {
                 clearable
               />
             </NFormItemGi>
-            <NFormItemGi span="24 m:12" class="pr-24px">
+            <NFormItemGi :span="actionSpan" class="pr-24px">
               <NSpace class="w-full" justify="end">
                 <NButton @click="resetModel">
                   <template #icon>

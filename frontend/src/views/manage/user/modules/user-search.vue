@@ -4,6 +4,7 @@ import { jsonClone } from '@sa/utils';
 import { enableStatusOptions, userGenderOptions } from '@/constants/business';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
+import { getGridActionSpan } from '@/utils/common';
 
 defineOptions({
   name: 'UserSearch'
@@ -31,6 +32,9 @@ const rules = computed<Record<RuleKey, App.Global.FormRule>>(() => {
 });
 
 const defaultModel = jsonClone(toRaw(model.value));
+
+/** 搜索/重置按钮所在网格项的响应式 span：填满末行剩余宽度，使按钮固定在右下角 */
+const actionSpan = getGridActionSpan(5);
 
 function resetModel() {
   Object.assign(model.value, defaultModel);
@@ -73,7 +77,7 @@ async function search() {
                 clearable
               />
             </NFormItemGi>
-            <NFormItemGi span="24 m:12" class="pr-24px">
+            <NFormItemGi :span="actionSpan" class="pr-24px">
               <NSpace class="w-full" justify="end">
                 <NButton @click="reset">
                   <template #icon>

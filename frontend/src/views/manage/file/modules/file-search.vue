@@ -3,6 +3,7 @@ import { toRaw } from 'vue';
 import { NButton, NCollapse, NCollapseItem, NForm, NFormItemGi, NGrid, NInput, NSelect, NSpace } from 'naive-ui';
 import { jsonClone } from '@sa/utils';
 import { $t } from '@/locales';
+import { getGridActionSpan } from '@/utils/common';
 
 defineOptions({
   name: 'FileSearch'
@@ -18,6 +19,9 @@ const emit = defineEmits<Emits>();
 const model = defineModel<Api.FileManage.FileSearchParams>('model', { required: true });
 
 const defaultModel = jsonClone(toRaw(model.value));
+
+/** 搜索/重置按钮所在网格项的响应式 span：填满末行剩余宽度，使按钮固定在右下角 */
+const actionSpan = getGridActionSpan(3);
 
 const storagePlatformOptions = [
   { label: $t('page.manage.file.platform.local'), value: 'local' },
@@ -77,7 +81,7 @@ function search() {
                 clearable
               />
             </NFormItemGi>
-            <NFormItemGi span="24 m:6" class="pr-24px">
+            <NFormItemGi :span="actionSpan" class="pr-24px">
               <NSpace class="w-full" justify="end">
                 <NButton @click="resetModel">
                   <template #icon>

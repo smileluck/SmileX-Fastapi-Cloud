@@ -15,6 +15,7 @@ import {
 import dayjs from 'dayjs';
 import { jsonClone } from '@sa/utils';
 import { $t } from '@/locales';
+import { getGridActionSpan } from '@/utils/common';
 
 defineOptions({
   name: 'OperationLogSearch'
@@ -29,6 +30,9 @@ const model = defineModel<Api.SystemManage.OperationLogSearchParams>('model', { 
 const emit = defineEmits<Emits>();
 
 const defaultModel = jsonClone(toRaw(model.value));
+
+/** 搜索/重置按钮所在网格项的响应式 span：填满末行剩余宽度，使按钮固定在右下角 */
+const actionSpan = getGridActionSpan(4);
 
 const timeRange = computed<[number, number] | null>({
   get() {
@@ -84,7 +88,7 @@ function search() {
             <NFormItemGi span="24 s:12 m:6" :label="$t('page.log.operationLog.form.timeRange')" class="pr-24px">
               <NDatePicker v-model:value="timeRange" type="datetimerange" clearable class="w-full" />
             </NFormItemGi>
-            <NFormItemGi span="24 m:12" class="pr-24px">
+            <NFormItemGi :span="actionSpan" class="pr-24px">
               <NSpace class="w-full" justify="end">
                 <NButton @click="resetModel">
                   <template #icon>

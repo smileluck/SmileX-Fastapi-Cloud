@@ -3,6 +3,7 @@ import { computed, toRaw } from 'vue';
 import dayjs from 'dayjs';
 import { jsonClone } from '@sa/utils';
 import { $t } from '@/locales';
+import { getGridActionSpan } from '@/utils/common';
 
 defineOptions({ name: 'TaskLogSearch' });
 
@@ -15,6 +16,9 @@ const emit = defineEmits<Emits>();
 const model = defineModel<Api.Scheduler.TaskLogSearchParams>('model', { required: true });
 
 const defaultModel = jsonClone(toRaw(model.value));
+
+/** 搜索/重置按钮所在网格项的响应式 span：填满末行剩余宽度，使按钮固定在右下角 */
+const actionSpan = getGridActionSpan(3);
 
 const statusOptions = [
   { label: $t('page.manage.scheduler.lastStatuses.success'), value: 'success' },
@@ -84,7 +88,7 @@ function search() {
             <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.schedulerLog.form.timeRange')" class="pr-24px">
               <NDatePicker v-model:value="timeRange" type="datetimerange" clearable class="w-full" />
             </NFormItemGi>
-            <NFormItemGi span="24 m:6" class="pr-24px">
+            <NFormItemGi :span="actionSpan" class="pr-24px">
               <NSpace class="w-full" justify="end">
                 <NButton @click="resetModel">
                   <template #icon>

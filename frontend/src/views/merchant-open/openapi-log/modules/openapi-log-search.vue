@@ -3,6 +3,7 @@ import { computed, toRaw } from 'vue';
 import { jsonClone } from '@sa/utils';
 import { useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
+import { getGridActionSpan } from '@/utils/common';
 
 defineOptions({
   name: 'OpenapiLogSearch'
@@ -19,6 +20,9 @@ const { formRef, validate, restoreValidation } = useNaiveForm();
 const model = defineModel<Api.SystemManage.OpenapiLogSearchParams>('model', { required: true });
 
 const defaultModel = jsonClone(toRaw(model.value));
+
+/** 搜索/重置按钮所在网格项的响应式 span：填满末行剩余宽度，使按钮固定在右下角 */
+const actionSpan = getGridActionSpan(6);
 
 function resetModel() {
   Object.assign(model.value, defaultModel);
@@ -82,7 +86,7 @@ async function search() {
                 :placeholder="$t('page.manage.openapiLog.form.status')"
               />
             </NFormItemGi>
-            <NFormItemGi span="24 m:12" class="pr-24px">
+            <NFormItemGi :span="actionSpan" class="pr-24px">
               <NSpace class="w-full" justify="end">
                 <NButton @click="reset">
                   <template #icon>
