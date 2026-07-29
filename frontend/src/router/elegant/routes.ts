@@ -270,6 +270,15 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'manage_user',
           i18nKey: 'route.manage_user'
         }
+      },
+      {
+        name: 'manage_app-user',
+        path: '/manage/app-user',
+        component: 'view.manage_app-user',
+        meta: {
+          title: 'manage_app-user',
+          i18nKey: 'route.manage_app-user'
+        }
       }
     ]
   },

@@ -6,7 +6,7 @@ from typing import Literal
 
 from pydantic import Field
 
-from app.models.common.base import BaseEntity, BaseRespEntity, BoolField
+from modules.common.schemas.base import BaseEntity, BaseRespEntity, BoolField
 
 
 class ScheduledTaskCreate(BaseEntity):

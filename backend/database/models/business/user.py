@@ -3,8 +3,9 @@
 
 from database.models.base import Base, DataClassBase, snowflake_id_key
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import String, Boolean, ForeignKey, text
+from sqlalchemy import String, Text, Boolean, DateTime, ForeignKey, text
 from typing import TYPE_CHECKING, List, Optional
+from datetime import datetime
 from sqlalchemy.dialects.postgresql import ARRAY
 
 
@@ -29,4 +30,26 @@ class AppUser(Base):
     )
     wx_unionid: Mapped[Optional[str]] = mapped_column(
         String(255), nullable=True, comment="微信 unionid", default=None
+    )
+    # 状态信息
+    status: Mapped[bool] = mapped_column(
+        Boolean, default=True, comment="状态：True-启用，False-禁用"
+    )
+    avatar: Mapped[Optional[str]] = mapped_column(
+        Text, nullable=True, comment="头像URL", default=None
+    )
+    # 登录信息
+    last_login_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        comment="最后登录时间",
+        server_default=None,
+        default=None,
+    )
+    last_login_ip: Mapped[Optional[str]] = mapped_column(
+        String(50),
+        nullable=True,
+        comment="最后登录IP",
+        server_default=None,
+        default=None,
     )

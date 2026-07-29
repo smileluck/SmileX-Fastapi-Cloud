@@ -771,6 +771,37 @@ declare namespace App {
               female: string;
             };
           };
+          appUser: {
+            title: string;
+            userName: string;
+            phoneCode: string;
+            userPhone: string;
+            userEmail: string;
+            userStatus: string;
+            password: string;
+            confirmPassword: string;
+            changePassword: string;
+            bindWechat: string;
+            bound: string;
+            unbound: string;
+            lastLoginTime: string;
+            lastLoginIp: string;
+            addUser: string;
+            editUser: string;
+            form: {
+              userName: string;
+              phoneCode: string;
+              userPhone: string;
+              userEmail: string;
+              userStatus: string;
+              newPassword: string;
+              confirmPassword: string;
+              passwordPlaceholder: string;
+              passwordNotMatch: string;
+              emailFormat: string;
+              phoneFormat: string;
+            };
+          };
           menu: {
             home: string;
             title: string;

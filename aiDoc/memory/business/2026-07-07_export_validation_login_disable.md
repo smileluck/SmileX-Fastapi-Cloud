@@ -21,8 +21,8 @@
 
 ### 后端
 
-- `app/models/common/base.py`：`BaseReqEntity` 增加 `mode="before"` 全局 trim 与空值收敛；`BaseRespEntity` 的 `status`/`is_system` 序列化器增加 `bool` 类型保护；`parse_optional_int` 中文错误提示。
-- `app/models/common/page.py`：`PageRequest` 继承 `BaseReqEntity`；`page`/`page_size` 增加 `BeforeValidator` 防御空值/非法字符串；`get_paginated_results` count 改为子查询。
+- `modules/common/schemas/base.py`：`BaseReqEntity` 增加 `mode="before"` 全局 trim 与空值收敛；`BaseRespEntity` 的 `status`/`is_system` 序列化器增加 `bool` 类型保护；`parse_optional_int` 中文错误提示。
+- `modules/common/schemas/page.py`：`PageRequest` 继承 `BaseReqEntity`；`page`/`page_size` 增加 `BeforeValidator` 防御空值/非法字符串；`get_paginated_results` count 改为子查询。
 - `core/exception/errors_handler.py`：`validation_exception_handler` 增加 Pydantic error type 中文映射。
 - `core/middleware/operation_log_middleware.py`：白名单仅保留 `/admin/sys/export/task/list` 不记录；新增 `WHITELIST_SUFFIXES`/`WHITELIST_PATTERNS` 机制但当前置空，仅用于后续真正的高频轮询接口。
 - `core/response/response_code.py`：新增 `USER_DISABLED`。
@@ -63,7 +63,7 @@
 
 ## 相关文件
 
-- 后端：`backend/app/models/common/{base,page}.py`、`backend/core/exception/errors_handler.py`、`backend/core/middleware/operation_log_middleware.py`、`backend/core/websocket/__init__.py`、`backend/main.py`、`backend/modules/admin/{deps/auth/user_manager,endpoints/sys/export_task,schemas/sys/{export_task,operation_log,role},services/sys/{export_task,operation_log}}.py`、`backend/modules/scheduler/tasks/export_task.py`
+- 后端：`backend/modules/common/schemas/{base,page}.py`、`backend/core/exception/errors_handler.py`、`backend/core/middleware/operation_log_middleware.py`、`backend/core/websocket/__init__.py`、`backend/main.py`、`backend/modules/admin/{deps/auth/user_manager,endpoints/sys/export_task,schemas/sys/{export_task,operation_log,role},services/sys/{export_task,operation_log}}.py`、`backend/modules/scheduler/tasks/export_task.py`
 - 前端：`frontend/src/service/api/export-task.ts`、`frontend/src/typings/api/export-task.d.ts`、`frontend/src/layouts/modules/global-header/**`、`frontend/src/views/export-record/index.vue`、`frontend/src/views/log/operation-log/index.vue`、`frontend/src/views/manage/role/modules/role-operate-drawer.vue`、`frontend/src/hooks/common/{form,websocket}.ts`、`frontend/src/router/elegant/{routes,imports}.ts`、`frontend/src/locales/langs/{zh-cn,en-us}.ts`
 
 ## 记录日期

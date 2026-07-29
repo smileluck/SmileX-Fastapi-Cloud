@@ -3,7 +3,7 @@
 
 from pydantic import Field
 
-from app.models.common.base import BaseEntity
+from modules.common.schemas.base import BaseEntity
 
 
 class OnlineUserQueryParams(BaseEntity):

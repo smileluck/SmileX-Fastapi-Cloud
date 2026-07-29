@@ -37,7 +37,7 @@ Base = DataClassBase + LogicMixin + DateTimeMixin
 | `database/models/sys/` | 系统模型（用户、角色、权限、菜单、字典、配置） |
 | `database/models/business/` | 业务模型 |
 | `database/models/base.py` | ORM 公共基类（`Base`、`DataClassBase`、`LogicMixin`、`DateTimeMixin`） |
-| `app/models/common/` | Pydantic Schema 基类（`BaseEntity`、`PageRequest` 等） |
+| `modules/common/schemas/` | Pydantic Schema 基类（`BaseEntity`、`PageRequest` 等） |
 
 ---
 
@@ -47,9 +47,9 @@ Base = DataClassBase + LogicMixin + DateTimeMixin
 
 | 场景 | 基类 | 定义位置 |
 |------|------|----------|
-| 通用实体 | `BaseEntity` | `app/models/common/base.py` |
-| 请求实体 | `BaseReqEntity` | `app/models/common/base.py` |
-| 响应实体 | `BaseRespEntity` | `app/models/common/base.py` |
+| 通用实体 | `BaseEntity` | `modules/common/schemas/base.py` |
+| 请求实体 | `BaseReqEntity` | `modules/common/schemas/base.py` |
+| 响应实体 | `BaseRespEntity` | `modules/common/schemas/base.py` |
 
 ### 响应 Schema 规则
 
@@ -70,7 +70,7 @@ Base = DataClassBase + LogicMixin + DateTimeMixin
 
 ### 分页查询 Schema
 
-继承 `PageRequest`（`app/models/common/page.py`）：
+继承 `PageRequest`（`modules/common/schemas/page.py`）：
 
 - `page`：从 1 开始，默认 1，必须 > 0
 - `page_size`：默认 100，最大 200
@@ -128,7 +128,7 @@ Base = DataClassBase + LogicMixin + DateTimeMixin
 - 负责参数提取（`Depends`）、校验、调用 Service、格式化响应
 - 必须声明 `response_model=ResponseModel[SchemaT]` 或 `ResponsePageModel[SchemaT]`
 - 列表接口必须包含 `page_params: PageRequest = Depends(get_page_params)` 参数
-- 分页查询使用 `get_paginated_results()`（`app/models/common/page.py`），返回 `response_base.page(data=page_data)`
+- 分页查询使用 `get_paginated_results()`（`modules/common/schemas/page.py`），返回 `response_base.page(data=page_data)`
 - **禁止**在 Endpoint 或 Service 层手动构造分页响应字典（如 `{"items": ..., "total": ...}`）
 - ORM 结果转换为 Schema 使用 `SchemaClass.model_validate(instance)`
 - 所有端点必须有 docstring 说明用途

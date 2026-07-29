@@ -5,7 +5,7 @@ from datetime import datetime
 
 from pydantic import Field
 
-from app.models.common.base import BaseEntity, OptionalIntField
+from modules.common.schemas.base import BaseEntity, OptionalIntField
 
 
 class TaskLogQueryParams(BaseEntity):

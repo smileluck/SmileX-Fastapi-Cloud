@@ -222,6 +222,12 @@ class UserManager:
         is_first_login = user is None
         if is_first_login:
             user = await self.register_by_phone(phone=phone, code=code)
+        # 禁用账号拦截：后台禁用后不允许登录
+        if not user.status:
+            raise CustomError(
+                msg="账号已被禁用，请联系管理员",
+                error=CustomErrorCode.USER_LOGIN_FAILED,
+            )
         tokens = await base_user_manager.create_token(user_id=user.id, user_role="app", username=user.username)
         await base_user_manager.on_after_login(user=user)
         # 如果不是首次登录，则获取机器人id
@@ -338,6 +344,9 @@ class UserManager:
         user = user.scalars().first()
         if user is None:
             raise TokenError()
+        # 账号已被后台禁用：即便 session 仍在，也拒绝鉴权
+        if not user.status:
+            raise TokenError(msg="账号已被禁用")
         return user
 
     async def get_verification_code(self, phone: str) -> None:

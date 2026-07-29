@@ -7,8 +7,8 @@ from zoneinfo import ZoneInfo
 
 from pydantic import Field, ConfigDict, BeforeValidator
 
-from app.models.common.base import BaseEntity, BaseRespEntity, BoolField
-from app.models.common.page import PageRequest
+from modules.common.schemas.base import BaseEntity, BaseRespEntity, BoolField
+from modules.common.schemas.page import PageRequest
 
 
 def _format_datetime(v):

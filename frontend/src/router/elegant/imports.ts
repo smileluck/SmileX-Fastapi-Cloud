@@ -38,6 +38,7 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   manage_menu: () => import("@/views/manage/menu/index.vue"),
   manage_role: () => import("@/views/manage/role/index.vue"),
   manage_user: () => import("@/views/manage/user/index.vue"),
+  "manage_app-user": () => import("@/views/manage/app-user/index.vue"),
   "merchant-open_merchant": () => import("@/views/merchant-open/merchant/index.vue"),
   "merchant-open_openapi-log": () => import("@/views/merchant-open/openapi-log/index.vue"),
   monitor: () => import("@/views/monitor/index.vue"),

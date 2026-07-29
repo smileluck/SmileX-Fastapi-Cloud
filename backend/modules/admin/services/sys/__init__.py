@@ -5,6 +5,7 @@
 系统管理服务模块
 """
 from .config_service import ConfigService
+from .app_user_service import AppUserService
 from .data_scope_service import DataScopeService
 from .dept_service import DeptService
 from .merchant_service import MerchantService
@@ -23,6 +24,7 @@ from .file_service import FileService
 
 __all__ = [
     "ConfigService",
+    "AppUserService",
     "DataScopeService",
     "DeptService",
     "MerchantService",

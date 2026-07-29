@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_manager import get_session
 from core.response import ResponseModel, ResponsePageModel, response_base
-from app.models.common.page import PageRequest, get_page_params
+from modules.common.schemas.page import PageRequest, get_page_params
 from modules.admin.deps.auth.user_manager import current_user
 from modules.admin.deps.auth.permission import require_permission
 from database.models.sys.user import SysUser

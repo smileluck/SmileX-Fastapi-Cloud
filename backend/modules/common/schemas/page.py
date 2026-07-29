@@ -15,7 +15,7 @@ from core.response import ResponsePageModel, response_base, ResponsePageDataMode
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi import Query
 from database.models.base import Base
-from app.models.common.base import BaseReqEntity, EMPTY_VALUES
+from modules.common.schemas.base import BaseReqEntity, EMPTY_VALUES
 
 T = TypeVar("SchemaT")
 

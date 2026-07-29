@@ -16,7 +16,7 @@ from core.response.response_schema import (
     ResponsePageDataModel,
     response_base,
 )
-from app.models.common.page import PageRequest, get_page_params, get_paginated_results
+from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from core.decorators.operation_log import log_operation
 from modules.admin.deps.auth.user_manager import current_user
 from modules.admin.deps.auth.permission import require_permission

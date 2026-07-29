@@ -6,6 +6,7 @@
 """
 from fastapi import APIRouter
 from .config import config_router
+from .app_user import app_user_router
 from .dept import dept_router
 from .merchant import merchant_router
 from .dict import dict_router
@@ -34,6 +35,7 @@ sys_router = APIRouter(prefix="/sys", tags=["系统管理"])
 
 # 包含各个子模块路由
 sys_router.include_router(config_router)
+sys_router.include_router(app_user_router)
 sys_router.include_router(dept_router)
 sys_router.include_router(merchant_router)
 sys_router.include_router(dict_router)

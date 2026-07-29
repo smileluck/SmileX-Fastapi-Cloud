@@ -5,7 +5,7 @@ from typing import Optional
 from datetime import datetime
 
 from pydantic import Field
-from app.models.common.base import BaseReqEntity, BaseRespEntity, OptionalIntField
+from modules.common.schemas.base import BaseReqEntity, BaseRespEntity, OptionalIntField
 
 
 class ExportTaskSubmit(BaseReqEntity):

@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from pydantic import Field, field_validator
 
-from app.models.common.base import BaseEntity
+from modules.common.schemas.base import BaseEntity
 
 
 class IpBlacklistQueryParams(BaseEntity):

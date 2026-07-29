@@ -5,8 +5,8 @@ from typing import Optional, List, Union
 from pydantic import Field, ConfigDict, field_validator, model_validator
 from datetime import datetime
 import re
-from app.models.common.base import BaseRespEntity, BaseEntity, BoolField
-from app.models.common.page import PageRequest
+from modules.common.schemas.base import BaseRespEntity, BaseEntity, BoolField
+from modules.common.schemas.page import PageRequest
 
 # 密码复杂度策略：6-20 位，且至少包含字母和数字（与前端 REG_PWD 保持一致）
 PASSWORD_PATTERN = re.compile(r"^(?=.*[A-Za-z])(?=.*\d)\w{6,20}$")

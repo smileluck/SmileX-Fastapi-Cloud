@@ -8,8 +8,8 @@ from pydantic import (
     BeforeValidator,
 )
 from datetime import datetime
-from app.models.common.base import BaseRespEntity, BaseEntity, BoolField
-from app.models.common.page import PageRequest
+from modules.common.schemas.base import BaseRespEntity, BaseEntity, BoolField
+from modules.common.schemas.page import PageRequest
 from database.models.sys.config import ConfigType, ConfigGroup
 
 

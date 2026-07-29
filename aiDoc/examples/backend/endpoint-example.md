@@ -17,7 +17,7 @@
 ```python
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.common.page import PageRequest, get_page_params, get_paginated_results
+from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from core.response.response_schema import ResponseModel, ResponsePageModel, response_base
 from modules.admin.schemas.sys.user import GetUserListQuery, CreateUserReq, GetUserResp
 from modules.admin.services.sys.user_service import UserService

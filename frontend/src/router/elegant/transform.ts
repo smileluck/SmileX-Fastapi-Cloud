@@ -189,6 +189,7 @@ const routeMap: RouteMap = {
   "manage_menu": "/manage/menu",
   "manage_role": "/manage/role",
   "manage_user": "/manage/user",
+  "manage_app-user": "/manage/app-user",
   "merchant-open": "/merchant-open",
   "merchant-open_merchant": "/merchant-open/merchant",
   "merchant-open_openapi-log": "/merchant-open/openapi-log",

@@ -143,6 +143,61 @@ declare namespace Api {
       dept_id?: number | null;
     };
 
+    /** app user (C 端应用用户) */
+    type AppUser = Common.CommonRecord<{
+      /** 用户名 */
+      name: string;
+      /** 手机号区号 */
+      phone_code: string;
+      /** 手机号 */
+      phone: string;
+      /** 邮箱 */
+      email?: string | null;
+      /** 头像 URL */
+      avatar?: string | null;
+      /** 微信 openid */
+      wx_openid?: string | null;
+      /** 最后登录时间 */
+      last_login_at?: string;
+      /** 最后登录 IP */
+      last_login_ip?: string;
+    }>;
+
+    /** app user search params */
+    type AppUserSearchParams = CommonType.RecordNullable<
+      Pick<Api.SystemManage.AppUser, 'name' | 'phone' | 'phone_code' | 'email' | 'wx_openid' | 'status'> & CommonSearchParams
+    >;
+
+    /** app user list */
+    type AppUserList = Common.PaginatingQueryRecord<AppUser>;
+
+    /** app user create request */
+    type AppUserCreateRequest = {
+      name: string;
+      phone_code: string;
+      phone: string;
+      password?: string;
+      email?: string;
+      avatar?: string;
+      status: Common.EnableStatus | null;
+    };
+
+    /** app user update request */
+    type AppUserUpdateRequest = {
+      name?: string;
+      phone_code?: string;
+      phone?: string;
+      email?: string;
+      avatar?: string;
+      status?: Common.EnableStatus | null;
+    };
+
+    /** app user batch update status */
+    type AppUserBatchStatusRequest = {
+      user_ids: number[];
+      status: boolean;
+    };
+
     /** dept */
     type Dept = Common.CommonRecord<{
       parent_id?: number | null;

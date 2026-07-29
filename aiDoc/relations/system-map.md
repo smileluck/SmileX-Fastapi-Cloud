@@ -71,7 +71,7 @@ main.py                            # 应用入口，注册路由、中间件、�
 | `utils/timezone.py` | 时区工具 |
 | `utils/url_builder.py` | 数据库 URL 构建器 |
 
-### Pydantic Schema 基类 `app/models/common/`
+### Pydantic Schema 基类 `modules/common/schemas/`
 
 | 文件 | 职责 |
 |------|------|

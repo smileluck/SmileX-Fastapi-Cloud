@@ -5,8 +5,8 @@ from typing import Optional, List, Annotated
 from pydantic import Field, ConfigDict, BeforeValidator
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from app.models.common.base import BaseRespEntity, BaseEntity, BoolField
-from app.models.common.page import PageRequest
+from modules.common.schemas.base import BaseRespEntity, BaseEntity, BoolField
+from modules.common.schemas.page import PageRequest
 
 
 def _format_datetime(v):

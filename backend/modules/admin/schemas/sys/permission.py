@@ -6,7 +6,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.models.common.base import BaseRespEntity, BoolField
+from modules.common.schemas.base import BaseRespEntity, BoolField
 
 
 class SysPermissionQueryParams(BaseModel):

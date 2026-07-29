@@ -102,7 +102,7 @@
 - **序列化**（后端→前端）：`BaseRespEntity` 的 `@field_serializer("status")`
   - `True` → `"1"`
   - `False` → `"2"`
-- 定义位置：`app/models/common/base.py`
+- 定义位置：`modules/common/schemas/base.py`
 
 ### 前端处理
 
@@ -127,7 +127,7 @@
 | 后端序列化 | `string` | `Asia/Shanghai`，`YYYY-MM-DD HH:mm:ss` |
 | 前端接收 | `string` | `YYYY-MM-DD HH:mm:ss` |
 
-序列化由 `BaseEntity` 的 `json_encoders` 自动处理（`app/models/common/base.py`）。
+序列化由 `BaseEntity` 的 `json_encoders` 自动处理（`modules/common/schemas/base.py`）。
 
 ### 前端 → 后端（请求参数）
 

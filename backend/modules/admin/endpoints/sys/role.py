@@ -18,7 +18,7 @@ from core.response.response_schema import (
     ResponsePageModel,
     ResponsePageDataModel,
 )
-from app.models.common.page import PageRequest, get_page_params, get_paginated_results
+from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from core.decorators.operation_log import log_operation
 from core.utils.excel_export import build_excel_bytes, SYNC_EXPORT_MAX_ROWS
 from modules.admin.deps.auth.user_manager import current_user

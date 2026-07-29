@@ -18,7 +18,7 @@ from core.redis import get_redis_util
 from core.utils.memory_cache import get_memory_cache, CacheNamespace
 from core.security.oauth.user_manager import build_session_key
 from database.models.sys.user import SysUser
-from app.models.common.page import ResponsePageDataModel
+from modules.common.schemas.page import ResponsePageDataModel
 from modules.admin.schemas.sys.online_user import OnlineUserResponse
 
 logger = logging.getLogger(__name__)

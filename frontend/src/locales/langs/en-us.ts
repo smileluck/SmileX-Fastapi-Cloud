@@ -393,6 +393,7 @@ const local: App.I18n.Schema = {
     'merchant-open_openapi-log': 'Call Log',
     manage_role: 'Role Management',
     manage_user: 'User Management',
+    'manage_app-user': 'App User',
     manage_dict: 'Dict Management',
     manage_config: 'System Config',
     manage_announcement: 'Announcement',
@@ -628,6 +629,37 @@ const local: App.I18n.Schema = {
         gender: {
           male: 'Male',
           female: 'Female'
+        }
+      },
+      appUser: {
+        title: 'App User List',
+        userName: 'User Name',
+        phoneCode: 'Phone Code',
+        userPhone: 'Phone Number',
+        userEmail: 'Email',
+        userStatus: 'User Status',
+        password: 'Password',
+        confirmPassword: 'Confirm Password',
+        changePassword: 'Change Password',
+        bindWechat: 'WeChat',
+        bound: 'Bound',
+        unbound: 'Unbound',
+        lastLoginTime: 'Last Login Time',
+        lastLoginIp: 'Last Login IP',
+        addUser: 'Add App User',
+        editUser: 'Edit App User',
+        form: {
+          userName: 'Please enter user name',
+          phoneCode: 'Please enter phone code, e.g. 86',
+          userPhone: 'Please enter phone number',
+          userEmail: 'Please enter email',
+          userStatus: 'Please select user status',
+          newPassword: 'Please enter new password',
+          confirmPassword: 'Please confirm new password',
+          passwordPlaceholder: 'Leave blank for SMS login only; 6-20 chars with letters and digits',
+          passwordNotMatch: 'The two passwords do not match',
+          emailFormat: 'Email format is incorrect',
+          phoneFormat: 'Phone number format is incorrect'
         }
       },
       menu: {

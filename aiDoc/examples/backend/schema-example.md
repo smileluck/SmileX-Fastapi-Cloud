@@ -16,8 +16,8 @@
 
 ```python
 from pydantic import ConfigDict
-from app.models.common.base import BaseEntity, BaseReqEntity, BaseRespEntity, BoolField
-from app.models.common.page import PageRequest
+from modules.common.schemas.base import BaseEntity, BaseReqEntity, BaseRespEntity, BoolField
+from modules.common.schemas.page import PageRequest
 from typing import Optional
 
 
@@ -76,5 +76,5 @@ class GetUserResp(BaseRespEntity):
 
 ## 真实参考文件
 
-- `backend/app/models/common/base.py`
+- `backend/modules/common/schemas/base.py`
 - `backend/modules/admin/schemas/sys/user.py`

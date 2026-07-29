@@ -10,7 +10,7 @@ from typing import List
 
 from database.db_manager import get_session
 from core.response.response_schema import ResponseModel, ResponsePageModel
-from app.models.common.page import get_page_params, get_paginated_results, PageRequest
+from modules.common.schemas.page import get_page_params, get_paginated_results, PageRequest
 from modules.admin.deps.auth.user_manager import current_user
 from modules.admin.deps.auth.permission import require_permission
 from database.models.sys.user import SysUser

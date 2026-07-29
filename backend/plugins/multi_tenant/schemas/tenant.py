@@ -3,7 +3,7 @@
 
 from typing import Optional, List
 from pydantic import Field, model_validator
-from app.models.common.base import BaseEntity, BaseRespEntity, BoolField
+from modules.common.schemas.base import BaseEntity, BaseRespEntity, BoolField
 from plugins.multi_tenant.schemas.tenant_config import (
     TenantJwtConfig,
     TenantConfigSchema,

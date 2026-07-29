@@ -7,7 +7,7 @@ MCP 管理 Schema
 from typing import Optional, List, Any
 from pydantic import Field
 
-from app.models.common.base import BaseEntity
+from modules.common.schemas.base import BaseEntity
 
 
 class McpToolParamSchema(BaseEntity):

@@ -9,8 +9,8 @@ from typing import Optional, List, Annotated
 from pydantic import Field, ConfigDict, BeforeValidator
 from zoneinfo import ZoneInfo
 
-from app.models.common.base import BaseRespEntity, BaseEntity
-from app.models.common.page import PageRequest
+from modules.common.schemas.base import BaseRespEntity, BaseEntity
+from modules.common.schemas.page import PageRequest
 
 
 def _format_datetime(v):

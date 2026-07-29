@@ -256,6 +256,93 @@ export function fetchGetUserList(params?: Api.SystemManage.UserSearchParams) {
   });
 }
 
+/** ==================== 应用用户管理 API ==================== */
+
+/** get app user list */
+export function fetchGetAppUserList(params?: Api.SystemManage.AppUserSearchParams) {
+  return request<Api.SystemManage.AppUserList>({
+    url: '/admin/sys/app-user/list',
+    method: 'get',
+    params
+  });
+}
+
+/** get app user detail */
+export function fetchGetAppUser(userId: number) {
+  return request<Api.SystemManage.AppUser>({
+    url: `/admin/sys/app-user/${userId}`,
+    method: 'get'
+  });
+}
+
+/** create app user */
+export function fetchCreateAppUser(user: Api.SystemManage.AppUserCreateRequest) {
+  return request<Api.SystemManage.AppUser>({
+    url: '/admin/sys/app-user/add',
+    method: 'post',
+    data: {
+      name: user.name,
+      phone_code: user.phone_code,
+      phone: user.phone,
+      password: user.password,
+      email: user.email,
+      avatar: user.avatar,
+      status: enableStatusToBoolean(user.status)
+    }
+  });
+}
+
+/** update app user */
+export function fetchUpdateAppUser(userId: number, user: Api.SystemManage.AppUserUpdateRequest) {
+  return request<Api.SystemManage.AppUser>({
+    url: `/admin/sys/app-user/${userId}`,
+    method: 'put',
+    data: {
+      name: user.name,
+      phone_code: user.phone_code,
+      phone: user.phone,
+      email: user.email,
+      avatar: user.avatar,
+      status: enableStatusToBoolean(user.status)
+    }
+  });
+}
+
+/** delete app user */
+export function fetchDeleteAppUser(userId: number) {
+  return request<void>({
+    url: `/admin/sys/app-user/${userId}`,
+    method: 'delete'
+  });
+}
+
+/** batch delete app users */
+export function fetchBatchDeleteAppUser(userIds: number[]) {
+  return request<{ delete_count: number }>({
+    url: '/admin/sys/app-user/batch',
+    method: 'delete',
+    data: userIds
+  });
+}
+
+/** batch update app user status */
+export function fetchBatchUpdateAppUserStatus(payload: Api.SystemManage.AppUserBatchStatusRequest) {
+  return request<{ update_count: number }>({
+    url: '/admin/sys/app-user/batch/status',
+    method: 'put',
+    data: payload
+  });
+}
+
+/** change app user password */
+export function fetchUpdateAppUserPassword(userId: number, newPassword: string) {
+  return request<void>({
+    url: `/admin/sys/app-user/${userId}/password`,
+    method: 'put',
+    data: { new_password: newPassword }
+  });
+}
+
 /** ==================== 字典管理 API ==================== */
 
 /** get dict list */

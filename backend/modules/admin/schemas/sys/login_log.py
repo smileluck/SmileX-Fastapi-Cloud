@@ -5,7 +5,7 @@ from datetime import datetime
 
 from pydantic import Field
 
-from app.models.common.base import BaseEntity, BoolField
+from modules.common.schemas.base import BaseEntity, BoolField
 
 
 class LoginLogQueryParams(BaseEntity):

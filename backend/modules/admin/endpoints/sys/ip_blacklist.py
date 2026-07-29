@@ -9,7 +9,7 @@ import logging
 from fastapi import APIRouter, Body, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.common.page import PageRequest, get_page_params, get_paginated_results
+from modules.common.schemas.page import PageRequest, get_page_params, get_paginated_results
 from database.models.sys.user import SysUser
 from core.response import ResponseModel, ResponsePageModel, response_base
 from database.db_manager import get_session

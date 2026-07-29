@@ -5,8 +5,8 @@ from typing import Optional, List
 from pydantic import Field, ConfigDict, field_validator
 import json
 from datetime import datetime
-from app.models.common.base import BaseRespEntity, BaseReqEntity, BaseEntity, BoolField
-from app.models.common.page import PageRequest
+from modules.common.schemas.base import BaseRespEntity, BaseReqEntity, BaseEntity, BoolField
+from modules.common.schemas.page import PageRequest
 
 
 class SysDictQueryParams(BaseReqEntity):
