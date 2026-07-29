@@ -21,6 +21,8 @@ declare module "@elegant-router/types" {
     "404": "/404";
     "500": "/500";
     "about": "/about";
+    "business": "/business";
+    "business_app-user": "/business/app-user";
     "demo": "/demo";
     "demo_dict": "/demo/dict";
     "demo_openapi-test": "/demo/openapi-test";
@@ -43,7 +45,6 @@ declare module "@elegant-router/types" {
     "manage_menu": "/manage/menu";
     "manage_role": "/manage/role";
     "manage_user": "/manage/user";
-    "manage_app-user": "/manage/app-user";
     "merchant-open": "/merchant-open";
     "merchant-open_merchant": "/merchant-open/merchant";
     "merchant-open_openapi-log": "/merchant-open/openapi-log";
@@ -86,6 +87,7 @@ declare module "@elegant-router/types" {
     | "404"
     | "500"
     | "about"
+    | "business"
     | "demo"
     | "export-record"
     | "home"
@@ -118,6 +120,7 @@ declare module "@elegant-router/types" {
     | "iframe-page"
     | "login"
     | "about"
+    | "business_app-user"
     | "demo_dict"
     | "demo_openapi-test"
     | "demo_upload"
@@ -135,7 +138,6 @@ declare module "@elegant-router/types" {
     | "manage_menu"
     | "manage_role"
     | "manage_user"
-    | "manage_app-user"
     | "merchant-open_merchant"
     | "merchant-open_openapi-log"
     | "monitor"

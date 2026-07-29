@@ -52,6 +52,26 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'business',
+    path: '/business',
+    component: 'layout.base',
+    meta: {
+      title: 'business',
+      i18nKey: 'route.business'
+    },
+    children: [
+      {
+        name: 'business_app-user',
+        path: '/business/app-user',
+        component: 'view.business_app-user',
+        meta: {
+          title: 'business_app-user',
+          i18nKey: 'route.business_app-user'
+        }
+      }
+    ]
+  },
+  {
     name: 'demo',
     path: '/demo',
     component: 'layout.base',
@@ -269,15 +289,6 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'manage_user',
           i18nKey: 'route.manage_user'
-        }
-      },
-      {
-        name: 'manage_app-user',
-        path: '/manage/app-user',
-        component: 'view.manage_app-user',
-        meta: {
-          title: 'manage_app-user',
-          i18nKey: 'route.manage_app-user'
         }
       }
     ]

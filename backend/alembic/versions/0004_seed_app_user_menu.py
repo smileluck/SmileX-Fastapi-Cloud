@@ -1,12 +1,15 @@
-"""seed app_user admin menu
+"""seed business menu + app_user
 
 Revision ID: 0004
 Revises: 0003
 Create Date: 2026-07-28
 
-为"应用用户管理"后台模块插入菜单 + 4 个权限按钮种子。
+新增"业务管理"顶级目录(CATALOG)，应用用户管理菜单挂其下。
 仅插菜单记录，不向 sys_role_menu_association 分配任何角色 ——
 上线后由运维在角色管理页为目标角色勾选。
+
+注意：菜单 name 与前端 elegant-router 路由名保持一致（含连字符），
+否则前端按菜单 name 找不到组件与 i18n（参照 manage_ip-blacklist 先例）。
 """
 from typing import Sequence, Union
 from datetime import datetime
@@ -21,36 +24,65 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-# 系统管理目录 id（与 0002 种子保持一致）
-_SYS_MANAGE_PARENT_ID = 2874692539129857
+# 业务管理顶级目录 id（parent_id=None）
+_SYS_BUSINESS_DIR_ID = 2942406616004001
+# 应用用户管理菜单 id（挂在业务管理下）
+_APP_USER_MENU_ID = 2942406616004002
+
+_DT = datetime(2026, 7, 28, 10, 0, 0)
 
 _APP_USER_MENU_ROWS = [
+    # 业务管理目录（CATALOG）
     {
-        'id': 2942406616003001,
-        'parent_id': _SYS_MANAGE_PARENT_ID,
-        'name': 'manage_app_user',
-        'path': '/manage/app-user',
-        'component': 'view.manage_app-user',
+        'id': _SYS_BUSINESS_DIR_ID,
+        'parent_id': None,
+        'name': 'business',
+        'path': '/business',
+        'component': 'layout.base',
+        'redirect': None,
+        'permission': None,
+        'meta_icon': 'mdi:briefcase-outline',
+        'meta_hidden': False,
+        'meta_affix': False,
+        'meta_breadcrumb': True,
+        'status': True,
+        'type': 'CATALOG',
+        'sort': 3,
+        'is_system': True,
+        'meta_href': None,
+        'meta_keep_alive': False,
+        'deleted_at': None,
+        'created_at': _DT,
+        'updated_at': None,
+    },
+    # 应用用户管理（MENU，挂在业务管理目录下）
+    {
+        'id': _APP_USER_MENU_ID,
+        'parent_id': _SYS_BUSINESS_DIR_ID,
+        'name': 'business_app-user',
+        'path': '/business/app-user',
+        'component': 'view.business_app-user',
         'redirect': None,
         'permission': 'sys:app_user:list',
-        'meta_icon': 'ic:outline-people-alt',
+        'meta_icon': 'mdi:account-group-outline',
         'meta_hidden': False,
         'meta_affix': False,
         'meta_breadcrumb': True,
         'status': True,
         'type': 'MENU',
-        'sort': 12,
+        'sort': 1,
         'is_system': True,
         'meta_href': None,
         'meta_keep_alive': False,
         'deleted_at': None,
-        'created_at': datetime(2026, 7, 28, 10, 0, 0),
+        'created_at': _DT,
         'updated_at': None,
     },
+    # 4 个权限按钮（BUTTON），挂在应用用户管理菜单下
     {
-        'id': 2942406616003002,
-        'parent_id': 2942406616003001,
-        'name': 'manage_app_user_list',
+        'id': 2942406616004003,
+        'parent_id': _APP_USER_MENU_ID,
+        'name': 'business_app-user_list',
         'path': None,
         'component': None,
         'redirect': None,
@@ -66,13 +98,13 @@ _APP_USER_MENU_ROWS = [
         'meta_href': None,
         'meta_keep_alive': False,
         'deleted_at': None,
-        'created_at': datetime(2026, 7, 28, 10, 0, 0),
+        'created_at': _DT,
         'updated_at': None,
     },
     {
-        'id': 2942406616003003,
-        'parent_id': 2942406616003001,
-        'name': 'manage_app_user_add',
+        'id': 2942406616004004,
+        'parent_id': _APP_USER_MENU_ID,
+        'name': 'business_app-user_add',
         'path': None,
         'component': None,
         'redirect': None,
@@ -88,13 +120,13 @@ _APP_USER_MENU_ROWS = [
         'meta_href': None,
         'meta_keep_alive': False,
         'deleted_at': None,
-        'created_at': datetime(2026, 7, 28, 10, 0, 0),
+        'created_at': _DT,
         'updated_at': None,
     },
     {
-        'id': 2942406616003004,
-        'parent_id': 2942406616003001,
-        'name': 'manage_app_user_edit',
+        'id': 2942406616004005,
+        'parent_id': _APP_USER_MENU_ID,
+        'name': 'business_app-user_edit',
         'path': None,
         'component': None,
         'redirect': None,
@@ -110,13 +142,13 @@ _APP_USER_MENU_ROWS = [
         'meta_href': None,
         'meta_keep_alive': False,
         'deleted_at': None,
-        'created_at': datetime(2026, 7, 28, 10, 0, 0),
+        'created_at': _DT,
         'updated_at': None,
     },
     {
-        'id': 2942406616003005,
-        'parent_id': 2942406616003001,
-        'name': 'manage_app_user_delete',
+        'id': 2942406616004006,
+        'parent_id': _APP_USER_MENU_ID,
+        'name': 'business_app-user_delete',
         'path': None,
         'component': None,
         'redirect': None,
@@ -132,7 +164,7 @@ _APP_USER_MENU_ROWS = [
         'meta_href': None,
         'meta_keep_alive': False,
         'deleted_at': None,
-        'created_at': datetime(2026, 7, 28, 10, 0, 0),
+        'created_at': _DT,
         'updated_at': None,
     },
 ]

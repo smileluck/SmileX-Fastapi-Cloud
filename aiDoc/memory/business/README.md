@@ -10,7 +10,7 @@
 
 ## 需求索引
 
-- [2026-07-28 应用用户（AppUser）后台管理](./2026-07-28_app_user_admin_manage.md) — AppUser 加 status/avatar/last_login_* 字段 + admin 模块 CRUD（`/admin/sys/app-user/*`，权限码 `sys:app_user:*`）+ C 端 `login_by_phone`/`current_user` 检查 status（禁用真正生效）+ 禁用/改密/删除复用 `OnlineUserService.kick_all_sessions` 吊销 session；前端 `views/manage/app-user/` 整页 + i18n + 菜单种子（不分配角色，运维勾选）；password 选填（留空仅短信登录）；不新建应用模型、不修 C 端历史字段偏差
+- [2026-07-28 应用用户（AppUser）后台管理](./2026-07-28_app_user_admin_manage.md) — AppUser 加 status/avatar/last_login_* 字段 + admin 模块 CRUD（`/admin/sys/app-user/*`，权限码 `sys:app_user:*`）+ C 端 `login_by_phone`/`current_user` 检查 status（禁用真正生效）+ 禁用/改密/删除复用 `OnlineUserService.kick_all_sessions` 吊销 session；前端 `views/business/app-user/` 整页（归"业务管理"顶级目录）+ i18n + 菜单种子（不分配角色，运维勾选）；password 选填（留空仅短信登录）；不新建应用模型、不修 C 端历史字段偏差
 - [2026-07-28 后端 Web 安全加固](./2026-07-28_security_hardening.md) — 5 项：①文件上传引入 filetype 做 magic number + 扩展名 + 声明 MIME 三方交叉校验（挡 .exe 伪装），.env.prod 补白名单（原回退 None=任意可传）、移除 exe/msi/apk；②预览改用短期(5min)绑定 file_id 的 scoped token（POST /preview-token 换取），不再把 access token 放进 URL；③admin/app 补 logout 端点 + 修 App session key 格式 Bug（verify/logout 都用 build_session_key）；④JWT 注入 jti + Redis 黑名单（单 token 精细吊销，批量仍用 kick_all_sessions）；⑤HSTS 仅写部署 checklist（生产无 HTTPS，当前关闭正确）
 - [2026-07-27 NaiveUI 组件级主题配置](./2026-07-27_naiveui_component_theme_config.md) — 主题抽屉新增「组件」Tab：codegen 从 GlobalThemeOverrides 生成全部 92 组件 × 2217 属性表，每组件单独启用 + 表单/JSON5 混合编辑，localStorage 持久化（dev 也生效），合并优先级 用户组件配置 > 预设 > 自动；zh/en i18n；顺带修 setup-store $reset 对独立 ref 无效问题
 - [2026-07-23 首页仪表盘](./2026-07-23_homepage_dashboard.md) — 修复空白首页：新增聚合接口 `/admin/sys/dashboard/summary`（Redis 缓存 60s）+ 业务统计卡片（用户/角色/在线/今日登录）+ 最近登录时间线 + 最新公告列表

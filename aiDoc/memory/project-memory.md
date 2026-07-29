@@ -10,7 +10,7 @@
 
 详细索引见 [business/README.md](./business/README.md)。近期：
 
-- [2026-07-28 应用用户（AppUser）后台管理](./business/2026-07-28_app_user_admin_manage.md) — AppUser 加 status/avatar/last_login_* + admin 模块 CRUD（`/admin/sys/app-user/*`）+ C 端 login/current_user 检查 status（禁用生效）+ 禁用/改密/删除复用 `OnlineUserService.kick_all_sessions` 吊销 session；前端整页 + 菜单种子（不分配角色）
+- [2026-07-28 应用用户（AppUser）后台管理](./business/2026-07-28_app_user_admin_manage.md) — AppUser 加 status/avatar/last_login_* + admin 模块 CRUD（`/admin/sys/app-user/*`）+ C 端 login/current_user 检查 status（禁用生效）+ 禁用/改密/删除复用 `OnlineUserService.kick_all_sessions` 吊销 session；前端 views/business/app-user + "业务管理"目录菜单（不分配角色）
 - [2026-07-28 后端 Web 安全加固](./business/2026-07-28_security_hardening.md) — 5 项：文件上传 magic number 三方校验 + 白名单收紧；预览改 scoped token；admin/app 补 logout + 修 App session key Bug；JWT jti 黑名单；HSTS 部署 checklist
 - [2026-07-27 NaiveUI 组件级主题配置](./business/2026-07-27_naiveui_component_theme_config.md) — 主题抽屉新增「组件」Tab：codegen 从 GlobalThemeOverrides 生成全部组件 × 属性表，每组件单独启用 + 表单/JSON5 混合编辑，localStorage 持久化（dev 也生效），合并优先级 用户组件配置 > 预设 > 自动；zh/en i18n
 
