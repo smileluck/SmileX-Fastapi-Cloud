@@ -4,7 +4,13 @@
 #
 # 命令:
 #   setup              首次部署：安装依赖、初始化数据库、安装 systemd 服务
-#   deploy             日常部署：拉取代码、更新依赖、迁移、重启
+#   deploy [--full]    日常部署：拉取代码，按需更新依赖/迁移，重启
+#                      （默认智能跳过未变更步骤；--full 强制全量）
+#   pull               仅拉取代码（不更新依赖、不迁移、不重启）
+#   deps               仅更新 Python 依赖（uv sync）
+#   migrate            仅运行数据库迁移（alembic upgrade head）
+#   restart            仅重启服务（硬重启；gunicorn.conf.py / 环境变量变更需用此命令）
+#   reload             平滑重载（systemctl reload = gunicorn HUP，零停机刷新应用代码）
 #   rollback [hash]    回滚到指定 commit（默认上一个 commit）
 #   logs               查看服务日志 (journalctl -f)
 #   status             查看服务状态
@@ -93,6 +99,65 @@ check_prerequisites() {
     info "系统依赖检查通过"
 }
 
+# ---- 共享的部署步骤（被 deploy / 原子子命令复用，保持行为一致）----
+
+do_pull() {
+    info "拉取最新代码 (分支: ${GIT_BRANCH})"
+    cd "${BACKEND_DIR}"
+    git pull origin "${GIT_BRANCH}"
+}
+
+do_deps() {
+    info "更新 Python 依赖"
+    cd "${BACKEND_DIR}"
+    uv sync --frozen
+}
+
+do_migrate() {
+    info "运行数据库迁移"
+    cd "${BACKEND_DIR}"
+    source "${VENV_DIR}/bin/activate"
+    alembic upgrade head
+    info "数据库迁移完成"
+}
+
+do_restart() {
+    info "重启服务"
+    sudo systemctl restart "${APP_NAME}"
+}
+
+# 健康检查；传入 after_commit 必填，before_commit 可选（提供时失败会附带回滚提示）。
+do_health_check() {
+    local after_commit="$1"
+    local before_commit="${2:-}"
+
+    info "健康检查..."
+    sleep 3
+    if curl -sf -o /dev/null -m "${HEALTH_CHECK_TIMEOUT}" "${HEALTH_CHECK_URL}"; then
+        info "========== 部署成功 =========="
+        info "版本: ${after_commit}"
+    else
+        error "健康检查失败！服务可能未正常启动"
+        error "查看日志: ./deploy.sh logs"
+        [[ -n "${before_commit}" ]] && error "回滚命令: ./deploy.sh rollback ${before_commit}"
+        exit 1
+    fi
+}
+
+# 判断拉取范围内依赖文件是否变更（决定 deploy 是否需要 uv sync）
+deps_changed() {
+    local before="$1" after="$2"
+    git -C "${BACKEND_DIR}" diff --name-only "${before}..${after}" \
+        -- uv.lock pyproject.toml requirements.txt 2>/dev/null | grep -q .
+}
+
+# 判断拉取范围内迁移目录是否变更（决定 deploy 是否需要 alembic）
+migrations_changed() {
+    local before="$1" after="$2"
+    git -C "${BACKEND_DIR}" diff --name-only "${before}..${after}" \
+        -- alembic alembic.ini 2>/dev/null | grep -q .
+}
+
 # ---- 子命令实现 ----
 
 cmd_setup() {
@@ -164,56 +229,93 @@ cmd_setup() {
 }
 
 cmd_deploy() {
+    local full=0
+    [[ "${1:-}" == "--full" ]] && full=1
+
     info "========== 开始部署 =========="
     check_prerequisites
 
     cd "${BACKEND_DIR}"
 
     # 记录当前 commit
-    local before_commit
+    local before_commit after_commit
     before_commit=$(git rev-parse --short HEAD)
     info "当前版本: ${before_commit}"
 
-    # 拉取最新代码
-    info "拉取最新代码 (分支: ${GIT_BRANCH})"
-    git pull origin "${GIT_BRANCH}"
-
-    local after_commit
+    # 1. 拉取最新代码
+    do_pull
     after_commit=$(git rev-parse --short HEAD)
 
     if [[ "${before_commit}" == "${after_commit}" ]]; then
         info "代码无变化，跳过部署"
         exit 0
     fi
-
     info "更新版本: ${before_commit} -> ${after_commit}"
 
-    # 更新依赖
-    info "更新 Python 依赖"
-    uv sync --frozen
-
-    # 数据库迁移
-    info "运行数据库迁移"
-    source "${VENV_DIR}/bin/activate"
-    alembic upgrade head
-    info "数据库迁移完成"
-
-    # 重启服务
-    info "重启服务"
-    sudo systemctl restart "${APP_NAME}"
-
-    # 健康检查
-    info "健康检查..."
-    sleep 3
-    if curl -sf -o /dev/null -m "${HEALTH_CHECK_TIMEOUT}" "${HEALTH_CHECK_URL}"; then
-        info "========== 部署成功 =========="
-        info "版本: ${after_commit}"
+    # 2. 按需更新依赖（依赖文件变更或 --full 时执行，否则跳过）
+    if [[ ${full} -eq 1 ]] || deps_changed "${before_commit}" "${after_commit}"; then
+        do_deps
     else
-        error "健康检查失败！服务可能未正常启动"
-        error "查看日志: ./deploy.sh logs"
-        error "回滚命令: ./deploy.sh rollback ${before_commit}"
-        exit 1
+        info "依赖未变更，跳过 uv sync"
     fi
+
+    # 3. 按需数据库迁移（迁移目录变更或 --full 时执行，否则跳过）
+    if [[ ${full} -eq 1 ]] || migrations_changed "${before_commit}" "${after_commit}"; then
+        do_migrate
+    else
+        info "无新迁移，跳过 alembic"
+    fi
+
+    # 4. 重启服务 + 健康检查
+    do_restart
+    do_health_check "${after_commit}" "${before_commit}"
+}
+
+cmd_pull() {
+    info "========== 拉取代码 =========="
+    check_prerequisites
+    cd "${BACKEND_DIR}"
+
+    local before after
+    before=$(git rev-parse --short HEAD)
+    do_pull
+    after=$(git rev-parse --short HEAD)
+
+    if [[ "${before}" == "${after}" ]]; then
+        info "已是最新，无更新 (${after})"
+    else
+        info "更新: ${before} -> ${after}"
+        git --no-pager log --oneline "${before}..${after}"
+    fi
+    warn "仅拉取代码，未更新依赖/迁移/重启；按需执行: ./deploy.sh deps | migrate | restart"
+}
+
+cmd_deps() {
+    info "========== 更新 Python 依赖 =========="
+    check_prerequisites
+    do_deps
+    info "依赖更新完成"
+    warn "未重启服务；生效需执行: ./deploy.sh restart（或 reload）"
+}
+
+cmd_migrate() {
+    info "========== 数据库迁移 =========="
+    check_prerequisites
+    do_migrate
+    warn "未重启服务；生效需执行: ./deploy.sh restart"
+}
+
+cmd_restart() {
+    info "========== 重启服务 =========="
+    do_restart
+    do_health_check "$(cd "${BACKEND_DIR}" && git rev-parse --short HEAD)"
+}
+
+cmd_reload() {
+    info "========== 平滑重载 (gunicorn HUP) =========="
+    sudo systemctl reload "${APP_NAME}"
+    info "已发送 reload 信号；worker 将零停机重载应用代码"
+    warn "gunicorn.conf.py / 环境变量变更不会被 reload 生效，需执行: ./deploy.sh restart"
 }
 
 cmd_rollback() {
@@ -236,8 +338,7 @@ cmd_rollback() {
     alembic upgrade head
 
     # 重启服务
-    info "重启服务"
-    sudo systemctl restart "${APP_NAME}"
+    do_restart
 
     info "========== 回滚完成 =========="
     info "当前版本: $(git rev-parse --short HEAD)"
@@ -269,7 +370,13 @@ usage() {
     echo ""
     echo "命令:"
     echo "  setup              首次部署：安装依赖、初始化数据库、安装 systemd 服务"
-    echo "  deploy             日常部署：拉取代码、更新依赖、迁移、重启"
+    echo "  deploy [--full]    日常部署：拉取代码，按需更新依赖/迁移，重启"
+    echo "                     （默认智能跳过未变更步骤；--full 强制全量）"
+    echo "  pull               仅拉取代码（不更新依赖、不迁移、不重启）"
+    echo "  deps               仅更新 Python 依赖（uv sync）"
+    echo "  migrate            仅运行数据库迁移（alembic upgrade head）"
+    echo "  restart            仅重启服务（硬重启；gunicorn.conf.py / 环境变量变更需用此命令）"
+    echo "  reload             平滑重载（systemctl reload = gunicorn HUP，零停机刷新应用代码）"
     echo "  rollback [hash]    回滚到指定 commit（默认上一个 commit）"
     echo "  logs               查看服务日志"
     echo "  status             查看服务状态"
@@ -277,7 +384,12 @@ usage() {
 
 case "${1:-}" in
     setup)    cmd_setup ;;
-    deploy)   cmd_deploy ;;
+    deploy)   cmd_deploy "${2:-}" ;;
+    pull)     cmd_pull ;;
+    deps)     cmd_deps ;;
+    migrate)  cmd_migrate ;;
+    restart)  cmd_restart ;;
+    reload)   cmd_reload ;;
     rollback) cmd_rollback "${2:-}" ;;
     logs)     cmd_logs ;;
     status)   cmd_status ;;
