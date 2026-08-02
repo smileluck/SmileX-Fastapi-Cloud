@@ -107,15 +107,25 @@ cmd_setup() {
     cd "${BACKEND_DIR}"
     uv sync --frozen
 
-    # 检查 .env.prod
+    # 检查 .env.prod（由 git 检出，仓库内无独立模板文件）
     if [[ ! -f "${ENV_FILE}" ]]; then
-        warn ".env.prod 不存在，从模板创建"
-        cp "${BACKEND_DIR}/.env.prod" "${ENV_FILE}" 2>/dev/null || true
-        warn "请编辑 ${ENV_FILE} 配置数据库、Redis 等连接信息后再继续"
-        warn "编辑完成后重新运行: sudo ./deploy.sh setup"
-        exit 0
+        error "环境配置文件不存在: ${ENV_FILE}"
+        error "请先 git pull 检出该文件，或手动创建后再运行 setup"
+        exit 1
     fi
     info "环境配置: ${ENV_FILE}"
+
+    # 将 deploy.env 的 LOG_DIR 同步写入 .env.prod 的 LOG__DIR，
+    # 保证运行中的应用/Gunicorn 实际写入的日志目录与本脚本预置的目录一致。
+    # 说明：应用经 Pydantic 嵌套配置读取 LOG__DIR（双下划线 = LOG.DIR），
+    # systemd 也会把 .env.prod 注入进程环境供 gunicorn.conf.py 读取，
+    # 因此 .env.prod 的 LOG__DIR 才是运行态的真源；此处让它跟随 LOG_DIR。
+    if grep -qE '^LOG__DIR=' "${ENV_FILE}"; then
+        sed -i "s|^LOG__DIR=.*|LOG__DIR=${LOG_DIR}|" "${ENV_FILE}"
+    else
+        printf '\n# 由 deploy.sh setup 同步\nLOG__DIR=%s\n' "${LOG_DIR}" >> "${ENV_FILE}"
+    fi
+    info "日志目录同步完成: LOG__DIR=${LOG_DIR}"
 
     # 数据库迁移
     info "运行数据库迁移"
