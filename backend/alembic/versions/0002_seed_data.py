@@ -532,7 +532,7 @@ SYS_MENU_DATA = [
         'component': 'view.manage_dept',
         'redirect': None,
         'permission': 'sys:dept:list',
-        'meta_icon': 'ic:outline-account-tree',
+        'meta_icon': None,
         'meta_hidden': False,
         'meta_affix': False,
         'meta_breadcrumb': True,
