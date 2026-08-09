@@ -255,7 +255,7 @@ async function handleManualTrigger(taskId: number) {
 }
 
 function handleViewLogs(taskName: string) {
-  router.push({ path: '/manage/scheduler-log', query: { task_name: taskName } });
+  router.push({ name: 'scheduler_log', query: { task_name: taskName } });
 }
 
 async function handleDelete(taskId: number) {
