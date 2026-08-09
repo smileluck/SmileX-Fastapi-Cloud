@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { onMounted, reactive, ref } from 'vue';
+import { onActivated, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { NButton, NCard, NDataTable, NPopconfirm, NTag, useMessage } from 'naive-ui';
 import { fetchBatchDeleteTaskLog, fetchClearTaskLog, fetchGetTaskLogList } from '@/service/api';
@@ -21,7 +21,7 @@ const searchParams: Api.Scheduler.TaskLogSearchParams = reactive({
   page: 1,
   page_size: 10,
   task_id: null,
-  task_name: null,
+  task_name: (route.query.task_name as string) || null,
   task_key: null,
   status: null,
   start_time: null,
@@ -144,9 +144,10 @@ function handleViewDetail(logId: number) {
   detailVisible.value = true;
 }
 
-onMounted(() => {
-  if (route.query.task_name) {
-    searchParams.task_name = route.query.task_name as string;
+onActivated(() => {
+  const taskName = (route.query.task_name as string) || null;
+  if (searchParams.task_name !== taskName) {
+    searchParams.task_name = taskName;
     getData();
   }
 });
