@@ -34,6 +34,7 @@ dependencies = [
     "cryptography>=42.0.0",
     "filetype>=1.2.0",
     "pyyaml>=6.0",
+    "greenlet>=3.3.0",
 ]
 
 [tool.uv.workspace]
