@@ -1,15 +1,9 @@
-import axios from 'axios';
-import { localStg } from '@/utils/storage';
 import { getServiceBaseURL } from '@/utils/service';
 import { request } from '../request';
 
 const isHttpProxy = import.meta.env.DEV && import.meta.env.VITE_HTTP_PROXY === 'Y';
 const { baseURL } = getServiceBaseURL(import.meta.env, isHttpProxy);
 
-function getAuthHeader() {
-  const token = localStg.get('token');
-  return token || '';
-}
 
 /** 上传单个文件 */
 export function fetchUploadFile(file: File) {
@@ -54,11 +48,13 @@ export function fetchGetFile(fileId: number) {
 
 /** 下载文件 (返回 Blob) */
 export async function fetchDownloadFile(fileId: number): Promise<Blob> {
-  const response = await axios.get(`${baseURL}/admin/sys/file/${fileId}/download`, {
-    responseType: 'blob',
-    headers: { Authorization: getAuthHeader() }
+  const { data, error } = await request<Blob, 'blob'>({
+    url: `/admin/sys/file/${fileId}/download`,
+    method: 'get',
+    responseType: 'blob'
   });
-  return response.data;
+  if (error) throw error;
+  return data;
 }
 
 /** 换取文件预览令牌（短期 5 分钟、绑定单文件，后端 POST /preview-token） */
