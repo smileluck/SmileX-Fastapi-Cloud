@@ -52,6 +52,71 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'agent',
+    path: '/agent',
+    component: 'layout.base',
+    meta: {
+      title: 'agent',
+      i18nKey: 'route.agent'
+    },
+    children: [
+      {
+        name: 'agent_agents',
+        path: '/agent/agents',
+        component: 'view.agent_agents',
+        meta: {
+          title: 'agent_agents',
+          i18nKey: 'route.agent_agents'
+        }
+      },
+      {
+        name: 'agent_chat',
+        path: '/agent/chat',
+        component: 'view.agent_chat',
+        meta: {
+          title: 'agent_chat',
+          i18nKey: 'route.agent_chat'
+        }
+      },
+      {
+        name: 'agent_mcp-servers',
+        path: '/agent/mcp-servers',
+        component: 'view.agent_mcp-servers',
+        meta: {
+          title: 'agent_mcp-servers',
+          i18nKey: 'route.agent_mcp-servers'
+        }
+      },
+      {
+        name: 'agent_providers',
+        path: '/agent/providers',
+        component: 'view.agent_providers',
+        meta: {
+          title: 'agent_providers',
+          i18nKey: 'route.agent_providers'
+        }
+      },
+      {
+        name: 'agent_skills',
+        path: '/agent/skills',
+        component: 'view.agent_skills',
+        meta: {
+          title: 'agent_skills',
+          i18nKey: 'route.agent_skills'
+        }
+      },
+      {
+        name: 'agent_usage',
+        path: '/agent/usage',
+        component: 'view.agent_usage',
+        meta: {
+          title: 'agent_usage',
+          i18nKey: 'route.agent_usage'
+        }
+      }
+    ]
+  },
+  {
     name: 'business',
     path: '/business',
     component: 'layout.base',

@@ -7,3 +7,4 @@ export * from './monitor';
 export * from './file';
 export * from './scheduler';
 export * from './export-task';
+export * from './agent';

@@ -292,6 +292,20 @@ METHOD \n PATH \n timestamp \n nonce \n app_id \n sha256(body).hexdigest()
 
 ---
 
+
+## SSE 流式对话（agent 模块例外契约）
+
+智能体对话端点 `POST /admin/agent/chat/agents/{id}/stream` 是统一响应结构的**唯一例外**：
+以 `text/event-stream` 流式返回，无法包裹 `{code, msg, data}`。
+
+- 帧格式：`event: meta|delta|tool|error` + `data: <单行 JSON>`；每 15s 一条 `: ping` 注释帧
+- 请求体 `{messages, conversation_id?}` 仅接受 `user/assistant` 角色，system 由 Agent 配置注入
+- 前端必须用 `fetch` + `ReadableStream` 解析（axios 不支持流式），按空行分帧、忽略 `:` 开头行
+- 鉴权失败（401 等）时响应为普通 JSON（`{msg}`），前端需先判 `Content-Type`
+- 其余 agent CRUD 接口仍走统一响应/分页结构
+
+详见 `modules/agent-guide.md`。
+
 ## 变更规则
 
 - 破坏性接口变更（字段名/类型/结构改变）必须记录变更说明

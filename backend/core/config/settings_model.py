@@ -199,6 +199,18 @@ class I18nModel(BaseModel):
     FALLBACK_LANGUAGE: str = Field("zh-CN", description="键在请求语言中缺失时的回退语言")
 
 
+class AgentModel(BaseModel):
+    """AI 智能体（LLM 底座）配置模型"""
+
+    CRYPTO_KEY: str = Field(
+        "",
+        description="智能体域密钥加密材料（供应商 API Key / MCP Token），空则回退 JWT.SECRET_KEY",
+    )
+    USAGE_RETENTION_DAYS: int = Field(
+        0, description="用量流水保留天数（0=永久保留，超期由定时任务清理）"
+    )
+
+
 class RedisPoolModel(BaseModel):
     """Redis连接池模型"""
 

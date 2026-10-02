@@ -216,8 +216,7 @@ const local: App.I18n.Schema = {
           wrapper: '外层滚动',
           content: '主体滚动'
         },
-        page: {
-          animate: '页面切换动画',
+        page: {          animate: '页面切换动画',
           mode: {
             title: '页面切换动画类型',
             'fade-slide': '滑动',
@@ -390,6 +389,13 @@ const local: App.I18n.Schema = {
     manage_role: '角色管理',
     manage_user: '用户管理',
     business: '业务管理',
+    agent: '智能体',
+    agent_providers: '模型供应商',
+    agent_agents: 'Agent 配置',
+    agent_chat: '聊天测试',
+    agent_usage: '用量统计',
+    'agent_mcp-servers': 'MCP 服务',
+    agent_skills: '技能管理',
     'business_app-user': '应用用户管理',
     manage_dict: '字典管理',
     manage_config: '系统配置',
@@ -411,6 +417,143 @@ const local: App.I18n.Schema = {
     scheduler_log: '执行日志'
   },
   page: {
+
+    agent: {
+      providers: {
+        title: '模型供应商',
+        name: '供应商名称',
+        code: '供应商编码',
+        baseUrl: 'Base URL',
+        apiKey: 'API Key',
+        noApiKey: '未配置',
+        protocol: '调用协议',
+        status: '状态',
+        remark: '备注',
+        createdAt: '创建时间',
+        test: '连通测试',
+        testing: '测试中...',
+        testSuccess: '连接成功',
+        testFailed: '测试失败',
+        remoteModels: '上游模型',
+        loadingModels: '正在拉取上游模型...',
+        noModels: '上游未返回模型列表',
+        add: '新增供应商',
+        edit: '编辑供应商',
+        form: {
+          name: '请输入供应商名称',
+          code: '请输入供应商编码（唯一）',
+          baseUrl: '如 https://api.openai.com/v1',
+          apiKey: 'API Key（留空=不配置）',
+          apiKeyKeep: '留空保持不变',
+          status: '请选择状态',
+          remark: '请输入备注'
+        }
+      },
+      agents: {
+        title: 'Agent 配置',
+        name: '名称',
+        code: '编码',
+        model: '绑定模型',
+        systemPrompt: '系统提示词',
+        temperature: '温度',
+        topP: 'Top-P',
+        maxTokens: '最大输出',
+        tools: '工具',
+        skills: '技能',
+        status: '状态',
+        remark: '备注',
+        add: '新增 Agent',
+        edit: '编辑 Agent',
+        form: {
+          name: '请输入名称',
+          code: '请输入编码（唯一）',
+          model: '请选择模型',
+          systemPrompt: '请输入系统提示词（支持 Markdown）',
+          tools: '请选择绑定的工具（可搜索）',
+          skills: '请选择绑定的技能',
+          status: '请选择状态',
+          remark: '请输入备注'
+        }
+      },
+      mcpServers: {
+        title: 'MCP 服务',
+        name: '服务名称',
+        code: '服务编码',
+        transport: '传输协议',
+        baseUrl: '端点地址',
+        token: 'Token',
+        headers: '自定义请求头',
+        addHeader: '添加请求头',
+        status: '状态',
+        remark: '备注',
+        test: '连通测试',
+        testing: '握手测试中...',
+        toolsCount: '个工具',
+        testFailed: '测试失败',
+        add: '新增 MCP 服务',
+        edit: '编辑 MCP 服务',
+        form: {
+          name: '请输入服务名称',
+          code: '请输入服务编码（唯一，禁用冒号）',
+          baseUrl: '如 https://mcp.example.com/mcp',
+          token: '鉴权 Token（留空=不鉴权）',
+          tokenKeep: '留空保持不变',
+          status: '请选择状态',
+          remark: '请输入备注'
+        }
+      },
+      skills: {
+        title: '技能管理',
+        name: '技能名称',
+        code: '技能编码',
+        description: '描述',
+        instruction: '主指令',
+        files: '附属文件',
+        fileCount: '文件数',
+        status: '状态',
+        remark: '备注',
+        updatedAt: '更新时间',
+        add: '新增技能',
+        edit: '编辑技能',
+        addFile: '添加附属文件',
+        form: {
+          name: '请输入技能名称',
+          code: '请输入技能编码（唯一）',
+          description: '请输入技能描述',
+          instruction: 'Markdown 提示词，绑定 Agent 后注入 system prompt',
+          fileContent: '文件文本内容（≤32KB）',
+          status: '请选择状态',
+          remark: '请输入备注'
+        }
+      },
+      chat: {
+        title: '智能体对话',
+        selectAgent: '选择智能体',
+        conversations: '会话列表',
+        newConversation: '新建会话',
+        untitled: '未命名会话',
+        noConversations: '暂无会话',
+        renamePrompt: '请输入新的会话标题',
+        emptyHint: '选择智能体，输入消息开始对话',
+        inputPlaceholder: '输入消息，Enter 发送，Shift+Enter 换行',
+        send: '发送',
+        stop: '停止',
+        thinking: '思考中...',
+        toolCalls: '工具调用'
+      },
+      usage: {
+        title: '用量统计',
+        onlyMine: '仅本人',
+        days7: '近 7 天',
+        days30: '近 30 天',
+        days90: '近 90 天',
+        totalCalls: '调用次数',
+        totalTokens: '总 Tokens',
+        promptTokens: '输入 Tokens',
+        completionTokens: '输出 Tokens',
+        tokens: 'Tokens'
+      }
+    },
     login: {
       common: {
         loginOrRegister: '登录 / 注册',

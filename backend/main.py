@@ -18,6 +18,7 @@ from core.redis import RedisPool
 from modules.app.router import router as app_app_router
 from modules.admin.router import router as admin_app_router
 from modules.openapi.router import open_router
+from modules.agent.router import router as agent_router
 from modules.admin.endpoints.sys.health import health_router
 from core.registry.setup_registry import setup_app
 from core.websocket import FastAPIConnectionManager, set_connection_manager
@@ -60,6 +61,7 @@ async def lifespan(app: FastAPI):
     import modules.scheduler.tasks.rate_limit_config  # noqa: F401
     import modules.scheduler.tasks.generic  # noqa: F401
     import modules.scheduler.tasks.export_task  # noqa: F401
+    import modules.agent.tasks  # noqa: F401
 
     manager = SchedulerManager.get_instance()
     manager.start()
@@ -121,6 +123,8 @@ app.include_router(app_app_router)
 app.include_router(admin_app_router)
 # 开放API（商户 HMAC 签名鉴权）
 app.include_router(open_router)
+# AI 智能体（LLM 底座：供应商/模型/Agent/SSE 对话/MCP/技能）
+app.include_router(agent_router)
 # 健康/就绪探针：顶级路由，无鉴权，不受任何业务中间件约束
 app.include_router(health_router)
 

@@ -10,6 +10,7 @@
 
 详细索引见 [business/README.md](./business/README.md)。近期：
 
+- [2026-10-02 AI 智能体底座（Agent + MCP 客户端 + 技能包）](./business/2026-10-02_agent_ai_foundation.md) — 供应商/模型/Agent 三层 + SSE 流式对话 + function calling（内置 + MCP 远程工具）+ 技能包 + 会话/用量；`modules/agent/` 独立模块（9 表 + `/admin/agent`）+ 前端 6 页面
 - [2026-07-29 后端响应消息 i18n](./business/2026-07-29_backend_response_i18n.md) — 新增 `core/i18n/`（YAML key 目录 + `t()` + `Accept-Language` 解析 + 语言 ContextVar），`CustomResponseCode`/`CustomErrorCode` 的 `.msg` 按 key 懒翻译，异常类 `default_msg_key`，全量迁移约 350 条 inline 中文为 `t()`；前端 `onRequest` 注入 `Accept-Language: getLocale()`；仅 zh-CN/en-US，新增语言加 yaml 即可；日志/描述/基础设施错误不翻译
 - [2026-07-28 应用用户（AppUser）后台管理](./business/2026-07-28_app_user_admin_manage.md) — AppUser 加 status/avatar/last_login_* + admin 模块 CRUD（`/admin/sys/app-user/*`）+ C 端 login/current_user 检查 status（禁用生效）+ 禁用/改密/删除复用 `OnlineUserService.kick_all_sessions` 吊销 session；前端 views/business/app-user + "业务管理"目录菜单（不分配角色）
 - [2026-07-28 后端 Web 安全加固](./business/2026-07-28_security_hardening.md) — 5 项：文件上传 magic number 三方校验 + 白名单收紧；预览改 scoped token；admin/app 补 logout + 修 App session key Bug；JWT jti 黑名单；HSTS 部署 checklist

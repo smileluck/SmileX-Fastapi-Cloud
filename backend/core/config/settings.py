@@ -25,6 +25,7 @@ from .settings_model import (
     PluginModel,
     OpenApiModel,
     I18nModel,
+    AgentModel,
 )
 
 
@@ -70,3 +71,5 @@ class GlobalSetting(BaseSettings):
     OPEN_API: OpenApiModel = OpenApiModel()
     # 国际化配置
     I18N: I18nModel = I18nModel()
+    # AI 智能体（LLM 底座）配置
+    AGENT: AgentModel = AgentModel()

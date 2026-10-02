@@ -29,6 +29,7 @@
 - `modules/backend-layer-rules.md`: 后端分层、统一响应、错误码约束
 - `modules/module-development.md`: 后端/前端模块开发流程
 - `modules/mcp-guide.md`: MCP 工具平台使用指南（部署模式、工具开发、管理接口）
+- `modules/agent-guide.md`: AI 智能体模块指南（三层配置、SSE 对话契约、工具绑定、防护数值）
 - `modules/plugin-development.md`: 插件开发与管理指南（生命周期、CLI、多租户集成）
 - `frontend-backend/boundary.md`: 前后端契约与字段类型约束
 - `frontend-backend/frontend-rules.md`: 前端代码、状态、路由、样式规范
@@ -48,6 +49,7 @@
 | 新建前端页面 / 前端功能 | `modules/module-development.md`（前端部分）、`frontend-backend/frontend-rules.md`、`frontend-backend/frontend-utils.md`、`examples/frontend/*` |
 | 前后端契约变更 / 字段对接 | `frontend-backend/boundary.md`、`modules/backend-layer-rules.md`（响应/分页结构） |
 | MCP 工具开发 / 调用 | `modules/mcp-guide.md` |
+| AI 智能体 / SSE 对话 / MCP 接入 / 技能 | `modules/agent-guide.md`、`frontend-backend/boundary.md`（SSE 例外契约） |
 | 插件开发 / 多租户 | `modules/plugin-development.md`、`relations/system-map.md` |
 | 项目结构 / 技术栈 / 依赖答疑 | `relations/repo-profile.md`、`relations/system-map.md` |
 | 开发流程 / 提交规范 / 分支 | `relations/development-workflow.md` |

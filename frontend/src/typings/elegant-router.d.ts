@@ -21,6 +21,13 @@ declare module "@elegant-router/types" {
     "404": "/404";
     "500": "/500";
     "about": "/about";
+    "agent": "/agent";
+    "agent_agents": "/agent/agents";
+    "agent_chat": "/agent/chat";
+    "agent_mcp-servers": "/agent/mcp-servers";
+    "agent_providers": "/agent/providers";
+    "agent_skills": "/agent/skills";
+    "agent_usage": "/agent/usage";
     "business": "/business";
     "business_app-user": "/business/app-user";
     "demo": "/demo";
@@ -87,6 +94,7 @@ declare module "@elegant-router/types" {
     | "404"
     | "500"
     | "about"
+    | "agent"
     | "business"
     | "demo"
     | "export-record"
@@ -120,6 +128,12 @@ declare module "@elegant-router/types" {
     | "iframe-page"
     | "login"
     | "about"
+    | "agent_agents"
+    | "agent_chat"
+    | "agent_mcp-servers"
+    | "agent_providers"
+    | "agent_skills"
+    | "agent_usage"
     | "business_app-user"
     | "demo_dict"
     | "demo_openapi-test"

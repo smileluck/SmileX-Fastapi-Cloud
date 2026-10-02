@@ -105,6 +105,42 @@ error:
     not_found: "Merchant not found"
     code_exist: "Merchant code already exists"
     app_id_conflict: "AppId conflict, please retry"
+  agent:
+    provider_not_found: "Model provider {id} does not exist"
+    provider_code_exist: "Provider code {code} already exists"
+    provider_has_models: "Models exist under this provider, delete them first"
+    model_not_found: "Model {id} does not exist"
+    model_exist: "Model {name} already exists under this provider"
+    model_in_use: "This model is referenced by an agent, remove the reference first"
+    not_found: "Agent {id} does not exist"
+    code_exist: "Agent code {code} already exists"
+    disabled: "The agent has been disabled"
+    model_disabled: "The model bound to this agent has been disabled"
+    provider_disabled: "The provider of this model has been disabled"
+    conversation_not_found: "Conversation {id} does not exist"
+    conversation_agent_mismatch: "The conversation does not belong to this agent"
+    decrypt_failed: "Secret decryption failed, please save the secret again"
+    upstream_error: "Upstream call failed: {detail}"
+    unknown_tool: "Unknown tool: {name}"
+    too_many_tools: "Too many tools bound (limit {max})"
+  mcp_server:
+    not_found: "MCP server {id} does not exist"
+    not_found_by_code: "MCP server {code} does not exist"
+    disabled_by_code: "MCP server {code} has been disabled"
+    code_exist: "MCP server code {code} already exists"
+    in_use: "MCP server is referenced by agent tools, remove the reference first"
+    bad_url: "Endpoint must be a valid http(s) URL"
+    bad_tool_ref: "Invalid MCP tool reference: {name}"
+  skill:
+    not_found: "Skill {id} does not exist"
+    not_found_or_disabled: "Skill {code} does not exist or is disabled"
+    code_exist: "Skill code {code} already exists"
+    in_use: "Skill is bound to an agent, remove the binding first"
+    bad_path: "Invalid skill file path: {path}"
+    duplicate_path: "Duplicate skill file path: {path}"
+    file_too_large: "Skill file exceeds the 32KB limit: {path}"
+    too_many_files: "Too many skill files (limit {max})"
+    too_many: "Too many skills bound (limit {max})"
 
 pydantic:
   int_parsing: "Please enter a valid integer"
@@ -404,3 +440,31 @@ rate_limit:
 security:
   request_too_large: "Request body too large"
   invalid_content_length: "Invalid Content-Length"
+
+agent:
+  default_conversation_title: "New conversation"
+  tools:
+    builtin_group: "Built-in tools"
+  provider:
+    create_success: "Provider created successfully"
+    update_success: "Provider updated successfully"
+    delete_success: "Provider deleted successfully"
+  model:
+    create_success: "Model created successfully"
+    update_success: "Model updated successfully"
+    delete_success: "Model deleted successfully"
+  create_success: "Agent created successfully"
+  update_success: "Agent updated successfully"
+  delete_success: "Agent deleted successfully"
+  mcp:
+    create_success: "MCP server created successfully"
+    update_success: "MCP server updated successfully"
+    delete_success: "MCP server deleted successfully"
+  skill:
+    create_success: "Skill created successfully"
+    update_success: "Skill updated successfully"
+    delete_success: "Skill deleted successfully"
+  conversation:
+    create_success: "Conversation created successfully"
+    rename_success: "Conversation renamed successfully"
+    delete_success: "Conversation deleted successfully"

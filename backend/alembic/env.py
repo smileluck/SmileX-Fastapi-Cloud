@@ -47,6 +47,16 @@ from database.models.sys.login_log import SysLoginLog
 from database.models.business.user import AppUser
 from database.models.sys.scheduled_task import SysScheduledTask
 from database.models.sys.task_log import SysScheduledTaskLog
+from database.models.sys.agent import (
+    SysAgentProvider,
+    SysAgentModel,
+    SysAgent,
+    SysAgentConversation,
+    SysAgentConversationMsg,
+    SysAgentUsageLog,
+)
+from database.models.sys.mcp_server import SysMcpServer
+from database.models.sys.skill import SysSkill, SysSkillFile
 
 # Set target_metadata to Base.metadata
 target_metadata = Base.metadata

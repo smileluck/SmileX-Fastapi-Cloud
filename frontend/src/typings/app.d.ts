@@ -554,6 +554,142 @@ declare namespace App {
       };
       route: Record<I18nRouteKey, string>;
       page: {
+        agent: {
+          providers: {
+            title: string;
+            name: string;
+            code: string;
+            baseUrl: string;
+            apiKey: string;
+            noApiKey: string;
+            protocol: string;
+            status: string;
+            remark: string;
+            createdAt: string;
+            test: string;
+            testing: string;
+            testSuccess: string;
+            testFailed: string;
+            remoteModels: string;
+            loadingModels: string;
+            noModels: string;
+            add: string;
+            edit: string;
+            form: {
+              name: string;
+              code: string;
+              baseUrl: string;
+              apiKey: string;
+              apiKeyKeep: string;
+              status: string;
+              remark: string;
+            };
+          };
+          agents: {
+            title: string;
+            name: string;
+            code: string;
+            model: string;
+            systemPrompt: string;
+            temperature: string;
+            topP: string;
+            maxTokens: string;
+            tools: string;
+            skills: string;
+            status: string;
+            remark: string;
+            add: string;
+            edit: string;
+            form: {
+              name: string;
+              code: string;
+              model: string;
+              systemPrompt: string;
+              tools: string;
+              skills: string;
+              status: string;
+              remark: string;
+            };
+          };
+          mcpServers: {
+            title: string;
+            name: string;
+            code: string;
+            transport: string;
+            baseUrl: string;
+            token: string;
+            headers: string;
+            addHeader: string;
+            status: string;
+            remark: string;
+            test: string;
+            testing: string;
+            toolsCount: string;
+            testFailed: string;
+            add: string;
+            edit: string;
+            form: {
+              name: string;
+              code: string;
+              baseUrl: string;
+              token: string;
+              tokenKeep: string;
+              status: string;
+              remark: string;
+            };
+          };
+          skills: {
+            title: string;
+            name: string;
+            code: string;
+            description: string;
+            instruction: string;
+            files: string;
+            fileCount: string;
+            status: string;
+            remark: string;
+            updatedAt: string;
+            add: string;
+            edit: string;
+            addFile: string;
+            form: {
+              name: string;
+              code: string;
+              description: string;
+              instruction: string;
+              fileContent: string;
+              status: string;
+              remark: string;
+            };
+          };
+          chat: {
+            title: string;
+            selectAgent: string;
+            conversations: string;
+            newConversation: string;
+            untitled: string;
+            noConversations: string;
+            renamePrompt: string;
+            emptyHint: string;
+            inputPlaceholder: string;
+            send: string;
+            stop: string;
+            thinking: string;
+            toolCalls: string;
+          };
+          usage: {
+            title: string;
+            onlyMine: string;
+            days7: string;
+            days30: string;
+            days90: string;
+            totalCalls: string;
+            totalTokens: string;
+            promptTokens: string;
+            completionTokens: string;
+            tokens: string;
+          };
+        };
         login: {
           common: {
             loginOrRegister: string;

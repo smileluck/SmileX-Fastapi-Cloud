@@ -112,6 +112,42 @@ error:
     not_found: "商户不存在"
     code_exist: "商户编码已存在"
     app_id_conflict: "AppId冲突，请重试"
+  agent:
+    provider_not_found: "模型供应商 {id} 不存在"
+    provider_code_exist: "供应商编码 {code} 已存在"
+    provider_has_models: "该供应商下存在模型，请先删除模型"
+    model_not_found: "模型 {id} 不存在"
+    model_exist: "该供应商下模型 {name} 已存在"
+    model_in_use: "该模型已被智能体引用，请先解除引用"
+    not_found: "智能体 {id} 不存在"
+    code_exist: "智能体编码 {code} 已存在"
+    disabled: "智能体已被禁用"
+    model_disabled: "该智能体绑定的模型已被禁用"
+    provider_disabled: "该模型所属供应商已被禁用"
+    conversation_not_found: "会话 {id} 不存在"
+    conversation_agent_mismatch: "会话不属于该智能体，不支持跨智能体追加消息"
+    decrypt_failed: "密钥解密失败，请重新保存密钥"
+    upstream_error: "上游调用失败: {detail}"
+    unknown_tool: "未知工具: {name}"
+    too_many_tools: "工具绑定数量超过上限（{max} 个）"
+  mcp_server:
+    not_found: "MCP 服务 {id} 不存在"
+    not_found_by_code: "MCP 服务 {code} 不存在"
+    disabled_by_code: "MCP 服务 {code} 已禁用"
+    code_exist: "MCP 服务编码 {code} 已存在"
+    in_use: "MCP 服务已被智能体工具引用，请先解除引用"
+    bad_url: "端点地址必须是合法的 http(s) URL"
+    bad_tool_ref: "非法的 MCP 工具引用: {name}"
+  skill:
+    not_found: "技能 {id} 不存在"
+    not_found_or_disabled: "技能 {code} 不存在或已禁用"
+    code_exist: "技能编码 {code} 已存在"
+    in_use: "技能已被智能体绑定，请先解除引用"
+    bad_path: "附属文件路径非法: {path}"
+    duplicate_path: "附属文件路径重复: {path}"
+    file_too_large: "附属文件超过 32KB 上限: {path}"
+    too_many_files: "附属文件数量超过上限（{max} 个）"
+    too_many: "技能绑定数量超过上限（{max} 个）"
 
 pydantic:
   int_parsing: "请输入有效的整数"
@@ -411,3 +447,31 @@ rate_limit:
 security:
   request_too_large: "请求体过大"
   invalid_content_length: "非法 Content-Length"
+
+agent:
+  default_conversation_title: "新对话"
+  tools:
+    builtin_group: "内置工具"
+  provider:
+    create_success: "创建供应商成功"
+    update_success: "更新供应商成功"
+    delete_success: "删除供应商成功"
+  model:
+    create_success: "创建模型成功"
+    update_success: "更新模型成功"
+    delete_success: "删除模型成功"
+  create_success: "创建智能体成功"
+  update_success: "更新智能体成功"
+  delete_success: "删除智能体成功"
+  mcp:
+    create_success: "创建 MCP 服务成功"
+    update_success: "更新 MCP 服务成功"
+    delete_success: "删除 MCP 服务成功"
+  skill:
+    create_success: "创建技能成功"
+    update_success: "更新技能成功"
+    delete_success: "删除技能成功"
+  conversation:
+    create_success: "创建会话成功"
+    rename_success: "重命名会话成功"
+    delete_success: "删除会话成功"

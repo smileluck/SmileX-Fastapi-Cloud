@@ -113,6 +113,27 @@ class CustomErrorCode(CustomCodeBase):
     MERCHANT_NOT_FOUND = (11028, "error.merchant.not_found")
     MERCHANT_CODE_EXIST = (11029, "error.merchant.code_exist")
     MERCHANT_APP_ID_CONFLICT = (11030, "error.merchant.app_id_conflict")
+    # AI 智能体 / MCP / 技能 11051-11120
+    AGENT_PROVIDER_NOT_FOUND = (11051, "error.agent.provider_not_found")
+    AGENT_PROVIDER_CODE_EXIST = (11052, "error.agent.provider_code_exist")
+    AGENT_PROVIDER_HAS_MODELS = (11053, "error.agent.provider_has_models")
+    AGENT_MODEL_NOT_FOUND = (11054, "error.agent.model_not_found")
+    AGENT_MODEL_EXIST = (11055, "error.agent.model_exist")
+    AGENT_MODEL_IN_USE = (11056, "error.agent.model_in_use")
+    AGENT_NOT_FOUND = (11057, "error.agent.not_found")
+    AGENT_CODE_EXIST = (11058, "error.agent.code_exist")
+    AGENT_DISABLED = (11059, "error.agent.disabled")
+    AGENT_MODEL_DISABLED = (11060, "error.agent.model_disabled")
+    AGENT_PROVIDER_DISABLED = (11061, "error.agent.provider_disabled")
+    AGENT_CONVERSATION_NOT_FOUND = (11062, "error.agent.conversation_not_found")
+    AGENT_CONVERSATION_AGENT_MISMATCH = (11063, "error.agent.conversation_agent_mismatch")
+    AGENT_DECRYPT_FAILED = (11070, "error.agent.decrypt_failed")
+    MCP_SERVER_NOT_FOUND = (11064, "error.mcp_server.not_found")
+    MCP_SERVER_CODE_EXIST = (11065, "error.mcp_server.code_exist")
+    MCP_SERVER_IN_USE = (11066, "error.mcp_server.in_use")
+    SKILL_NOT_FOUND = (11067, "error.skill.not_found")
+    SKILL_CODE_EXIST = (11068, "error.skill.code_exist")
+    SKILL_IN_USE = (11069, "error.skill.in_use")
 @dataclass
 class CustomResponse:
     """

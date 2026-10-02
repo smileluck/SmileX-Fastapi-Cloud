@@ -15,6 +15,16 @@ from .ip_blacklist import SysIpBlacklist
 from .file import SysFile
 from .scheduled_task import SysScheduledTask
 from .task_log import SysScheduledTaskLog
+from .agent import (
+    SysAgentProvider,
+    SysAgentModel,
+    SysAgent,
+    SysAgentConversation,
+    SysAgentConversationMsg,
+    SysAgentUsageLog,
+)
+from .mcp_server import SysMcpServer
+from .skill import SysSkill, SysSkillFile
 
 __all__ = [
     "SysMenu",
@@ -33,4 +43,13 @@ __all__ = [
     "SysFile",
     "SysScheduledTask",
     "SysScheduledTaskLog",
+    "SysAgentProvider",
+    "SysAgentModel",
+    "SysAgent",
+    "SysAgentConversation",
+    "SysAgentConversationMsg",
+    "SysAgentUsageLog",
+    "SysMcpServer",
+    "SysSkill",
+    "SysSkillFile",
 ]
