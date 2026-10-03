@@ -87,8 +87,8 @@ def _truncate_result(text: str) -> str:
     return encoded[:TOOL_RESULT_MAX].decode("utf-8", errors="ignore") + "…（已截断）"
 
 
-def build_system_prompt(agent: SysAgent, skill_contents: list) -> str:
-    """Agent 提示词 + 技能块拼接；总量上限 60KB 截断"""
+def build_system_prompt(agent: SysAgent, skill_contents: list, kb_context: str = "") -> str:
+    """Agent 提示词 + 技能块 + 知识库引用材料拼接；总量上限 60KB 截断"""
     parts: list[str] = []
     if agent.system_prompt:
         parts.append(agent.system_prompt)
@@ -100,6 +100,8 @@ def build_system_prompt(agent: SysAgent, skill_contents: list) -> str:
         for file in content.files:
             block.append(f"\n\n## 附：{file.path}\n{file.content}")
         parts.append("\n".join(block))
+    if kb_context:
+        parts.append(f"\n\n{kb_context}")
     prompt = "".join(parts)
     if len(prompt.encode("utf-8")) > SYSTEM_PROMPT_MAX:
         prompt = prompt.encode("utf-8")[:SYSTEM_PROMPT_MAX].decode("utf-8", errors="ignore")
@@ -320,7 +322,26 @@ async def stream_chat(
         except Exception as exc:
             logger.warning("加载智能体 %s 技能失败，已跳过: %s", ctx.agent.id, exc)
 
-    system_prompt = build_system_prompt(ctx.agent, skill_contents)
+    # 知识库检索：以最后一条 user 消息为 query，失败降级为不注入
+    kb_context = ""
+    kb_ids = AgentService.parse_knowledge_ids(ctx.agent)
+    if kb_ids:
+        query_text = next((m.content for m in reversed(history) if m.role == "user"), "")
+        if query_text.strip():
+            try:
+                from modules.agent.core.knowledge_retriever import (
+                    KnowledgeRetriever,
+                    build_kb_context,
+                )
+
+                async for db in get_session():
+                    chunks = await KnowledgeRetriever.retrieve(db, query_text, kb_ids)
+                    break
+                kb_context = build_kb_context(chunks)
+            except Exception as exc:
+                logger.warning("智能体 %s 知识库检索失败，已跳过: %s", ctx.agent.id, exc)
+
+    system_prompt = build_system_prompt(ctx.agent, skill_contents, kb_context)
     messages: list[ChatMessage] = []
     if system_prompt:
         messages.append(ChatMessage(role="system", content=system_prompt))

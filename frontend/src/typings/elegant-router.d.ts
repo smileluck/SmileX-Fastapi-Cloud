@@ -28,6 +28,7 @@ declare module "@elegant-router/types" {
     "agent_providers": "/agent/providers";
     "agent_skills": "/agent/skills";
     "agent_usage": "/agent/usage";
+    "agent_knowledge": "/agent/knowledge";
     "business": "/business";
     "business_app-user": "/business/app-user";
     "demo": "/demo";
@@ -134,6 +135,7 @@ declare module "@elegant-router/types" {
     | "agent_providers"
     | "agent_skills"
     | "agent_usage"
+    | "agent_knowledge"
     | "business_app-user"
     | "demo_dict"
     | "demo_openapi-test"

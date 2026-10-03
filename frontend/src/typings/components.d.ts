@@ -166,8 +166,9 @@ declare global {
   const DictText: typeof import('./../components/custom/dict-text.vue')['default']
   const ExceptionBase: typeof import('./../components/common/exception-base.vue')['default']
   const FullScreen: typeof import('./../components/common/full-screen.vue')['default']
-  const 'IconAntDesign:deleteOutlined': typeof import('~icons/ant-design/delete-outlined')['default']
-  const 'IconAntDesign:editOutlined': typeof import('~icons/ant-design/edit-outlined')['default']
+  // 含冒号图标组件无法生成合法标识符,以模块引用类型代替(unplugin 已知缺陷)
+  const IconAntDesignDeleteOutlined: typeof import('~icons/ant-design/delete-outlined')['default']
+  const IconAntDesignEditOutlined: typeof import('~icons/ant-design/edit-outlined')['default']
   const IconAntDesignEnterOutlined: typeof import('~icons/ant-design/enter-outlined')['default']
   const IconAntDesignReloadOutlined: typeof import('~icons/ant-design/reload-outlined')['default']
   const IconAntDesignSettingOutlined: typeof import('~icons/ant-design/setting-outlined')['default']

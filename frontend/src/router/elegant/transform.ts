@@ -174,6 +174,7 @@ const routeMap: RouteMap = {
   "agent_providers": "/agent/providers",
   "agent_skills": "/agent/skills",
   "agent_usage": "/agent/usage",
+  "agent_knowledge": "/agent/knowledge",
   "business": "/business",
   "business_app-user": "/business/app-user",
   "demo": "/demo",

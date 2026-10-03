@@ -43,6 +43,9 @@ class SysAgentModel(Base):
         Integer, nullable=False, index=True, comment="所属供应商 ID（sys_agent_provider.id）"
     )
     name: Mapped[str] = mapped_column(String(128), nullable=False, comment="模型名称（上游模型 ID）")
+    model_type: Mapped[str] = mapped_column(
+        String(32), default="chat", comment="模型类型：chat-对话/embedding-向量化/rerank-重排"
+    )
     display_name: Mapped[Optional[str]] = mapped_column(String(64), default=None, comment="展示名称")
     context_window: Mapped[int] = mapped_column(Integer, default=0, comment="上下文窗口（token，0=未知）")
     max_output: Mapped[int] = mapped_column(Integer, default=0, comment="单次最大输出（token，0=上游默认）")
@@ -76,6 +79,9 @@ class SysAgent(Base):
     max_tokens: Mapped[int] = mapped_column(Integer, default=0, comment="单次最大输出（token，0=上游默认）")
     tools: Mapped[Optional[str]] = mapped_column(String(512), default=None, comment="绑定的工具名 JSON 数组文本")
     skills: Mapped[Optional[str]] = mapped_column(String(512), default=None, comment="绑定的技能编码 JSON 数组文本")
+    knowledge_ids: Mapped[Optional[str]] = mapped_column(
+        String(512), default=None, comment="绑定的知识库 ID JSON 数组文本"
+    )
     remark: Mapped[Optional[str]] = mapped_column(String(200), default=None, comment="备注")
     status: Mapped[bool] = mapped_column(Boolean, default=True, comment="状态：True-启用，False-禁用")
 
@@ -131,3 +137,76 @@ class SysAgentUsageLog(Base):
     completion_tokens: Mapped[int] = mapped_column(Integer, default=0, comment="输出 token 数")
     total_tokens: Mapped[int] = mapped_column(Integer, default=0, comment="总 token 数")
     latency_ms: Mapped[int] = mapped_column(Integer, default=0, comment="耗时（毫秒）")
+
+
+# 知识库文档处理状态（sys_agent_knowledge_doc.status）
+DOC_STATUS_PENDING = 0
+DOC_STATUS_PROCESSING = 1
+DOC_STATUS_COMPLETED = 2
+DOC_STATUS_FAILED = 3
+
+
+class SysAgentKnowledge(Base):
+    """
+    智能体知识库表
+    向量存储于 Qdrant（每库一个 collection kb_{id}）；embedding_model_id 创建后锁定，换模型走全量重建
+    """
+
+    name: Mapped[str] = mapped_column(String(20), nullable=False, comment="知识库名称")
+    code: Mapped[str] = mapped_column(String(64), nullable=False, index=True, comment="知识库编码")
+    embedding_model_id: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        comment="向量化模型 ID（sys_agent_model.id，须为 model_type=embedding）",
+    )
+    description: Mapped[Optional[str]] = mapped_column(String(200), default=None, comment="知识库描述")
+    doc_count: Mapped[int] = mapped_column(Integer, default=0, comment="文档数量（冗余计数）")
+    chunk_count: Mapped[int] = mapped_column(Integer, default=0, comment="切片数量（冗余计数）")
+    remark: Mapped[Optional[str]] = mapped_column(String(200), default=None, comment="备注")
+    status: Mapped[bool] = mapped_column(Boolean, default=True, comment="状态：True-启用，False-禁用")
+
+    __table_args__ = (
+        UniqueConstraint("code", name="uk_sys_agent_knowledge_code"),
+    )
+
+
+class SysAgentKnowledgeDoc(Base):
+    """
+    知识库文档表
+    上传时同步提取全文存 content（重切片的源）；切片/向量化在后台任务完成，status 为状态机
+    """
+
+    knowledge_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, index=True, comment="所属知识库 ID（sys_agent_knowledge.id）"
+    )
+    file_name: Mapped[str] = mapped_column(String(255), nullable=False, comment="文件名")
+    file_type: Mapped[str] = mapped_column(String(16), default="", comment="文件扩展名（小写，无点）")
+    file_size: Mapped[int] = mapped_column(Integer, default=0, comment="原始文件大小（字节）")
+    content_hash: Mapped[str] = mapped_column(String(64), default="", comment="内容 SHA-256（同库去重）")
+    content: Mapped[Optional[str]] = mapped_column(Text, default=None, comment="提取后的全文文本")
+    char_count: Mapped[int] = mapped_column(Integer, default=0, comment="全文长度（字符）")
+    chunk_count: Mapped[int] = mapped_column(Integer, default=0, comment="切片数量")
+    status: Mapped[int] = mapped_column(
+        Integer, default=DOC_STATUS_PENDING, comment="处理状态：0-待处理 1-处理中 2-完成 3-失败"
+    )
+    error_msg: Mapped[Optional[str]] = mapped_column(String(500), default=None, comment="失败原因")
+
+    __table_args__ = (
+        Index("ix_sys_agent_knowledge_doc_kb_hash", "knowledge_id", "content_hash"),
+    )
+
+
+class SysAgentKnowledgeChunk(Base):
+    """
+    知识库切片表（元数据账目）
+    向量与切片正文存 Qdrant（point id = 本表 id，payload 含 doc_id/content）；对账以本表数量为准
+    """
+
+    knowledge_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, index=True, comment="所属知识库 ID"
+    )
+    doc_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, index=True, comment="所属文档 ID（sys_agent_knowledge_doc.id）"
+    )
+    chunk_index: Mapped[int] = mapped_column(Integer, default=0, comment="切片序号（文档内从 0 递增）")
+    char_count: Mapped[int] = mapped_column(Integer, default=0, comment="切片长度（字符）")

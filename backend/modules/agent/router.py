@@ -8,6 +8,7 @@ from fastapi import APIRouter
 
 from modules.agent.endpoints.agent import agent_router
 from modules.agent.endpoints.chat import chat_router
+from modules.agent.endpoints.knowledge import knowledge_router
 from modules.agent.endpoints.mcp import mcp_router
 from modules.agent.endpoints.model import model_router
 from modules.agent.endpoints.provider import provider_router
@@ -21,3 +22,4 @@ router.include_router(agent_router)
 router.include_router(chat_router)
 router.include_router(mcp_router)
 router.include_router(skill_router)
+router.include_router(knowledge_router)

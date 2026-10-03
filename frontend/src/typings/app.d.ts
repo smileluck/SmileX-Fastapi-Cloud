@@ -596,6 +596,7 @@ declare namespace App {
             maxTokens: string;
             tools: string;
             skills: string;
+            knowledge: string;
             status: string;
             remark: string;
             add: string;
@@ -607,6 +608,7 @@ declare namespace App {
               systemPrompt: string;
               tools: string;
               skills: string;
+              knowledge: string;
               status: string;
               remark: string;
             };
@@ -660,6 +662,55 @@ declare namespace App {
               fileContent: string;
               status: string;
               remark: string;
+            };
+          };
+          knowledge: {
+            title: string;
+            name: string;
+            code: string;
+            description: string;
+            embeddingModel: string;
+            docCount: string;
+            chunkCount: string;
+            status: string;
+            remark: string;
+            updatedAt: string;
+            add: string;
+            edit: string;
+            docs: string;
+            rebuild: string;
+            rebuildConfirm: string;
+            rebuildStarted: string;
+            form: {
+              name: string;
+              code: string;
+              embeddingModel: string;
+              description: string;
+              status: string;
+              remark: string;
+              embeddingLockTip: string;
+            };
+            docStatus: {
+              pending: string;
+              processing: string;
+              completed: string;
+              failed: string;
+            };
+            doc: {
+              title: string;
+              upload: string;
+              uploadTip: string;
+              uploadSuccess: string;
+              deleteSuccess: string;
+              list: string;
+              empty: string;
+              chunkCount: string;
+              reprocess: string;
+            };
+            search: {
+              title: string;
+              placeholder: string;
+              chunkIndex: string;
             };
           };
           chat: {

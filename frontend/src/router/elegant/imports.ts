@@ -25,6 +25,7 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   agent_chat: () => import("@/views/agent/chat/index.vue"),
   "agent_mcp-servers": () => import("@/views/agent/mcp-servers/index.vue"),
   agent_providers: () => import("@/views/agent/providers/index.vue"),
+  agent_knowledge: () => import("@/views/agent/knowledge/index.vue"),
   agent_skills: () => import("@/views/agent/skills/index.vue"),
   agent_usage: () => import("@/views/agent/usage/index.vue"),
   "business_app-user": () => import("@/views/business/app-user/index.vue"),

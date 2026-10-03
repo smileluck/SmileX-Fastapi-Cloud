@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.exception.errors import CustomError, NotFoundError
 from core.i18n import t
 from core.response.response_code import CustomErrorCode
-from database.models.sys.agent import SysAgent, SysAgentModel, SysAgentProvider
+from database.models.sys.agent import SysAgent, SysAgentKnowledge, SysAgentModel, SysAgentProvider
 from modules.agent.core.llm_client import ChatMessage, ChatRequest
 from modules.agent.schemas.model import (
     AgentModelCreate,
@@ -101,6 +101,7 @@ class ModelService:
         model = SysAgentModel(
             provider_id=payload.provider_id,
             name=payload.name,
+            model_type=payload.model_type,
             display_name=payload.display_name,
             context_window=payload.context_window,
             max_output=payload.max_output,
@@ -126,6 +127,8 @@ class ModelService:
 
         update_data = payload.model_dump(exclude_unset=True)
         update_data.pop("provider_id", None)
+        if update_data.get("model_type") is not None and update_data["model_type"] != model.model_type:
+            await ModelService._ensure_not_used_by_knowledge(db, model_id)
         for key, value in update_data.items():
             if hasattr(model, key) and value is not None:
                 setattr(model, key, value)
@@ -134,6 +137,21 @@ class ModelService:
         await db.refresh(model)
         logger.info("更新模型成功，ID: %s", model_id)
         return model
+
+    @staticmethod
+    async def _ensure_not_used_by_knowledge(db: AsyncSession, model_id: int) -> None:
+        """模型被知识库用作向量化模型时禁止删除/变更类型"""
+        result = await db.execute(
+            select(func.count()).select_from(SysAgentKnowledge).where(
+                SysAgentKnowledge.embedding_model_id == model_id,
+                SysAgentKnowledge.deleted_at.is_(None),
+            )
+        )
+        if (result.scalar() or 0) > 0:
+            raise CustomError(
+                error=CustomErrorCode.KNOWLEDGE_EMBEDDING_MODEL_IN_USE,
+                msg=t("error.knowledge.embedding_model_in_use"),
+            )
 
     @staticmethod
     async def delete_model(db: AsyncSession, model_id: int) -> bool:
@@ -152,6 +170,7 @@ class ModelService:
                 error=CustomErrorCode.AGENT_MODEL_IN_USE,
                 msg=t("error.agent.model_in_use"),
             )
+        await ModelService._ensure_not_used_by_knowledge(db, model_id)
 
         await archive_and_soft_delete(
             db, model, "name"

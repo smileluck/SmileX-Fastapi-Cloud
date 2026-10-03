@@ -8,6 +8,7 @@ from .skill_service import SkillService
 from .mcp_server_service import McpServerService
 from .conversation_service import ConversationService
 from .usage_service import UsageService
+from .knowledge_service import KnowledgeService
 
 __all__ = [
     "ProviderService",
@@ -17,4 +18,5 @@ __all__ = [
     "McpServerService",
     "ConversationService",
     "UsageService",
+    "KnowledgeService",
 ]

@@ -5,6 +5,7 @@ import { enableStatusOptions } from '@/constants/business';
 import {
   fetchCreateAgent,
   fetchGetAgentModelList,
+  fetchGetAllEnabledKnowledge,
   fetchGetAllEnabledSkills,
   fetchGetToolGroups,
   fetchUpdateAgent
@@ -54,6 +55,7 @@ interface Model {
   max_tokens: number;
   tools: string[];
   skills: string[];
+  knowledge_ids: number[];
   status: Api.Common.EnableStatus;
   remark: string;
 }
@@ -69,6 +71,7 @@ function createDefaultModel(): Model {
     max_tokens: 0,
     tools: [],
     skills: [],
+    knowledge_ids: [],
     status: '1',
     remark: ''
   };
@@ -76,29 +79,40 @@ function createDefaultModel(): Model {
 
 const model = ref<Model>(createDefaultModel());
 
-// 模型下拉（含供应商前缀展示）
+// 模型下拉（仅 chat 类型，含供应商前缀展示）
 const modelOptions = ref<{ label: string; value: number }[]>([]);
 // 技能下拉
 const skillOptions = ref<{ label: string; value: string }[]>([]);
+// 知识库下拉
+const knowledgeOptions = ref<{ label: string; value: number }[]>([]);
 // 工具分组多选（NSelect group）
 const toolGroupOptions = ref<{ label: string; key: string; children: { label: string; value: string }[] }[]>([]);
 
 async function loadOptions() {
-  const [modelRes, skillRes, toolRes] = await Promise.all([
+  const [modelRes, skillRes, toolRes, knowledgeRes] = await Promise.all([
     fetchGetAgentModelList({ page: 1, page_size: 200 }),
     fetchGetAllEnabledSkills(),
-    fetchGetToolGroups()
+    fetchGetToolGroups(),
+    fetchGetAllEnabledKnowledge()
   ]);
   if (!modelRes.error && modelRes.data) {
-    modelOptions.value = (modelRes.data.records || []).map(item => ({
-      label: `${item.provider_name ? `${item.provider_name} / ` : ''}${item.display_name || item.name}`,
-      value: item.id
-    }));
+    modelOptions.value = (modelRes.data.records || [])
+      .filter(item => item.model_type === 'chat')
+      .map(item => ({
+        label: `${item.provider_name ? `${item.provider_name} / ` : ''}${item.display_name || item.name}`,
+        value: item.id
+      }));
   }
   if (!skillRes.error && skillRes.data) {
     skillOptions.value = skillRes.data.map(item => ({
       label: `${item.name} (${item.code})`,
       value: item.code
+    }));
+  }
+  if (!knowledgeRes.error && knowledgeRes.data) {
+    knowledgeOptions.value = knowledgeRes.data.map(item => ({
+      label: `${item.name} (${item.code})`,
+      value: item.id
     }));
   }
   if (!toolRes.error && toolRes.data) {
@@ -117,12 +131,14 @@ onMounted(() => {
   loadOptions();
 });
 
-const rules = computed<Record<'name' | 'code' | 'model_id' | 'status', App.Global.FormRule | App.Global.FormRule[]>>(() => ({
-  name: defaultRequiredRule,
-  code: defaultRequiredRule,
-  model_id: defaultRequiredRule,
-  status: defaultRequiredRule
-}));
+const rules = computed<Record<'name' | 'code' | 'model_id' | 'status', App.Global.FormRule | App.Global.FormRule[]>>(
+  () => ({
+    name: defaultRequiredRule,
+    code: defaultRequiredRule,
+    model_id: defaultRequiredRule,
+    status: defaultRequiredRule
+  })
+);
 
 function handleInitModel() {
   model.value = createDefaultModel();
@@ -138,6 +154,7 @@ function handleInitModel() {
       max_tokens: cloned.max_tokens || 0,
       tools: cloned.tools || [],
       skills: cloned.skills || [],
+      knowledge_ids: cloned.knowledge_ids || [],
       status: cloned.status || '1',
       remark: cloned.remark || ''
     };
@@ -165,6 +182,7 @@ async function handleSubmit() {
       max_tokens: model.value.max_tokens,
       tools: model.value.tools,
       skills: model.value.skills,
+      knowledge_ids: model.value.knowledge_ids,
       status: model.value.status,
       remark: model.value.remark || undefined
     });
@@ -179,6 +197,7 @@ async function handleSubmit() {
       max_tokens: model.value.max_tokens,
       tools: model.value.tools,
       skills: model.value.skills,
+      knowledge_ids: model.value.knowledge_ids,
       status: model.value.status,
       remark: model.value.remark || undefined
     });
@@ -250,6 +269,16 @@ watch(visible, () => {
             filterable
             :options="skillOptions"
             :placeholder="$t('page.agent.agents.form.skills')"
+            :max-tag-count="3"
+          />
+        </NFormItem>
+        <NFormItem :label="$t('page.agent.agents.knowledge')" path="knowledge_ids">
+          <NSelect
+            v-model:value="model.knowledge_ids"
+            multiple
+            filterable
+            :options="knowledgeOptions"
+            :placeholder="$t('page.agent.agents.form.knowledge')"
             :max-tag-count="3"
           />
         </NFormItem>

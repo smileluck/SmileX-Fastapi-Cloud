@@ -1,8 +1,8 @@
-import { getServiceBaseURL } from '@/utils/service';
-import { getLocale } from '@/locales';
 import { getAuthorization } from '@/service/request/shared';
-import { request } from '../request';
+import { getServiceBaseURL } from '@/utils/service';
 import { enableStatusToBoolean } from '@/utils/status';
+import { getLocale } from '@/locales';
+import { request } from '../request';
 
 const isHttpProxy = import.meta.env.DEV && import.meta.env.VITE_HTTP_PROXY === 'Y';
 const { baseURL } = getServiceBaseURL(import.meta.env, isHttpProxy);
@@ -388,5 +388,99 @@ export function fetchDeleteSkill(skillId: number) {
   return request<void>({
     url: `/admin/agent/skills/${skillId}`,
     method: 'delete'
+  });
+}
+
+/** ---- 知识库 ---- */
+export function fetchGetKnowledgeList(params?: Api.Agent.KnowledgeSearchParams) {
+  return request<Api.Agent.KnowledgeList>({
+    url: '/admin/agent/knowledge/list',
+    method: 'get',
+    params
+  });
+}
+
+export function fetchGetAllEnabledKnowledge() {
+  return request<Api.Agent.Knowledge[]>({
+    url: '/admin/agent/knowledge/all',
+    method: 'get'
+  });
+}
+
+export function fetchGetKnowledge(knowledgeId: number) {
+  return request<Api.Agent.Knowledge>({
+    url: `/admin/agent/knowledge/${knowledgeId}`,
+    method: 'get'
+  });
+}
+
+export function fetchCreateKnowledge(knowledge: Api.Agent.KnowledgeCreate) {
+  return request<Api.Agent.Knowledge>({
+    url: '/admin/agent/knowledge/add',
+    method: 'post',
+    data: { ...knowledge, status: enableStatusToBoolean(knowledge.status) }
+  });
+}
+
+export function fetchUpdateKnowledge(knowledgeId: number, knowledge: Api.Agent.KnowledgeUpdate) {
+  return request<Api.Agent.Knowledge>({
+    url: `/admin/agent/knowledge/${knowledgeId}`,
+    method: 'put',
+    data: { ...knowledge, status: knowledge.status ? enableStatusToBoolean(knowledge.status) : undefined }
+  });
+}
+
+export function fetchDeleteKnowledge(knowledgeId: number) {
+  return request<void>({
+    url: `/admin/agent/knowledge/${knowledgeId}`,
+    method: 'delete'
+  });
+}
+
+export function fetchRebuildKnowledge(knowledgeId: number) {
+  return request<{ doc_count: number }>({
+    url: `/admin/agent/knowledge/${knowledgeId}/rebuild`,
+    method: 'post'
+  });
+}
+
+export function fetchGetKnowledgeDocList(knowledgeId: number, params?: Api.Agent.KnowledgeDocSearchParams) {
+  return request<Api.Agent.KnowledgeDocList>({
+    url: `/admin/agent/knowledge/${knowledgeId}/documents/list`,
+    method: 'get',
+    params
+  });
+}
+
+export function fetchUploadKnowledgeDocs(knowledgeId: number, files: File[]) {
+  const formData = new FormData();
+  files.forEach(file => formData.append('files', file));
+  return request<Api.Agent.KnowledgeDoc[]>({
+    url: `/admin/agent/knowledge/${knowledgeId}/documents`,
+    method: 'post',
+    data: formData,
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+}
+
+export function fetchDeleteKnowledgeDoc(knowledgeId: number, docId: number) {
+  return request<void>({
+    url: `/admin/agent/knowledge/${knowledgeId}/documents/${docId}`,
+    method: 'delete'
+  });
+}
+
+export function fetchReprocessKnowledgeDoc(knowledgeId: number, docId: number) {
+  return request<void>({
+    url: `/admin/agent/knowledge/${knowledgeId}/documents/${docId}/reprocess`,
+    method: 'post'
+  });
+}
+
+export function fetchSearchKnowledge(knowledgeId: number, query: string, topK = 5) {
+  return request<Api.Agent.KnowledgeSearchHit[]>({
+    url: `/admin/agent/knowledge/${knowledgeId}/search`,
+    method: 'post',
+    data: { query, top_k: topK }
   });
 }

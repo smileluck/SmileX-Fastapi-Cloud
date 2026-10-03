@@ -31,6 +31,7 @@ class AgentModelCreate(BaseReqEntity):
 
     provider_id: int = Field(..., description="所属供应商 ID", gt=0)
     name: str = Field(..., description="模型名称（上游模型 ID）", min_length=1, max_length=128)
+    model_type: str = Field("chat", description="模型类型：chat-对话/embedding-向量化/rerank-重排", pattern=r"^(chat|embedding|rerank)$")
     display_name: Optional[str] = Field(None, description="展示名称", max_length=64)
     context_window: int = Field(0, description="上下文窗口（token，0=未知）", ge=0)
     max_output: int = Field(0, description="单次最大输出（token，0=上游默认）", ge=0)
@@ -44,6 +45,7 @@ class AgentModelCreate(BaseReqEntity):
 class AgentModelUpdate(BaseReqEntity):
     """模型更新请求（供应商不可变更；全部字段留空=保持原值）"""
 
+    model_type: Optional[str] = Field(None, description="模型类型（被知识库引用时不可变更）", pattern=r"^(chat|embedding|rerank)$")
     display_name: Optional[str] = Field(None, description="展示名称", max_length=64)
     context_window: Optional[int] = Field(None, description="上下文窗口（token）", ge=0)
     max_output: Optional[int] = Field(None, description="单次最大输出（token）", ge=0)
@@ -63,6 +65,7 @@ class AgentModelResponseData(BaseRespEntity):
     provider_id: int = Field(..., description="所属供应商 ID")
     provider_name: Optional[str] = Field(None, description="所属供应商名称（联查填充）")
     name: str = Field(..., description="模型名称")
+    model_type: str = Field(..., description="模型类型：chat/embedding/rerank")
     display_name: Optional[str] = Field(None, description="展示名称")
     context_window: int = Field(..., description="上下文窗口")
     max_output: int = Field(..., description="单次最大输出")
@@ -83,5 +86,6 @@ class AgentModelBrief(BaseEntity):
     id: int = Field(..., description="模型 ID")
     provider_id: int = Field(..., description="供应商 ID")
     name: str = Field(..., description="模型名称")
+    model_type: str = Field("chat", description="模型类型：chat/embedding/rerank")
     display_name: Optional[str] = Field(None, description="展示名称")
     status: bool = Field(..., description="状态")

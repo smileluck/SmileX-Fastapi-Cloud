@@ -53,6 +53,7 @@ declare namespace Api {
       provider_id: number;
       provider_name?: string | null;
       name: string;
+      model_type: ModelType;
       display_name: string | null;
       context_window: number;
       max_output: number;
@@ -65,6 +66,9 @@ declare namespace Api {
       updated_at: string | null;
     }
 
+    /** 模型类型：chat-对话 / embedding-向量化 / rerank-重排 */
+    type ModelType = 'chat' | 'embedding' | 'rerank';
+
     type ModelSearchParams = CommonType.RecordNullable<
       Pick<Model, 'provider_id' | 'name' | 'status'> & CommonSearchParams
     >;
@@ -74,6 +78,7 @@ declare namespace Api {
     interface ModelCreate {
       provider_id: number;
       name: string;
+      model_type?: ModelType;
       display_name?: string;
       context_window?: number;
       max_output?: number;
@@ -85,6 +90,7 @@ declare namespace Api {
     }
 
     interface ModelUpdate {
+      model_type?: ModelType;
       display_name?: string;
       context_window?: number;
       max_output?: number;
@@ -109,15 +115,14 @@ declare namespace Api {
       max_tokens: number;
       tools: string[];
       skills: string[];
+      knowledge_ids: number[];
       remark: string | null;
       status: Common.EnableStatus;
       created_at: string | null;
       updated_at: string | null;
     }
 
-    type AgentSearchParams = CommonType.RecordNullable<
-      Pick<Agent, 'name' | 'code' | 'status'> & CommonSearchParams
-    >;
+    type AgentSearchParams = CommonType.RecordNullable<Pick<Agent, 'name' | 'code' | 'status'> & CommonSearchParams>;
 
     type AgentList = Common.PaginatingQueryRecord<Agent>;
 
@@ -131,6 +136,7 @@ declare namespace Api {
       max_tokens?: number;
       tools?: string[];
       skills?: string[];
+      knowledge_ids?: number[];
       remark?: string;
       status: Common.EnableStatus;
     }
@@ -144,6 +150,7 @@ declare namespace Api {
       max_tokens?: number;
       tools?: string[];
       skills?: string[];
+      knowledge_ids?: number[];
       remark?: string;
       status?: Common.EnableStatus;
     }
@@ -269,9 +276,7 @@ declare namespace Api {
       file_size: number;
     }
 
-    type SkillSearchParams = CommonType.RecordNullable<
-      Pick<Skill, 'name' | 'code' | 'status'> & CommonSearchParams
-    >;
+    type SkillSearchParams = CommonType.RecordNullable<Pick<Skill, 'name' | 'code' | 'status'> & CommonSearchParams>;
 
     type SkillList = Common.PaginatingQueryRecord<Skill>;
 
@@ -303,6 +308,76 @@ declare namespace Api {
       prompt_tokens: number;
       completion_tokens: number;
       error?: string | null;
+    }
+
+    /** 知识库 */
+    interface Knowledge {
+      id: number;
+      name: string;
+      code: string;
+      description: string | null;
+      embedding_model_id: number;
+      embedding_model_name?: string | null;
+      doc_count: number;
+      chunk_count: number;
+      remark: string | null;
+      status: Common.EnableStatus;
+      created_at: string | null;
+      updated_at: string | null;
+    }
+
+    type KnowledgeSearchParams = CommonType.RecordNullable<
+      Pick<Knowledge, 'name' | 'code' | 'status'> & CommonSearchParams
+    >;
+
+    type KnowledgeList = Common.PaginatingQueryRecord<Knowledge>;
+
+    interface KnowledgeCreate {
+      name: string;
+      code: string;
+      description?: string;
+      embedding_model_id: number;
+      remark?: string;
+      status: Common.EnableStatus;
+    }
+
+    interface KnowledgeUpdate {
+      name?: string;
+      description?: string;
+      remark?: string;
+      status?: Common.EnableStatus;
+    }
+
+    /** 知识库文档处理状态：0-待处理 1-处理中 2-完成 3-失败 */
+    type KnowledgeDocStatus = 0 | 1 | 2 | 3;
+
+    interface KnowledgeDoc {
+      id: number;
+      knowledge_id: number;
+      file_name: string;
+      file_type: string;
+      file_size: number;
+      char_count: number;
+      chunk_count: number;
+      status: KnowledgeDocStatus;
+      error_msg: string | null;
+      created_at: string | null;
+    }
+
+    type KnowledgeDocSearchParams = CommonType.RecordNullable<
+      { file_name?: string; status?: KnowledgeDocStatus } & CommonSearchParams
+    >;
+
+    type KnowledgeDocList = Common.PaginatingQueryRecord<KnowledgeDoc>;
+
+    /** 检索测试命中 */
+    interface KnowledgeSearchHit {
+      kb_id: number;
+      kb_name: string;
+      doc_id: number;
+      chunk_index: number;
+      content: string;
+      score: number;
     }
 
     /** SSE 对话帧：meta */

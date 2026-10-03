@@ -35,6 +35,32 @@ def load_str_list(text: Optional[str]) -> list[str]:
     return [str(v) for v in values if v]
 
 
+def dump_int_list(values: Optional[list[int]]) -> str:
+    """整数列表序列化为 JSON 文本列（空列表/None → 空串，等价“未配置”）"""
+    if not values:
+        return ""
+    return json.dumps([int(v) for v in values])
+
+
+def load_int_list(text: Optional[str]) -> list[int]:
+    """JSON 文本列反序列化为整数列表（空串/解析失败/非整数项 → 空列表或过滤）"""
+    if not text:
+        return []
+    try:
+        values = json.loads(text)
+    except json.JSONDecodeError:
+        return []
+    if not isinstance(values, list):
+        return []
+    result: list[int] = []
+    for v in values:
+        try:
+            result.append(int(v))
+        except (TypeError, ValueError):
+            continue
+    return result
+
+
 def archive_unique_columns(obj, *columns: str) -> None:
     """
     软删前归档唯一列：改为 `原值前缀#<id>`，释放唯一索引供同码重建。

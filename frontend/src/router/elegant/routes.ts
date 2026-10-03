@@ -113,6 +113,15 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'agent_usage',
           i18nKey: 'route.agent_usage'
         }
+      },
+      {
+        name: 'agent_knowledge',
+        path: '/agent/knowledge',
+        component: 'view.agent_knowledge',
+        meta: {
+          title: 'agent_knowledge',
+          i18nKey: 'route.agent_knowledge'
+        }
       }
     ]
   },

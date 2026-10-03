@@ -141,6 +141,23 @@ error:
     file_too_large: "Skill file exceeds the 32KB limit: {path}"
     too_many_files: "Too many skill files (limit {max})"
     too_many: "Too many skills bound (limit {max})"
+  knowledge:
+    not_found: "Knowledge base {id} does not exist"
+    not_found_or_disabled: "Knowledge base {id} does not exist or is disabled"
+    code_exist: "Knowledge base code {code} already exists"
+    in_use: "Knowledge base is bound to an agent, remove the binding first"
+    doc_not_found: "Knowledge document {id} does not exist"
+    doc_duplicated: "A document with identical content already exists: {name}"
+    embedding_model_invalid: "Model {id} does not exist, is disabled, or is not an embedding model"
+    file_too_large: "File exceeds the size limit ({max} MB): {name}"
+    file_type_unsupported: "Unsupported file type: {name} (txt/md/pdf/docx only)"
+    too_many_docs: "Too many documents in the knowledge base (limit {max})"
+    doc_processing: "Document is being processed, please try again later"
+    qdrant_error: "Vector service call failed: {detail}"
+    empty_content: "No text could be extracted from file: {name}"
+    embedding_model_locked: "Embedding model cannot be changed after creation; use full rebuild instead"
+    embedding_model_in_use: "Model is used as embedding model by a knowledge base and cannot be deleted or re-typed"
+    too_many: "Too many knowledge bases bound (limit {max})"
 
 pydantic:
   int_parsing: "Please enter a valid integer"
@@ -464,6 +481,14 @@ agent:
     create_success: "Skill created successfully"
     update_success: "Skill updated successfully"
     delete_success: "Skill deleted successfully"
+  knowledge:
+    create_success: "Knowledge base created successfully"
+    update_success: "Knowledge base updated successfully"
+    delete_success: "Knowledge base deleted successfully"
+    upload_success: "Documents uploaded, processing in background"
+    doc_delete_success: "Document deleted successfully"
+    reprocess_success: "Document reprocessing started"
+    rebuild_success: "Knowledge base rebuild started"
   conversation:
     create_success: "Conversation created successfully"
     rename_success: "Conversation renamed successfully"

@@ -305,3 +305,27 @@ class LLMClient:
         data = resp.json()
         ids = sorted({item.get("id") for item in (data.get("data") or []) if item.get("id")})
         return ids
+
+    async def embeddings(self, model: str, input_texts: list[str]) -> list[list[float]]:
+        """
+        向量化（OpenAI 兼容 /embeddings 接口），返回向量顺序与输入一致。
+        input_texts 为空时返回空列表；上游返回数量与输入不符视为上游异常。
+        """
+        if not input_texts:
+            return []
+        payload: dict[str, Any] = {"model": model, "input": input_texts}
+        try:
+            async with httpx.AsyncClient(timeout=self._timeout) as client:
+                resp = await client.post(
+                    f"{self.base_url}/embeddings", json=payload, headers=self._headers()
+                )
+        except Exception as exc:
+            raise _wrap_error(exc) from exc
+        if resp.status_code != 200:
+            raise LLMError(f"上游返回 HTTP {resp.status_code}: {_parse_upstream_error_body(resp.text)}")
+        data = resp.json()
+        items = sorted(data.get("data") or [], key=lambda item: item.get("index", 0))
+        vectors = [item.get("embedding") or [] for item in items]
+        if len(vectors) != len(input_texts) or any(not v for v in vectors):
+            raise LLMError("上游返回向量数量或内容异常")
+        return vectors

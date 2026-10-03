@@ -209,6 +209,16 @@ class AgentModel(BaseModel):
     USAGE_RETENTION_DAYS: int = Field(
         0, description="用量流水保留天数（0=永久保留，超期由定时任务清理）"
     )
+    KB_QDRANT_URL: str = Field("http://127.0.0.1:6333", description="知识库 Qdrant 向量服务地址")
+    KB_QDRANT_API_KEY: str = Field("", description="知识库 Qdrant API Key（未启用鉴权则留空）")
+    KB_CHUNK_SIZE: int = Field(500, ge=50, le=4000, description="知识库切片长度（字符）")
+    KB_CHUNK_OVERLAP: int = Field(100, ge=0, le=1000, description="知识库切片重叠（字符）")
+    KB_TOP_K: int = Field(5, ge=1, le=20, description="对话时知识库检索返回切片数")
+    KB_SCORE_THRESHOLD: float = Field(0.3, ge=0.0, le=1.0, description="检索相似度阈值（余弦，低于丢弃）")
+    KB_MAX_FILE_SIZE_MB: int = Field(10, ge=1, le=100, description="单知识库文档大小上限（MB）")
+    KB_MAX_DOCS: int = Field(200, ge=1, le=10000, description="单知识库文档数量上限")
+    KB_EMBED_BATCH: int = Field(32, ge=1, le=64, description="向量化批量请求的批大小")
+    KB_DOC_PROCESS_TIMEOUT_MIN: int = Field(10, ge=1, le=120, description="文档处理超时（分钟，超时复位待处理）")
 
 
 class RedisPoolModel(BaseModel):

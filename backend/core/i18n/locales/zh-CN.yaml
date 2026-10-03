@@ -148,6 +148,23 @@ error:
     file_too_large: "附属文件超过 32KB 上限: {path}"
     too_many_files: "附属文件数量超过上限（{max} 个）"
     too_many: "技能绑定数量超过上限（{max} 个）"
+  knowledge:
+    not_found: "知识库 {id} 不存在"
+    not_found_or_disabled: "知识库 {id} 不存在或已禁用"
+    code_exist: "知识库编码 {code} 已存在"
+    in_use: "知识库已被智能体绑定，请先解除引用"
+    doc_not_found: "知识库文档 {id} 不存在"
+    doc_duplicated: "相同内容的文档已存在于该知识库: {name}"
+    embedding_model_invalid: "模型 {id} 不存在、未启用或不是 embedding 类型"
+    file_too_large: "文件超过大小上限（{max} MB）: {name}"
+    file_type_unsupported: "不支持的文件类型: {name}（支持 txt/md/pdf/docx）"
+    too_many_docs: "知识库文档数量超过上限（{max} 个）"
+    doc_processing: "文档正在处理中，请稍后再试"
+    qdrant_error: "向量服务调用失败: {detail}"
+    empty_content: "未能从文件中提取到有效文本: {name}"
+    embedding_model_locked: "向量化模型创建后不可变更，如需更换请使用全量重建"
+    embedding_model_in_use: "该模型已被知识库用作向量化模型，不可删除或变更类型"
+    too_many: "知识库绑定数量超过上限（{max} 个）"
 
 pydantic:
   int_parsing: "请输入有效的整数"
@@ -471,6 +488,14 @@ agent:
     create_success: "创建技能成功"
     update_success: "更新技能成功"
     delete_success: "删除技能成功"
+  knowledge:
+    create_success: "创建知识库成功"
+    update_success: "更新知识库成功"
+    delete_success: "删除知识库成功"
+    upload_success: "文档上传成功，正在后台处理"
+    doc_delete_success: "删除文档成功"
+    reprocess_success: "已重新发起文档处理"
+    rebuild_success: "已发起知识库全量重建"
   conversation:
     create_success: "创建会话成功"
     rename_success: "重命名会话成功"

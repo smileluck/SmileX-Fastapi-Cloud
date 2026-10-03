@@ -396,6 +396,7 @@ const local: App.I18n.Schema = {
     agent_usage: '用量统计',
     'agent_mcp-servers': 'MCP 服务',
     agent_skills: '技能管理',
+    agent_knowledge: '知识库',
     'business_app-user': '应用用户管理',
     manage_dict: '字典管理',
     manage_config: '系统配置',
@@ -460,6 +461,7 @@ const local: App.I18n.Schema = {
         maxTokens: '最大输出',
         tools: '工具',
         skills: '技能',
+        knowledge: '知识库',
         status: '状态',
         remark: '备注',
         add: '新增 Agent',
@@ -471,6 +473,7 @@ const local: App.I18n.Schema = {
           systemPrompt: '请输入系统提示词（支持 Markdown）',
           tools: '请选择绑定的工具（可搜索）',
           skills: '请选择绑定的技能',
+          knowledge: '请选择绑定的知识库',
           status: '请选择状态',
           remark: '请输入备注'
         }
@@ -524,6 +527,55 @@ const local: App.I18n.Schema = {
           fileContent: '文件文本内容（≤32KB）',
           status: '请选择状态',
           remark: '请输入备注'
+        }
+      },
+      knowledge: {
+        title: '知识库',
+        name: '名称',
+        code: '编码',
+        description: '描述',
+        embeddingModel: '向量化模型',
+        docCount: '文档数',
+        chunkCount: '切片数',
+        status: '状态',
+        remark: '备注',
+        updatedAt: '更新时间',
+        add: '新增知识库',
+        edit: '编辑知识库',
+        docs: '文档',
+        rebuild: '重建',
+        rebuildConfirm: '将对全部文档重新切片与向量化，确认重建？',
+        rebuildStarted: '已发起全量重建',
+        form: {
+          name: '请输入知识库名称',
+          code: '请输入知识库编码（唯一）',
+          embeddingModel: '请选择向量化模型（embedding 类型）',
+          description: '请输入知识库描述',
+          status: '请选择状态',
+          remark: '请输入备注',
+          embeddingLockTip: '向量化模型创建后不可变更；更换模型请使用「重建」全量重嵌。'
+        },
+        docStatus: {
+          pending: '待处理',
+          processing: '处理中',
+          completed: '完成',
+          failed: '失败'
+        },
+        doc: {
+          title: '知识库文档 - {name}',
+          upload: '上传文档',
+          uploadTip: '支持 txt / md / pdf / docx，多文件上传，向量化在后台自动完成',
+          uploadSuccess: '上传成功，正在后台处理',
+          deleteSuccess: '删除文档成功',
+          list: '文档列表',
+          empty: '暂无文档，点击上方按钮上传',
+          chunkCount: '{count} 切片',
+          reprocess: '重新处理'
+        },
+        search: {
+          title: '检索测试',
+          placeholder: '输入问题测试检索效果',
+          chunkIndex: '切片 #{index}'
         }
       },
       chat: {

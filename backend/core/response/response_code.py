@@ -134,6 +134,23 @@ class CustomErrorCode(CustomCodeBase):
     SKILL_NOT_FOUND = (11067, "error.skill.not_found")
     SKILL_CODE_EXIST = (11068, "error.skill.code_exist")
     SKILL_IN_USE = (11069, "error.skill.in_use")
+    # AI 知识库 11071-11090
+    KNOWLEDGE_NOT_FOUND = (11071, "error.knowledge.not_found")
+    KNOWLEDGE_CODE_EXIST = (11072, "error.knowledge.code_exist")
+    KNOWLEDGE_IN_USE = (11073, "error.knowledge.in_use")
+    KNOWLEDGE_DOC_NOT_FOUND = (11074, "error.knowledge.doc_not_found")
+    KNOWLEDGE_DOC_DUPLICATED = (11075, "error.knowledge.doc_duplicated")
+    KNOWLEDGE_EMBEDDING_MODEL_INVALID = (11076, "error.knowledge.embedding_model_invalid")
+    KNOWLEDGE_FILE_TOO_LARGE = (11077, "error.knowledge.file_too_large")
+    KNOWLEDGE_FILE_TYPE_UNSUPPORTED = (11078, "error.knowledge.file_type_unsupported")
+    KNOWLEDGE_TOO_MANY_DOCS = (11079, "error.knowledge.too_many_docs")
+    KNOWLEDGE_DOC_PROCESSING = (11080, "error.knowledge.doc_processing")
+    KNOWLEDGE_QDRANT_ERROR = (11081, "error.knowledge.qdrant_error")
+    KNOWLEDGE_EMPTY_CONTENT = (11082, "error.knowledge.empty_content")
+    KNOWLEDGE_EMBEDDING_MODEL_LOCKED = (11083, "error.knowledge.embedding_model_locked")
+    KNOWLEDGE_EMBEDDING_MODEL_IN_USE = (11084, "error.knowledge.embedding_model_in_use")
+    KNOWLEDGE_TOO_MANY = (11085, "error.knowledge.too_many")
+
 @dataclass
 class CustomResponse:
     """

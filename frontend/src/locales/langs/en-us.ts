@@ -401,6 +401,7 @@ const local: App.I18n.Schema = {
     agent_usage: 'Usage Stats',
     'agent_mcp-servers': 'MCP Servers',
     agent_skills: 'Skills',
+    agent_knowledge: 'Knowledge',
     'business_app-user': 'App User',
     manage_dict: 'Dict Management',
     manage_config: 'System Config',
@@ -464,6 +465,7 @@ const local: App.I18n.Schema = {
         maxTokens: 'Max Output',
         tools: 'Tools',
         skills: 'Skills',
+        knowledge: 'Knowledge',
         status: 'Status',
         remark: 'Remark',
         add: 'Add Agent',
@@ -475,6 +477,7 @@ const local: App.I18n.Schema = {
           systemPrompt: 'Enter system prompt (Markdown supported)',
           tools: 'Select tools (searchable)',
           skills: 'Select skills',
+          knowledge: 'Select bound knowledge bases',
           status: 'Select status',
           remark: 'Enter remark'
         }
@@ -528,6 +531,55 @@ const local: App.I18n.Schema = {
           fileContent: 'File text content (<=32KB)',
           status: 'Select status',
           remark: 'Enter remark'
+        }
+      },
+      knowledge: {
+        title: 'Knowledge Bases',
+        name: 'Name',
+        code: 'Code',
+        description: 'Description',
+        embeddingModel: 'Embedding Model',
+        docCount: 'Docs',
+        chunkCount: 'Chunks',
+        status: 'Status',
+        remark: 'Remark',
+        updatedAt: 'Updated At',
+        add: 'Add Knowledge Base',
+        edit: 'Edit Knowledge Base',
+        docs: 'Docs',
+        rebuild: 'Rebuild',
+        rebuildConfirm: 'All documents will be re-chunked and re-embedded. Continue?',
+        rebuildStarted: 'Full rebuild started',
+        form: {
+          name: 'Enter knowledge base name',
+          code: 'Enter unique code',
+          embeddingModel: 'Select an embedding model',
+          description: 'Enter description',
+          status: 'Select status',
+          remark: 'Enter remark',
+          embeddingLockTip: 'The embedding model cannot be changed after creation; use Rebuild to re-embed with a different model.'
+        },
+        docStatus: {
+          pending: 'Pending',
+          processing: 'Processing',
+          completed: 'Completed',
+          failed: 'Failed'
+        },
+        doc: {
+          title: 'Documents - {name}',
+          upload: 'Upload',
+          uploadTip: 'txt / md / pdf / docx, multiple files, embedding runs in background',
+          uploadSuccess: 'Uploaded, processing in background',
+          deleteSuccess: 'Document deleted',
+          list: 'Documents',
+          empty: 'No documents yet, click the button above to upload',
+          chunkCount: '{count} chunks',
+          reprocess: 'Reprocess'
+        },
+        search: {
+          title: 'Search Test',
+          placeholder: 'Enter a question to test retrieval',
+          chunkIndex: 'Chunk #{index}'
         }
       },
       chat: {

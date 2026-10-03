@@ -47,6 +47,7 @@ class AgentCreate(BaseReqEntity):
     max_tokens: int = Field(0, description="单次最大输出（token，0=上游默认）", ge=0, le=131072)
     tools: list[str] = Field(default_factory=list, description="绑定的工具名列表（内置名或 mcp:<code>:<tool>）", max_length=10)
     skills: list[str] = Field(default_factory=list, description="绑定的技能编码列表", max_length=10)
+    knowledge_ids: list[int] = Field(default_factory=list, description="绑定的知识库 ID 列表", max_length=5)
     remark: Optional[str] = Field(None, description="备注", max_length=200)
     status: bool = Field(True, description="状态：True-启用，False-禁用")
 
@@ -62,6 +63,7 @@ class AgentUpdate(BaseReqEntity):
     max_tokens: Optional[int] = Field(None, description="单次最大输出（token）", ge=0, le=131072)
     tools: Optional[list[str]] = Field(None, description="绑定的工具名列表（None=不变，[] =清空）", max_length=10)
     skills: Optional[list[str]] = Field(None, description="绑定的技能编码列表（None=不变，[]=清空）", max_length=10)
+    knowledge_ids: Optional[list[int]] = Field(None, description="绑定的知识库 ID 列表（None=不变，[]=清空）", max_length=5)
     remark: Optional[str] = Field(None, description="备注", max_length=200)
     status: BoolField = Field(None, description="状态：True-启用，False-禁用")
 
@@ -83,6 +85,7 @@ class AgentResponseData(BaseRespEntity):
     max_tokens: int = Field(..., description="单次最大输出")
     tools: list[str] = Field(default_factory=list, description="绑定的工具名列表")
     skills: list[str] = Field(default_factory=list, description="绑定的技能编码列表")
+    knowledge_ids: list[int] = Field(default_factory=list, description="绑定的知识库 ID 列表")
     remark: Optional[str] = Field(None, description="备注")
     status: bool = Field(..., description="状态")
     created_at: Annotated[Optional[str], BeforeValidator(_format_datetime)] = Field(None, description="创建时间")
@@ -92,6 +95,27 @@ class AgentResponseData(BaseRespEntity):
     @classmethod
     def _parse_tool_columns(cls, v):
         return _parse_json_str_list(v)
+
+    @field_validator("knowledge_ids", mode="before")
+    @classmethod
+    def _parse_knowledge_ids(cls, v):
+        """JSON 文本列 → int 列表（容错：过滤非整数项）"""
+        if isinstance(v, str):
+            try:
+                import json as _json
+
+                v = _json.loads(v)
+            except (TypeError, ValueError):
+                return []
+        if not isinstance(v, list):
+            return []
+        result = []
+        for item in v:
+            try:
+                result.append(int(item))
+            except (TypeError, ValueError):
+                continue
+        return result
 
 
 class ToolGroupItem(BaseReqEntity):

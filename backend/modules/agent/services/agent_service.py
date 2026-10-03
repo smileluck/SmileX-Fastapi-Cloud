@@ -16,8 +16,15 @@ from core.response.response_code import CustomErrorCode
 from database.models.sys.agent import SysAgent, SysAgentModel, SysAgentProvider
 from modules.agent.core.tool_registry import get_tool_registry
 from modules.agent.schemas.agent import AgentCreate, AgentQueryParams, AgentUpdate
+from modules.agent.services.knowledge_service import KnowledgeService
 from modules.agent.services.skill_service import SkillService
-from modules.agent.utils import archive_and_soft_delete, dump_str_list, load_str_list
+from modules.agent.utils import (
+    archive_and_soft_delete,
+    dump_int_list,
+    dump_str_list,
+    load_int_list,
+    load_str_list,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -135,6 +142,7 @@ class AgentService:
 
         await AgentService.validate_tools(db, payload.tools)
         await AgentService.validate_skills(db, payload.skills)
+        await KnowledgeService.validate_knowledge_ids(db, payload.knowledge_ids)
 
         agent = SysAgent(
             name=payload.name,
@@ -146,6 +154,7 @@ class AgentService:
             max_tokens=payload.max_tokens,
             tools=dump_str_list(list(dict.fromkeys(payload.tools))),
             skills=dump_str_list(list(dict.fromkeys(payload.skills))),
+            knowledge_ids=dump_int_list(list(dict.fromkeys(payload.knowledge_ids))),
             remark=payload.remark,
             status=payload.status,
         )
@@ -166,12 +175,16 @@ class AgentService:
 
         tools = update_data.pop("tools", None)
         skills = update_data.pop("skills", None)
+        knowledge_ids = update_data.pop("knowledge_ids", None)
         if tools is not None:
             await AgentService.validate_tools(db, tools)
             agent.tools = dump_str_list(list(dict.fromkeys(tools)))
         if skills is not None:
             await AgentService.validate_skills(db, skills)
             agent.skills = dump_str_list(list(dict.fromkeys(skills)))
+        if knowledge_ids is not None:
+            await KnowledgeService.validate_knowledge_ids(db, knowledge_ids)
+            agent.knowledge_ids = dump_int_list(list(dict.fromkeys(knowledge_ids)))
 
         if "model_id" in update_data and update_data["model_id"] is not None:
             result = await db.execute(
@@ -212,6 +225,11 @@ class AgentService:
         return load_str_list(agent.skills)
 
     @staticmethod
+    def parse_knowledge_ids(agent: SysAgent) -> list[int]:
+        """解析智能体绑定的知识库 ID 列表"""
+        return load_int_list(agent.knowledge_ids)
+
+    @staticmethod
     async def count_agents_using_skill(db: AsyncSession, skill_code: str) -> int:
         """统计引用指定技能编码的智能体数量（JSON 文本列带引号精确模糊匹配）"""
         result = await db.execute(
@@ -221,6 +239,18 @@ class AgentService:
             )
         )
         return result.scalar() or 0
+
+    @staticmethod
+    async def count_agents_using_knowledge(db: AsyncSession, kb_id: int) -> int:
+        """统计绑定指定知识库的智能体数量（JSON 文本列，Python 精确判定防数字子串误配）"""
+        result = await db.execute(
+            select(SysAgent.id, SysAgent.knowledge_ids).where(
+                SysAgent.knowledge_ids.isnot(None),
+                SysAgent.knowledge_ids != "",
+                SysAgent.deleted_at.is_(None),
+            )
+        )
+        return sum(1 for _, text in result.all() if kb_id in load_int_list(text))
 
     @staticmethod
     async def count_agents_using_mcp(db: AsyncSession, server_code: str) -> int:
