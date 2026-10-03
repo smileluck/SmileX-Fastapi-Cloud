@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-06-01 -->
 # 插件安装自动更新 PLUGINS__ENABLED
 
 ## 需求描述

@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 后端响应消息 i18n（中英 + 可扩展）
 
 ## 需求描述
@@ -24,7 +25,7 @@
 
 ### 前端
 
-- `src/service/request/index.ts` 的 `onRequest` 拦截器注入 `Accept-Language: getLocale()`（取 vue-i18n 当前 locale）。后端 `msg` 原样展示，不再前端翻译。
+- `frontend/src/service/request/index.ts` 的 `onRequest` 拦截器注入 `Accept-Language: getLocale()`（取 vue-i18n 当前 locale）。后端 `msg` 原样展示，不再前端翻译。
 
 ## 约束与备注
 

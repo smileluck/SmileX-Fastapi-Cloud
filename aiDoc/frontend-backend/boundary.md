@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 前后端边界与数据契约
 
 ## 责任边界
@@ -109,7 +110,7 @@
 - **TypeScript 类型**：`EnableStatus`（`"1" | "2"`）
 - **发送请求时**：使用 `enableStatusToBoolean()` 将 `"1"`/`"2"` 转为 `boolean`
 - **接收响应时**：后端已自动转换为 `"1"`/`"2"` 字符串
-- **转换函数**：`src/utils/status.ts`
+- **转换函数**：`frontend/src/utils/status.ts`
 
 ### `is_system` 字段
 
@@ -252,7 +253,7 @@ METHOD \n PATH \n timestamp \n nonce \n app_id \n sha256(body).hexdigest()
 | 换令牌接口 | `POST /admin/sys/file/{id}/preview-token` |
 | 响应 data | `{ preview_token: string, expires_in: number }`；有效期由后端 `JWT__PREVIEW_TOKEN_EXPIRES` 配置（默认 300 秒） |
 | 预览接口鉴权 | query `token`，需 `scope=preview` + file_id 绑定 |
-| 前端封装 | `fetchGetPreviewToken`、`getFilePreviewUrl(fileId, previewToken)`（`src/service/api/file.ts`）；组件 `views/manage/file/modules/file-preview-modal.vue` 打开时异步换 token |
+| 前端封装 | `fetchGetPreviewToken`、`getFilePreviewUrl(fileId, previewToken)`（`frontend/src/service/api/file.ts`）；组件 `views/manage/file/modules/file-preview-modal.vue` 打开时异步换 token |
 | 已知妥协 | 预览令牌有效期内即使用户登出仍可用（短 exp 缓解；强一致需 preview_file 内查 Redis session） |
 
 前端调用点必须**先换 token 再拼 URL**，禁止直接把 access token 放进 preview URL。
@@ -267,7 +268,7 @@ METHOD \n PATH \n timestamp \n nonce \n app_id \n sha256(body).hexdigest()
 
 | 侧 | 职责 |
 |---|---|
-| 前端 | 每个后端请求带 `Accept-Language: <locale>` 头，取值来自 vue-i18n 当前 locale（`getLocale()`，值为 `zh-CN` / `en-US`），在 `src/service/request/index.ts` 的 `onRequest` 拦截器统一注入 |
+| 前端 | 每个后端请求带 `Accept-Language: <locale>` 头，取值来自 vue-i18n 当前 locale（`getLocale()`，值为 `zh-CN` / `en-US`），在 `frontend/src/service/request/index.ts` 的 `onRequest` 拦截器统一注入 |
 | 后端 | 最外层纯 ASGI 中间件 `RequestContextMiddleware` 解析 `Accept-Language`（支持 RFC 质量值与语言前缀匹配，如 `zh`↔`zh-CN`），写入请求级语言 ContextVar；未传或无匹配走 `I18N.DEFAULT_LANGUAGE`（默认 `zh-CN`） |
 | 前端 | 后端 `msg` 已按请求语言返回，前端**原样展示**（`$dialog`/`$message` 直接用 `response.data.msg`），无需前端再翻译后端消息 |
 
@@ -310,7 +311,7 @@ METHOD \n PATH \n timestamp \n nonce \n app_id \n sha256(body).hexdigest()
 
 - 破坏性接口变更（字段名/类型/结构改变）必须记录变更说明
 - Swagger 注释必须与真实实现保持一致
-- 前端 API 封装统一放在 `src/service/api/`
+- 前端 API 封装统一放在 `frontend/src/service/api/`
 - 跨栈变更必须同步更新 `aiDoc/frontend-backend/` 下的文档
 
 ## 完成前检查清单

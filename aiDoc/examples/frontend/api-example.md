@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 前端 API 封装示例
 
 ## 用途
@@ -9,11 +10,11 @@
 - 函数名使用 `fetch` 前缀
 - 使用 `@sa/axios` 封装的请求方法
 - Status 字段使用 `enableStatusToBoolean()` 转换
-- 类型定义在 `src/typings/api/` 中
+- 类型定义在 `frontend/src/typings/api/` 中
 
 ## 示例
 
-### 类型定义 `src/typings/api/system-manage.d.ts`
+### 类型定义 `frontend/src/typings/api/system-manage.d.ts`
 
 ```typescript
 declare namespace Api {
@@ -44,7 +45,7 @@ declare namespace Api {
 }
 ```
 
-### API 封装 `src/service/api/system-manage.ts`
+### API 封装 `frontend/src/service/api/system-manage.ts`
 
 ```typescript
 import { request } from '@/service/request';

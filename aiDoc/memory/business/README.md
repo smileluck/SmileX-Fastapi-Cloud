@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 业务需求记忆
 
 存放每次用户提出的业务需求记录。
@@ -10,7 +11,7 @@
 
 ## 需求索引
 
-- [2026-10-02 Agent RAG 知识库](./2026-10-02_agent_rag_knowledge_base.md) — 智能体新增 RAG 知识库：知识库/文档/切片三表（元数据状态机在 PG，向量与正文在 Qdrant，每库一 collection）+ 文档解析→切片→向量化后台管线（状态机 + 幂等重跑 + 定时对账自愈）+ Agent 绑定 knowledge_ids 后对话自动检索注入 system prompt（60KB 截断内）；轻量起步（+1 Qdrant 服务、复用三层配置与 LLM 客户端扩展 embeddings）、组件抽象（Parser/Chunker/VectorStore/Retriever）预留混合检索/rerank/外挂向量库升级位；明确不走 SFT
+- [2026-10-02 Agent RAG 知识库](./2026-10-02_agent_rag_knowledge_base.md) — 智能体新增 RAG 知识库：知识库/文档/切片三表 + 文档解析→切片→向量化→pgvector 入库（状态机 + asyncio 后台处理）+ Agent 绑定 knowledge_ids 后对话自动检索注入 system prompt（60KB 截断内）；轻量起步（不加基础设施、复用三层配置与 LLM 客户端扩展 embeddings）、组件抽象（Parser/Chunker/VectorStore/Retriever）预留混合检索/rerank/外挂向量库升级位；明确不走 SFT
 - [2026-10-02 AI 智能体底座（Agent + MCP 客户端 + 技能包）](./2026-10-02_agent_ai_foundation.md) — 参考 SmileX-Admin-Gin 移植：供应商/模型/Agent 三层 + SSE 流式对话（meta/delta/tool/error 帧协议 + 15s ping）+ function calling（内置工具 + 外部 MCP 双协议接入，`mcp:<code>:<tool>` ↔ `mcp__<code>__<tool>` resolver）+ 技能包注入 system prompt（60KB 截断）+ 会话/用量统计；9 张新表 + `/admin/agent` 独立模块 + 域隔离 AES-GCM 密钥（`smilex-agent:`/`smilex-mcp:`，与 Gin 互解）+ 前端 6 页面（chat Playground 走 fetch+ReadableStream）；MCP 客户端消费侧与既有 mcp-platform 服务端互补
 - [2026-08-02 deploy.sh 日志链修复 + 多模式部署](./2026-08-02_deploy_logging_fix_and_multi_mode.md) — 修生产日志链：Gunicorn error 日志改 `gunicorn-error.log`（避免与 app `error.log` 同文件滚动竞态）、`cmd_setup` 把 `deploy.env LOG_DIR` 同步进 `.env.prod LOG__DIR`、修 `.env.prod` 自拷贝死代码；`deploy.sh` 增 `pull`/`deps`/`migrate`/`restart`/`reload` 原子子命令 + 智能 `deploy`（按 `git diff` 跳过未变更的 deps/migrate，`--full` 强制）；仅后端，无 `start_prod.sh`（生产启动 = systemd 服务）
 - [2026-07-29 后端响应消息 i18n](./2026-07-29_backend_response_i18n.md) — 新增 `core/i18n/`（YAML key 目录 + `t()` + `Accept-Language` 解析 + 语言 ContextVar），`CustomResponseCode`/`CustomErrorCode` 的 `.msg` 按 key 懒翻译，异常类 `default_msg_key`，全量迁移约 350 条 inline 中文为 `t()`；前端 `onRequest` 注入 `Accept-Language: getLocale()`；仅 zh-CN/en-US，新增语言加 yaml 即可；日志/描述/基础设施错误不翻译

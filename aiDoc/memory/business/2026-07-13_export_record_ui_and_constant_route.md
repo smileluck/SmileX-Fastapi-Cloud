@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 导出记录弹窗状态标识优化 + 查看全部路由修复
 
 ## 需求描述
@@ -33,7 +34,7 @@
 
 - 项目鉴权路由模式为 **dynamic**（`.env` → `VITE_AUTH_ROUTE_MODE=dynamic`）：auth 路由由后端菜单接口返回；`hideInMenu` 路由不在菜单中，故不会下发，必须靠 `constant: true` 才能在 `initConstantRoute` 中注册。
 - constant 路由绕过登录校验（`needLogin = !to.meta.constant`）；`export-record` 仍渲染在 `layout.base` 内，且页面接口需登录态，实际入口（头部「查看全部」）仅在登录后可见，行为正常。
-- `i18nKey` 派生自 `src/typings/app.d.ts` 中**手工维护**的 `Schema` 类型，并非自动从 locale 生成。`exportTask.*` 等键在 locale 中存在（运行时 `$t` 正常解析）但未写入 `Schema`，导致 `pnpm typecheck` 报 `I18nKey` 不匹配——此为既有技术债（覆盖 notification/role/scheduler 等多个模块），本次未顺手修补，保持与现有约定一致。
+- `i18nKey` 派生自 `frontend/src/typings/app.d.ts` 中**手工维护**的 `Schema` 类型，并非自动从 locale 生成。`exportTask.*` 等键在 locale 中存在（运行时 `$t` 正常解析）但未写入 `Schema`，导致 `pnpm typecheck` 报 `I18nKey` 不匹配——此为既有技术债（覆盖 notification/role/scheduler 等多个模块），本次未顺手修补，保持与现有约定一致。
 - ⚠️ 下载文案的正确 key 是 `common.actions.download`（locale 与 `Schema` 一致）。`common.download` 是错误 key，既不在 locale 也不在 `Schema`，运行时会原样渲染成字符串 `common.download`。
 - 状态颜色与全量列表页 `views/export-record/index.vue` 的 `statusMap` 保持一致。
 

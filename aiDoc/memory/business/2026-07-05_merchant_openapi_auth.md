@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 商户管理 + 开放API HMAC 签名鉴权
 
 ## 需求描述
@@ -46,10 +47,10 @@ METHOD \n PATH \n timestamp \n nonce \n app_id \n sha256(body).hexdigest()
 ### 前端
 
 - 页面：`views/manage/merchant/`（`index.vue` 分页表格 + `modules/merchant-search.vue` + `modules/merchant-operate-drawer.vue` + `modules/merchant-secret-result-modal.vue`，密钥一次性弹窗 + 复制按钮 + 警告）
-- API：`src/service/api/system-manage.ts` 新增 6 个函数（list/get/create/update/delete + reset-secret）
-- 类型：`src/typings/api/system-manage.d.ts`（`Merchant` / `MerchantSearchParams` / `MerchantCreate` / `MerchantUpdate` / `MerchantCreateResult` / `MerchantSecretResetResult`）
+- API：`frontend/src/service/api/system-manage.ts` 新增 6 个函数（list/get/create/update/delete + reset-secret）
+- 类型：`frontend/src/typings/api/system-manage.d.ts`（`Merchant` / `MerchantSearchParams` / `MerchantCreate` / `MerchantUpdate` / `MerchantCreateResult` / `MerchantSecretResetResult`）
 - i18n：`zh-cn.ts` / `en-us.ts` 的 `page.manage.merchant.*` + `route.manage_merchant`
-- Schema 类型：`src/typings/app.d.ts` 的 `Schema` 增 `merchant` 块（I18nKey 由此派生，必须手改）
+- Schema 类型：`frontend/src/typings/app.d.ts` 的 `Schema` 增 `merchant` 块（I18nKey 由此派生，必须手改）
 - 路由：elegant-router 自动注册 `view.manage_merchant`；本次已同步手改 4 个生成文件（`elegant-router.d.ts` / `imports.ts` / `routes.ts` / `transform.ts`），dev/build 会以相同内容覆盖
 
 ## 约束与备注

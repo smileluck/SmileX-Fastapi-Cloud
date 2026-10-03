@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 前端页面组件示例
 
 ## 用途
@@ -118,7 +119,7 @@ page: {
 **注意**：
 - 页面级文本全部放在 `page.manage.xxx.*` 下，不直接使用 `common.*`
 - 若需引用 `common.*`（如 `common.search`、`common.reset`），必须先确认该 key 在 `common` 命名空间中已存在
-- 新增键必须同时添加到 `zh-cn.ts`、`en-us.ts` 和 `src/typings/app.d.ts` 的 `App.I18n.Schema`
+- 新增键必须同时添加到 `zh-cn.ts`、`en-us.ts` 和 `frontend/src/typings/app.d.ts` 的 `App.I18n.Schema`
 
 ## 关键点
 

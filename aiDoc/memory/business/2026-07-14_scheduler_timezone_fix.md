@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 调度器时区修复 + create_superuser naive 时间
 
 ## 需求描述
@@ -26,7 +27,7 @@
 
 > 关键点：仅设调度器 `timezone=` 不够 —— `from_crontab` 创建的 trigger 自带本地时区，加入调度器后不被覆盖，故三处（scheduler / build / preview）都要显式固定。
 
-### `scripts/create_superuser.py`
+### `backend/scripts/create_superuser.py`
 
 - `from datetime import datetime` → `datetime, timezone`；`last_login_at=datetime.now()` → `datetime.now(timezone.utc)`。
 
@@ -47,7 +48,7 @@
 
 ### 后端
 
-- `modules/scheduler/core/scheduler.py`、`scripts/create_superuser.py`
+- `modules/scheduler/core/scheduler.py`、`backend/scripts/create_superuser.py`
 
 ### 前端
 

@@ -1,0 +1,44 @@
+{
+  "harness_version": "unknown",
+  "project_name": "SmileX-Fastapi-Cloud",
+  "lang": "zh",
+  "generated": "2026-10-02",
+  "files": {
+    ".agents/skills/project-code-review/SKILL.md": {
+      "sha256": "85e629c77d5e4a31fb3336e49b89ac893a4276f13bb6edc68bdd83e958fc4bad",
+      "template": "agents-skills/project-code-review/SKILL.md"
+    },
+    ".agents/skills/project-pre-push-checks/SKILL.md": {
+      "sha256": "b736e76d80eda2c6d5d63b931bd556b8c34852f139fc81a2f215a4a37888f1af",
+      "template": "agents-skills/project-pre-push-checks/SKILL.md"
+    },
+    "aiDoc/memory/lessons/README.md": {
+      "sha256": "090f99f4cad8c4d4afa2e8b3d5d3eebbe5dd9e8e2da5bfd5c44ccf89326f060e",
+      "template": "aidoc/memory/lessons/README.md"
+    },
+    "aiDoc/memory/lessons/TEMPLATE.md": {
+      "sha256": "3a32d116eec3d7b745b73f61400595ce16e21e7c78d82c23f0ba84bd7b67af6b",
+      "template": "aidoc/memory/lessons/TEMPLATE.md"
+    },
+    "aiDoc/notes/README.md": {
+      "sha256": "ba99a9d68f23dcca7838cceef0527d5d999e64163a3740a7cbbb537f0fa0f560",
+      "template": "aidoc/notes/README.md"
+    },
+    "aiDoc/notes/TEMPLATE.md": {
+      "sha256": "df6c110697aa6f66daa908235e640c1c68b41cc85d7ef23e83d21c1b27c80aa9",
+      "template": "aidoc/notes/TEMPLATE.md"
+    },
+    "aiDoc/plans/README.md": {
+      "sha256": "58c9a4f4c5fcd54920d90b97b0a65232219be1a3954054e9e8757768e6ea7be1",
+      "template": "aidoc/plans/README.md"
+    },
+    "aiDoc/plans/change-plan.TEMPLATE.md": {
+      "sha256": "e962a5bbfcacfe12717b1c7d1e069bc713d2dde3ed8328850592514030eb364b",
+      "template": "aidoc/plans/change-plan.TEMPLATE.md"
+    },
+    "aiDoc/plans/handoff.TEMPLATE.md": {
+      "sha256": "a946a11e72e001ddf1b00a97055cd9aeeb7a18c864d495528b812dda30f849a8",
+      "template": "aidoc/plans/handoff.TEMPLATE.md"
+    }
+  }
+}

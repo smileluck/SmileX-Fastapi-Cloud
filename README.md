@@ -227,16 +227,11 @@ SmileX-Fastapi-Cloud/
 
 ## AI 协作文档体系（可选）
 
-项目内置结构化 AI 协作文档：根 [`AGENTS.md`](./AGENTS.md)（规则唯一真源）+ [`aiDoc/`](./aiDoc)（分层约束文档），把长期有效的项目上下文从工具私有目录抽离，按主题拆分维护。配套 Claude Code 斜杠命令 `/generate-aidoc` 一键生成或增量维护。
+项目内置结构化 AI 协作文档：根 [`AGENTS.md`](./AGENTS.md)（规则唯一真源）+ [`aiDoc/`](./aiDoc)（分层约束文档），把长期有效的项目上下文从工具私有目录抽离，按主题拆分维护。
+
+文档体系由 Project-Harness 技能生成与维护：`/project-harness generate` 全量生成或增量更新（支持 `--incremental`、`--scope <area>`、`--dry-run`），`/project-harness sync` 做代码-文档漂移检测与重同步。
 
 > 与 MCP 一样是**可选**能力，不影响前后端构建与运行。
-
-| 参数 | 行为 |
-|---|---|
-| （空） | 全量生成：探测项目并生成 / 覆盖所有 aiDoc 文件 |
-| `--incremental` | 基于 `git diff` 增量更新受影响文件 |
-| `--scope backend` / `frontend` / `relations` / `memory` / `core` | 只重新生成对应范围 |
-| `--dry-run` | 只输出探测结果与计划，不写文件 |
 
 加载层级（L0 自动加载 `AGENTS.md` → L1 任务路由 `aiDoc/README.md` → L2 按需深读子文档）见 `AGENTS.md`。
 

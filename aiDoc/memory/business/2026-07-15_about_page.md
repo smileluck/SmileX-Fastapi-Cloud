@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 关于我们页面（前端常驻路由 + 构建时 Git 历史）
 
 ## 需求描述
@@ -16,9 +17,9 @@
 
 ### 前端
 
-- 新增页面 `src/views/about/index.vue`（NGrid 左右栏：左 SystemLogo + 项目介绍 + 技术栈 NTag + 特性列表；右 NTimeline 渲染 Git 提交）
+- 新增页面 `frontend/src/views/about/index.vue`（NGrid 左右栏：左 SystemLogo + 项目介绍 + 技术栈 NTag + 特性列表；右 NTimeline 渲染 Git 提交）
 - 新增 vite 插件 `build/plugins/git-log.ts`：buildStart 调 `git log` 采集最近 50 条提交，经 virtual module `virtual:smilex-git-log` 暴露；无 git 时 `available:false` 优雅降级
-- 新增类型声明 `src/typings/git-log.d.ts`
+- 新增类型声明 `frontend/src/typings/git-log.d.ts`
 - `build/plugins/index.ts` 注册 `setupGitLogPlugin()`
 - `build/plugins/router.ts` 的 `onRouteMetaGen` 将 `about` 加入 `constantRoutes`，并补 `icon` / `order=9999`
 - i18n：`zh-cn.ts` / `en-us.ts` 增 `route.about` + `page.about.*`；`app.d.ts` 补 `page.about` 类型

@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 首页仪表盘
 
 ## 需求描述
@@ -20,12 +21,12 @@
 
 ### 前端
 
-- 新增 `src/typings/api/dashboard.d.ts`：TypeScript 类型
-- 新增 `src/service/api/dashboard.ts`：API 封装
-- 重写 `src/views/home/index.vue`：调用聚合接口，展示完整内容
-- 改造 `src/views/home/modules/card-data.vue`：改为接收 props（真实数据）
-- 新增 `src/views/home/modules/recent-login.vue`：最近登录时间线（NTimeline）
-- 新增 `src/views/home/modules/latest-notice.vue`：最新公告列表（NList）
+- 新增 `frontend/src/typings/api/dashboard.d.ts`：TypeScript 类型
+- 新增 `frontend/src/service/api/dashboard.ts`：API 封装
+- 重写 `frontend/src/views/home/index.vue`：调用聚合接口，展示完整内容
+- 改造 `frontend/src/views/home/modules/card-data.vue`：改为接收 props（真实数据）
+- 新增 `frontend/src/views/home/modules/recent-login.vue`：最近登录时间线（NTimeline）
+- 新增 `frontend/src/views/home/modules/latest-notice.vue`：最新公告列表（NList）
 - 删除 5 个模板遗留组件（header-banner、line-chart、pie-chart、project-news、creativity-banner）
 - 更新 i18n 文案（zh-cn.ts、en-us.ts）
 

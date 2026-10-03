@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # API 限流 / IP 黑名单
 
 ## 需求描述
@@ -31,8 +32,8 @@
 ### 前端
 
 - 页面：`views/manage/ip-blacklist/`（index.vue + search + drawer）
-- API：`src/service/api/system-manage.ts`（4 个 API 函数）
-- 类型：`src/typings/api/system-manage.d.ts`（IpBlacklist + search + create + batch delete）
+- API：`frontend/src/service/api/system-manage.ts`（4 个 API 函数）
+- 类型：`frontend/src/typings/api/system-manage.d.ts`（IpBlacklist + search + create + batch delete）
 - i18n：`zh-cn.ts` / `en-us.ts` 的 `page.manage.ipBlacklist` 键 + `route.manage_ip-blacklist`
 - 路由：elegant-router 自动注册 `manage_ip-blacklist`
 

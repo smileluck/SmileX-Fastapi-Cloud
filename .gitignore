@@ -52,3 +52,4 @@ yarn.lock
 # uploads
 uploads
 uploads/*
+aiDoc/.harness-backups/

@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # i18n Schema 补全 + 类型清理
 
 ## 需求描述
@@ -8,7 +9,7 @@
 
 已完成
 
-## 一、i18n Schema 补全（`src/typings/app.d.ts`）
+## 一、i18n Schema 补全（`frontend/src/typings/app.d.ts`）
 
 `App.I18n.Schema` 是**手工维护**的 locale 镜像类型（`I18nKey` 由它派生），locale 文件 `const local: App.I18n.Schema` 强制要求二者一致。补全以下缺失字段：
 
@@ -30,8 +31,8 @@
 
 ### 前端
 
-- `src/typings/app.d.ts`（Schema 补全）
-- `src/hooks/business/dict.ts`、`src/service/api/export-task.ts`、`src/views/manage/user/modules/user-operate-drawer.vue`、`src/views/scheduler/log/index.vue`、`src/views/scheduler/task/index.vue`、`src/layouts/modules/global-header/components/export-record-center.vue`
+- `frontend/src/typings/app.d.ts`（Schema 补全）
+- `frontend/src/hooks/business/dict.ts`、`frontend/src/service/api/export-task.ts`、`frontend/src/views/manage/user/modules/user-operate-drawer.vue`、`frontend/src/views/scheduler/log/index.vue`、`frontend/src/views/scheduler/task/index.vue`、`frontend/src/layouts/modules/global-header/components/export-record-center.vue`
 
 ### 后端
 

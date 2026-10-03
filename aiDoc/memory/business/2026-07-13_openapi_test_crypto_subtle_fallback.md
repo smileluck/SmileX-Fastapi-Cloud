@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-07-13 -->
 # 开放API测试页 crypto.subtle 报错修复
 
 ## 需求描述

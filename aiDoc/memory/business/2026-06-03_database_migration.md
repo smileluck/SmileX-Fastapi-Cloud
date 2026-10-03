@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 数据库模块迁移到 database 包
 
 - **日期**: 2026-06-03
@@ -11,8 +12,8 @@
 ## 迁移内容
 
 ### ORM 模型层
-- `app/models/sys/` → `database/models/sys/`
-- `app/models/business/` → `database/models/business/`
+- `backend/app/models/sys/` → `database/models/sys/`
+- `backend/app/models/business/` → `database/models/business/`
 - ORM 基类（`Base`、`LogicMixin`、`DateTimeMixin`、`UserMixin`）→ `database/models/base.py`
 
 ### 数据库基础设施

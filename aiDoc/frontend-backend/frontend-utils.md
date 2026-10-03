@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 前端工具函数复用规则
 
 ## 核心原则
@@ -6,27 +7,27 @@
 
 ---
 
-## 应用级工具（`src/utils/`）
+## 应用级工具（`frontend/src/utils/`）
 
 ### Status 转换（强制使用）
 
-- `src/utils/status.ts`
+- `frontend/src/utils/status.ts`
 - `enableStatusToBoolean()`：`"1"`/`"2"` → `boolean`，**所有向后端发送 status 字段的场景必须使用**
 - `booleanToEnableStatus()`：`boolean` → `"1"`/`"2"`
 
 ### 本地存储（强制使用）
 
-- `src/utils/storage.ts`
+- `frontend/src/utils/storage.ts`
 - `localStg`：类型安全的 localStorage 封装，**所有本地存储操作必须使用**
 
 ### 其他工具
 
 | 文件 | 说明 |
 |------|------|
-| `src/utils/common.ts` | 通用辅助函数 |
-| `src/utils/icon.ts` | 图标处理 |
-| `src/utils/service.ts` | `getServiceBaseURL()` 等服务相关工具 |
-| `src/utils/agent.ts` | Agent 相关工具 |
+| `frontend/src/utils/common.ts` | 通用辅助函数 |
+| `frontend/src/utils/icon.ts` | 图标处理 |
+| `frontend/src/utils/service.ts` | `getServiceBaseURL()` 等服务相关工具 |
+| `frontend/src/utils/agent.ts` | Agent 相关工具 |
 
 ---
 
@@ -83,10 +84,10 @@
 
 | 场景 | 必须使用的工具 |
 |------|---------------|
-| HTTP 请求 | `@sa/axios`（通过 `src/service/request/`） |
-| Status 字段转换（前端→后端） | `enableStatusToBoolean()`（`src/utils/status.ts`） |
-| Status 字段转换（后端→前端） | `booleanToEnableStatus()`（`src/utils/status.ts`） |
-| 本地存储读写 | `localStg`（`src/utils/storage.ts`） |
+| HTTP 请求 | `@sa/axios`（通过 `frontend/src/service/request/`） |
+| Status 字段转换（前端→后端） | `enableStatusToBoolean()`（`frontend/src/utils/status.ts`） |
+| Status 字段转换（后端→前端） | `booleanToEnableStatus()`（`frontend/src/utils/status.ts`） |
+| 本地存储读写 | `localStg`（`frontend/src/utils/storage.ts`） |
 | 深拷贝对象 | `klona`（`@sa/utils`） |
 | 生成唯一 ID | `nanoid`（`@sa/utils`） |
 | 加密操作 | `crypto`（`@sa/utils`） |

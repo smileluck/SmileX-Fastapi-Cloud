@@ -1,9 +1,10 @@
+<!-- last-updated: 2026-10-02 -->
 # 前端开发规范
 
 ## 基础规则
 
-- HTTP 请求统一走 `@sa/axios` 封装（`packages/axios/`），通过 `src/service/request/` 调用
-- 全局状态使用 Pinia（`src/store/`），禁止在组件中直接操作全局变量
+- HTTP 请求统一走 `@sa/axios` 封装（`packages/axios/`），通过 `frontend/src/service/request/` 调用
+- 全局状态使用 Pinia（`frontend/src/store/`），禁止在组件中直接操作全局变量
 - 路由必须配置完整元数据（权限、标题、图标），使用项目内置异步路由机制
 - 所有变量、函数参数、返回值必须有明确的 TypeScript 类型声明
 
@@ -20,9 +21,9 @@
 
 ## TypeScript 要求
 
-- API 响应类型定义在 `src/typings/api/<domain>.d.ts`，放在 `Api` 命名空间下
-- 公共类型（分页、状态等）定义在 `src/typings/api/common.d.ts`
-- i18n 类型约束在 `src/typings/app.d.ts` 的 `App.I18n.Schema`
+- API 响应类型定义在 `frontend/src/typings/api/<domain>.d.ts`，放在 `Api` 命名空间下
+- 公共类型（分页、状态等）定义在 `frontend/src/typings/api/common.d.ts`
+- i18n 类型约束在 `frontend/src/typings/app.d.ts` 的 `App.I18n.Schema`
 - 修改数据结构时必须同步更新对应类型声明
 - 提交前执行 `pnpm typecheck` 确保类型安全
 
@@ -49,7 +50,7 @@ TS 函数返回值中字面量类型会被拓宽（`'gauge'` → `string`），�
 
 ### transform 回调类型
 
-列表页的 `transform` 回调中，API 数据会经过 `booleanToEnableStatus` 等转换。若类型在转换前后不变（如 `Role.status` 始终为 `EnableStatus`），用具体类型标注参数；若转换改变字段类型（如 `User.roles` → `userRoles`），在 `src/typings/api/` 中定义 `RawXxx` 类型用于回调参数：
+列表页的 `transform` 回调中，API 数据会经过 `booleanToEnableStatus` 等转换。若类型在转换前后不变（如 `Role.status` 始终为 `EnableStatus`），用具体类型标注参数；若转换改变字段类型（如 `User.roles` → `userRoles`），在 `frontend/src/typings/api/` 中定义 `RawXxx` 类型用于回调参数：
 
 ```typescript
 // 类型不变的 transform — 使用具体类型
@@ -80,7 +81,7 @@ validator: (rule: any, value: string) => { ... }
 
 ## 组件规范
 
-- 公共组件放在 `src/components/`
+- 公共组件放在 `frontend/src/components/`
 - 页面级组件放在对应页面的 `modules/` 目录
 - Props 必须使用 TypeScript 接口定义（`defineProps<{ ... }>()`）
 - 每个页面必须有独立文件夹，包含主 `.vue` 文件
@@ -100,15 +101,15 @@ validator: (rule: any, value: string) => { ... }
 - 搜索按钮：`icon-ic-round-search` 图标，`type="primary" ghost`
 - 重置逻辑使用 `jsonClone(toRaw(model.value))` + `Object.assign`
 
-参考实现：`src/views/manage/config/modules/config-search.vue`
+参考实现：`frontend/src/views/manage/config/modules/config-search.vue`
 
 ## 页面规范
 
 新增页面时必须完成：
 
-1. 在 `src/views/<name>/` 创建文件夹和 `.vue` 文件
-2. 在 `src/locales/langs/zh-cn.ts` 和 `en-us.ts` 添加翻译
-3. 在 `src/typings/app.d.ts` 更新 `App.I18n.Schema` 类型
+1. 在 `frontend/src/views/<name>/` 创建文件夹和 `.vue` 文件
+2. 在 `frontend/src/locales/langs/zh-cn.ts` 和 `en-us.ts` 添加翻译
+3. 在 `frontend/src/typings/app.d.ts` 更新 `App.I18n.Schema` 类型
 4. 运行 `pnpm gen-route` 自动生成路由
 
 ## 样式规范
@@ -116,7 +117,7 @@ validator: (rule: any, value: string) => { ... }
 - 样式优先级：UnoCSS > SCSS > 内联样式（避免使用内联样式）
 - 遵循 NaiveUI 的设计模式，保持视觉一致性
 - 主题控制通过 CSS 变量实现
-- 全局样式放在 `src/styles/`
+- 全局样式放在 `frontend/src/styles/`
 
 ## 国际化规范
 

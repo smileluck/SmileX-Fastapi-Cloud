@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-06-03 -->
 # Service 层示例
 
 ## 用途

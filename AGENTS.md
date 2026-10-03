@@ -28,6 +28,7 @@
 
 - `backend/`: Python 3.11+ FastAPI + SQLAlchemy 2.0 后端
 - `frontend/`: Vue 3 + Vite + NaiveUI 前端
+- `mcp-platform/`: 独立 MCP 工具服务（Python uvicorn，详见 `aiDoc/modules/mcp-guide.md`）
 - `aiDoc/`: AI 协作文档层（按任务路由加载，入口见 `aiDoc/README.md`）
 
 各 AI 工具目录（`.claude/`、`.trae/` 等）的加载方式见上文「各工具加载方式」。
@@ -76,8 +77,11 @@
 - 细节上下文写入 `aiDoc/`
 - 结构关系放在 `aiDoc/relations/`
 - 示例写法放在 `aiDoc/examples/`
-- 长期记忆与业务记忆放在 `aiDoc/memory/`
+- 长期记忆、业务需求记忆与经验教训放在 `aiDoc/memory/`
+- 决策理由放在 `aiDoc/notes/`，执行中的变更计划与交接放在 `aiDoc/plans/`
+- 跨工具复用的检查流程（代码审查、推送前检查）放在 `.agents/skills/`
 - "任务→必读文档"路由表唯一维护于 `aiDoc/README.md`，不在 `AGENTS.MD` 罗列文档清单
+- 何时重新生成 aiDoc：架构调整、模块/页面增删、路由表或示例与代码漂移时，用 `project-harness` 技能的 `generate` 工作流更新（小改动用 `--incremental` 或 `--scope <area>`）；日常漂移检测与重同步用 `sync` 工作流
 - 若项目级 AI 规则发生变化，先改 `AGENTS.MD`，再按需更新「各工具加载方式」
 
 ### 代码读取约束

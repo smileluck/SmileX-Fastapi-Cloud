@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 模块开发指南
 
 ## 新建后端模块
@@ -83,31 +84,31 @@ uv run alembic upgrade head
 
 ### 1. 定义 TypeScript 类型
 
-在 `src/typings/api/<feature>.d.ts` 中定义接口类型，放在 `Api` 命名空间下。
+在 `frontend/src/typings/api/<feature>.d.ts` 中定义接口类型，放在 `Api` 命名空间下。
 
-参考：`src/typings/api/`
+参考：`frontend/src/typings/api/`
 
 ### 2. 创建 API 函数
 
-在 `src/service/api/<feature>.ts` 中创建 API 调用函数。
+在 `frontend/src/service/api/<feature>.ts` 中创建 API 调用函数。
 
 - 函数名使用 `fetch` 前缀（如 `fetchGetUserList`、`fetchCreateUser`）
 - 使用 `@sa/axios` 封装的请求方法
 - Status 字段转换使用 `enableStatusToBoolean()` / `booleanToEnableStatus()`
 
-参考：`src/service/api/system-manage.ts`
+参考：`frontend/src/service/api/system-manage.ts`
 
 ### 3. 添加国际化
 
 在以下文件中添加对应的翻译键：
 
-- `src/locales/langs/zh-cn.ts`
-- `src/locales/langs/en-us.ts`
-- 更新 `src/typings/app.d.ts` 中的 `App.I18n.Schema` 类型约束
+- `frontend/src/locales/langs/zh-cn.ts`
+- `frontend/src/locales/langs/en-us.ts`
+- 更新 `frontend/src/typings/app.d.ts` 中的 `App.I18n.Schema` 类型约束
 
 ### 4. 创建页面组件
 
-在 `src/views/<feature>/` 下创建页面文件夹：
+在 `frontend/src/views/<feature>/` 下创建页面文件夹：
 
 ```
 src/views/<feature>/
@@ -116,7 +117,7 @@ src/views/<feature>/
     └── SomeModule.vue
 ```
 
-参考：`src/views/manage/`
+参考：`frontend/src/views/manage/`
 
 ### 5. 生成路由
 

@@ -1,3 +1,4 @@
+<!-- last-updated: 2026-10-02 -->
 # 表格空字段统一显示为 "-"
 
 ## 需求描述
@@ -42,8 +43,8 @@
 
 ### 前端
 
-- `src/hooks/common/table.ts`：新增 `tableCellText` / `withEmptyPlaceholder`，`getColumns` 套用。
-- `src/views/manage/menu/index.vue`：`routeName` / `routePath` 加 render。
+- `frontend/src/hooks/common/table.ts`：新增 `tableCellText` / `withEmptyPlaceholder`，`getColumns` 套用。
+- `frontend/src/views/manage/menu/index.vue`：`routeName` / `routePath` 加 render。
 
 ### 后端
 
