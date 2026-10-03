@@ -42,6 +42,9 @@ coverage
 *.sln
 *.sw?
 
+# AI 工具会话目录
+.zcode/
+
 # 包管理锁文件
 package-lock.json
 yarn.lock
