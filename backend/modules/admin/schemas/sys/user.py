@@ -63,9 +63,17 @@ class SysUserCreate(BaseEntity):
     email: Optional[str] = Field(None, description="邮箱", max_length=100)
     phone: Optional[str] = Field(None, description="手机号", max_length=20)
     avatar: Optional[str] = Field(None, description="头像URL")
-    status: bool = Field(True, description="用户状态：True-启用，False-禁用")
+    status: BoolField = Field(True, description="用户状态：True-启用，False-禁用")
     role_ids: List[int] = Field([], description="角色ID列表")
     dept_id: Optional[int] = Field(None, description="所属部门ID")
+
+    @field_validator("status")
+    @classmethod
+    def validate_status(cls, v):
+        """
+        显式空值收敛为默认启用，避免 NOT NULL 列写入 NULL
+        """
+        return True if v is None else v
 
     @field_validator("email")
     @classmethod
@@ -238,4 +246,14 @@ class SysUserBatchUpdateStatus(BaseEntity):
     """
 
     user_ids: List[int] = Field(..., description="用户ID列表")
-    status: bool = Field(..., description="要设置的状态：True-启用，False-禁用")
+    status: BoolField = Field(..., description="要设置的状态：True-启用，False-禁用")
+
+    @field_validator("status")
+    @classmethod
+    def validate_status(cls, v):
+        """
+        状态必填，空值直接拒绝，避免把状态列更新为 NULL
+        """
+        if v is None:
+            raise ValueError(t("validation.status_required"))
+        return v

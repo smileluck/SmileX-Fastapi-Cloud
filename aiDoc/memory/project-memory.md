@@ -11,6 +11,7 @@
 
 详细索引见 [business/README.md](./business/README.md)。近期：
 
+- [2026-10-08 用户/角色"禁用筛选不生效"修复](./business/2026-10-08_user_role_disable_filter_fix.md) — 根因：User/Role 的 Create + BatchUpdateStatus 请求模型 `status` 用原生 `bool` 而非 `BoolField`，'2'（禁用）提交 422 → 库里无禁用数据 → 筛"禁用"永远空；筛选链路本身无 bug。教训：请求模型 status 一律 `BoolField`；dept/menu/dict/app_user/merchant/agent 系列同类字段存量待修
 - [2026-10-02 Agent RAG 知识库](./business/2026-10-02_agent_rag_knowledge_base.md) — 智能体 RAG 知识库：三表 + 解析/切片/向量化管线（pgvector）+ Agent 绑定后对话检索注入；轻量起步 + 抽象预留升级位；不走 SFT
 - [2026-10-02 AI 智能体底座（Agent + MCP 客户端 + 技能包）](./business/2026-10-02_agent_ai_foundation.md) — 供应商/模型/Agent 三层 + SSE 流式对话 + function calling（内置 + MCP 远程工具）+ 技能包 + 会话/用量；`modules/agent/` 独立模块（9 表 + `/admin/agent`）+ 前端 6 页面
 - [2026-07-29 后端响应消息 i18n](./business/2026-07-29_backend_response_i18n.md) — 新增 `core/i18n/`（YAML key 目录 + `t()` + `Accept-Language` 解析 + 语言 ContextVar），`CustomResponseCode`/`CustomErrorCode` 的 `.msg` 按 key 懒翻译，异常类 `default_msg_key`，全量迁移约 350 条 inline 中文为 `t()`；前端 `onRequest` 注入 `Accept-Language: getLocale()`；仅 zh-CN/en-US，新增语言加 yaml 即可；日志/描述/基础设施错误不翻译

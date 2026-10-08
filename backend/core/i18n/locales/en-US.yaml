@@ -174,6 +174,7 @@ validation:
   page_size_max: "Page size cannot exceed 200"
   id_js_safe: "ID {value} exceeds the JavaScript safe integer range, please run a migration to fix"
   status_invalid_value: "Invalid value: {value}, only 1/true or 2/false or empty is allowed"
+  status_required: "Status value is required"
   email_format: "Invalid email format"
   phone_format: "Invalid phone number format"
   password_complexity: "Password must be 6-20 characters and contain both letters and numbers"

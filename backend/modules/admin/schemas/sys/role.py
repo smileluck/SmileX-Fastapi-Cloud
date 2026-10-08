@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from typing import Optional, List, Annotated
-from pydantic import Field, ConfigDict, BeforeValidator
+from pydantic import Field, ConfigDict, BeforeValidator, field_validator
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from core.i18n import t
 from modules.common.schemas.base import BaseRespEntity, BaseEntity, BaseReqEntity, BoolField
 from modules.common.schemas.page import PageRequest
 from database.models.sys.role import DataScopeEnum
@@ -35,10 +36,18 @@ class SysRoleCreate(BaseReqEntity):
 
     name: str = Field(..., description="角色名称", min_length=1, max_length=20)
     desc: Optional[str] = Field(None, description="角色描述", max_length=200)
-    status: bool = Field(True, description="角色状态：1-启用，2-禁用")
+    status: BoolField = Field(True, description="角色状态：True-启用，False-禁用")
     sort: int = Field(0, description="排序号", ge=0)
     data_scope: DataScopeEnum = Field(DataScopeEnum.SELF, description="数据范围：ALL/DEPT_AND_SUB/DEPT_ONLY/SELF")
     menu_ids: List[int] = Field([], description="菜单ID列表")
+
+    @field_validator("status")
+    @classmethod
+    def validate_status(cls, v):
+        """
+        显式空值收敛为默认启用，避免 NOT NULL 列写入 NULL
+        """
+        return True if v is None else v
 
 
 class SysRoleUpdate(BaseReqEntity):
@@ -116,7 +125,17 @@ class SysRoleBatchUpdateStatus(BaseReqEntity):
     """
 
     role_ids: List[int] = Field(..., description="角色ID列表")
-    status: bool = Field(..., description="要设置的状态：True-启用，False-禁用")
+    status: BoolField = Field(..., description="要设置的状态：True-启用，False-禁用")
+
+    @field_validator("status")
+    @classmethod
+    def validate_status(cls, v):
+        """
+        状态必填，空值直接拒绝，避免把状态列更新为 NULL
+        """
+        if v is None:
+            raise ValueError(t("validation.status_required"))
+        return v
 
 
 class SysRoleAssignMenu(BaseReqEntity):

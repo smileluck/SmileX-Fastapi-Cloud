@@ -181,6 +181,7 @@ validation:
   page_size_max: "每页条数最多为 200 条"
   id_js_safe: "ID {value} 超出JavaScript安全整数范围，请运行迁移修复"
   status_invalid_value: "非法值: {value}，只能是 1/true 或 2/false 或为空"
+  status_required: "状态值不能为空"
   email_format: "邮箱格式不正确"
   phone_format: "手机号格式不正确"
   password_complexity: "密码需6-20位，且至少包含字母和数字"
